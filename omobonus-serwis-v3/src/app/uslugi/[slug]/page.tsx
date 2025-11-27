@@ -164,7 +164,7 @@ export default async function ServicePage({
                               )}
                               {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
                               <div className="text-center hidden group-data-[state=open]:block">
-                                <div className="flex items-center justify-center gap-2 text-[#ffffff] font-cormorant font-bold text-lg">
+                                <div className="flex items-center justify-center gap-2 text-[#bfa76a] font-cormorant font-bold text-lg">
                                   Cena, zł
                                   <TooltipProvider>
                                     <Tooltip>
@@ -177,7 +177,7 @@ export default async function ServicePage({
                                     </Tooltip>
                                   </TooltipProvider>
                                 </div>
-                                <span className="text-xs font-normal text-white/50 block mt-1">
+                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-1" style={{ textShadow: '0 0 1px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.3)' }}>
                                   (kategorie urządzeń)
                                 </span>
                               </div>
@@ -185,7 +185,7 @@ export default async function ServicePage({
 
                             {/* Nagłówek "Czas realizacji" - widoczne tylko gdy otwarte */}
                             <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
-                              <div className="text-[#ffffff] font-cormorant font-bold text-lg text-center hidden group-data-[state=open]:block">
+                              <div className="text-[#bfa76a] font-cormorant font-bold text-lg text-center hidden group-data-[state=open]:block">
                                 <div>Czas</div>
                                 <div>realizacji</div>
                               </div>
@@ -235,7 +235,7 @@ export default async function ServicePage({
                               <AccordionContent className={section.id === 'faq' ? 'pt-0.5' : 'pt-2'}>
                                 {/* Если есть answer (FAQ), показываем ответ, иначе таблицу */}
                                 {subcategory.answer ? (
-                                  <div className={`font-cormorant text-base leading-relaxed whitespace-pre-line text-[#fff8e7] ${section.id === 'faq' ? 'pt-0.5' : 'pt-3 pb-2 px-1'}`}>
+                                  <div className={`font-table-main text-[15px] md:text-[16px] leading-[1.3] whitespace-pre-line text-[#fff8e7] ${section.id === 'faq' ? 'pt-0.5' : 'pt-3 pb-2 px-1'}`}>
                                     {subcategory.answer.split('\n').map((line, idx) => {
                                       // Поддержка жирного текста через **текст**
                                       const parts = line.split(/(\*\*.*?\*\*)/g)
@@ -279,7 +279,7 @@ export default async function ServicePage({
                                                       {parsed.main}
                                                     </div>
                                                     {parsed.parentheses && (
-                                                      <div className="text-xs md:text-sm italic text-[#fff8e7] mt-0.5 hidden md:block line-clamp-2 service-description-text">
+                                                      <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 hidden md:block line-clamp-2 service-description-text" style={{ textShadow: '0 0 1px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.3)' }}>
                                                         ({parsed.parentheses})
                                                       </div>
                                                     )}

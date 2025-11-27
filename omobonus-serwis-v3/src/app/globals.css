@@ -576,18 +576,18 @@
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   }
 
-  /* Фон аккордеона - services-background.png с матовым антикварным затемнением */
-  /* Приглушенный медный оттенок для создания эффекта старого матового золота */
+  /* Фон аккордеона - services-background.png с красноватым оттенком (80-85% затемнение) */
+  /* Красноватый оттенок для создания эффекта антикварного фона */
   /* Мягкий вертикальный градиент: разница между верхом и низом 5-7% */
   /* Мягкая внутренняя тень в нижней части создает эффект утопленности */
   
-  /* Закрытые блоки - затемнение 75% с эффектом выпуклости и видимой текстурой (еще темнее) */
+  /* Закрытые блоки - затемнение 75% с красноватым оттенком */
   [data-slot="accordion-item"] > div {
     background-image: 
       linear-gradient(
         to bottom,
-        rgba(50, 45, 25, 0.40) 0%,
-        rgba(42, 38, 20, 0.75) 100%
+        rgba(80, 35, 25, 0.40) 0%,
+        rgba(60, 28, 18, 0.75) 100%
       ),
       url('/images/services-background.png') !important;
     background-color: transparent !important;
@@ -601,13 +601,13 @@
       inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
   }
 
-  /* Шапка открытого блока - затемнение 80% с эффектом выпуклости и видимой текстурой (еще темнее) */
+  /* Шапка открытого блока - затемнение 80% с красноватым оттенком */
   [data-slot="accordion-item"][data-state="open"] > div {
     background-image: 
       linear-gradient(
         to bottom,
-        rgba(45, 43, 23, 0.45) 0%,
-        rgba(38, 36, 20, 0.80) 100%
+        rgba(75, 33, 23, 0.45) 0%,
+        rgba(55, 25, 15, 0.80) 100%
       ),
       url('/images/services-background.png') !important;
     background-color: transparent !important;
@@ -621,13 +621,13 @@
       inset 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
   }
 
-  /* Тело открытого блока - затемнение 77% с эффектом выпуклости и видимой текстурой (еще темнее) */
+  /* Тело открытого блока - затемнение 85% с красноватым оттенком */
   [data-slot="accordion-content"][data-state="open"] > div {
     background-image: 
       linear-gradient(
         to bottom,
-        rgba(45, 43, 23, 0.43) 0%,
-        rgba(38, 36, 20, 0.77) 100%
+        rgba(70, 30, 20, 0.43) 0%,
+        rgba(52, 23, 13, 0.85) 100%
       ),
       url('/images/services-background.png') !important;
     background-color: transparent !important;
@@ -644,6 +644,25 @@
   /* Благородный золотой цвет для подзаголовка - как на странице "Nasze Usługi" */
   .golden-glow-text {
     color: #bfa76a;
+  }
+
+  /* Фон карточек услуг - золотисто-бежевый с внутренней тенью */
+  .services-card-bg {
+    background-image: 
+      linear-gradient(
+        to bottom,
+        rgba(58, 46, 36, 0.25) 0%,
+        rgba(46, 38, 28, 0.35) 100%
+      ),
+      url('/images/services-background.png');
+    background-color: transparent !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 245, 200, 0.15),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
   }
 
 }

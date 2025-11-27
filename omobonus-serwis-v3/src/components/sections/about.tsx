@@ -37,7 +37,7 @@ export function About() {
           <div className="space-y-6 text-white">
             <div>
               <h2 className="text-2xl md:text-3xl font-serif font-bold mb-4">
-                Święty Omobonus XII wieku (łac. „Dobry człowiek”)
+                Święty Omobonus XII wieku (łac. „Dobry człowiek")
               </h2>
               <p className="text-lg">
                 Patron biznesmenów i przemysłowców. Był uczciwym rzemieślnikiem, który część swoich dochodów przekazywał potrzebującym.
@@ -57,7 +57,7 @@ export function About() {
 
             <div>
               <p className="text-lg font-serif text-primary">
-                „Szacunek do klienta i brak oszustwa” to nasze podstawowe zasady pracy.
+                „Szacunek do klienta i brak oszustwa" to nasze podstawowe zasady pracy.
               </p>
             </div>
 
@@ -71,7 +71,7 @@ export function About() {
                   'jeśli naprawa się nie opłaca – powiemy to otwarcie;',
                   'nie wymieniamy części bez potrzeby;',
                   'wymienione części i podzespoły zawsze zwracamy Klientowi;',
-                  'w razie potrzeby na czas naprawy zapewniamy usługę „Drukarka zastępcza”.',
+                  'w razie potrzeby na czas naprawy zapewniamy usługę „Drukarka zastępcza".',
                 ].map((text, idx) => (
                   <li key={idx} className="flex items-start">
                     <CheckCircle className="h-5 w-5 text-primary mr-3 mt-1 flex-shrink-0" />

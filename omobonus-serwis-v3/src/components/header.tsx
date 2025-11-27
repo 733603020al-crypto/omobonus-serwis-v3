@@ -64,7 +64,7 @@ export function Header() {
               e.preventDefault()
               scrollToSection('uslugi')
             }}
-            className="text-[18px] text-white font-cormorant hover:text-[#bfa76a] transition-colors"
+            className="text-[18px] text-[#bfa76a] font-cormorant hover:text-[#bfa76a] transition-colors"
           >
             Usługi
           </Link>
@@ -74,7 +74,7 @@ export function Header() {
               e.preventDefault()
               scrollToSection('o-nas')
             }}
-            className="text-[18px] text-white font-cormorant hover:text-[#bfa76a] transition-colors"
+            className="text-[18px] text-[#bfa76a] font-cormorant hover:text-[#bfa76a] transition-colors"
           >
             O nas
           </Link>
@@ -84,7 +84,7 @@ export function Header() {
               e.preventDefault()
               scrollToSection('kontakt')
             }}
-            className="text-[18px] text-white font-cormorant hover:text-[#bfa76a] transition-colors"
+            className="text-[18px] text-[#bfa76a] font-cormorant hover:text-[#bfa76a] transition-colors"
           >
             Kontakt
           </Link>
@@ -92,13 +92,13 @@ export function Header() {
             href="https://omobonus.com.pl"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[18px] text-white font-cormorant hover:text-[#bfa76a] transition-colors"
+            className="text-[18px] text-[#bfa76a] font-cormorant hover:text-[#bfa76a] transition-colors"
           >
             Sklep
           </Link>
           <Button
             variant="outline"
-            className="text-[18px] text-white font-cormorant px-4 py-1.5 rounded-full bg-transparent border-white/80 hover:bg-white/10 transition-colors"
+            className="text-[18px] text-[#bfa76a] font-cormorant px-4 py-1.5 rounded-full bg-transparent border-[#bfa76a]/80 hover:bg-[#bfa76a]/10 transition-colors"
             onClick={(e) => {
               e.preventDefault()
               scrollToSection('kontakt')

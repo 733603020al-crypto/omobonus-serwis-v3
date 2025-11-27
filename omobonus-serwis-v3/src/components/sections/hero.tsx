@@ -25,7 +25,7 @@ export function Hero() {
         <h1 className="text-[60px] font-cormorant font-bold leading-[1.1] text-[#ffffff] max-w-[900px]">
           Profesjonalny serwis <br /> komputerów i drukarek we <br /> Wrocławiu
         </h1>
-        <p className="mt-[24px] text-[22px] font-cormorant leading-tight text-[#fff8e7] italic font-semibold drop-shadow-2xl">
+        <p className="mt-[24px] text-[22px] font-cormorant leading-tight text-[#bfa76a] italic font-semibold drop-shadow-2xl">
           &quot;Brak oszustwa i szacunek do klienta&quot; to nasze podstawowe zasady pracy
         </p>
         <a
@@ -34,7 +34,7 @@ export function Hero() {
             e.preventDefault()
             scrollToSection('kontakt')
           }}
-          className="inline-flex items-center justify-center border border-white/80 text-[15px] text-white py-[8px] px-[24px] rounded-full hover:bg-white/10 transition-colors mt-[24px]"
+          className="inline-flex items-center justify-center border border-[#bfa76a]/80 text-[15px] text-[#bfa76a] py-[8px] px-[24px] rounded-full hover:bg-[#bfa76a]/10 transition-colors mt-[24px]"
         >
           Wyślij zgłoszenie
         </a>

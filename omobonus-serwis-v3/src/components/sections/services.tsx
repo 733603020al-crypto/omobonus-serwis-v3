@@ -19,11 +19,11 @@ export function Services() {
 
       {/* Zawartość */}
       <div className="relative max-w-7xl mx-auto px-4 md:px-6">
-        <div className="mb-6">
-          <h2 className="text-[60px] font-cormorant font-bold text-[#ffffff] leading-[1.1]">
+        <div className="mb-6 text-center">
+          <h2 className="text-[40px] font-cormorant font-bold text-[#ffffff] leading-[1.1]">
             Nasze Usługi
           </h2>
-          <p className="mt-[6px] text-[22px] text-[#fff8e7] font-cormorant italic leading-tight max-w-3xl mx-auto font-semibold drop-shadow-2xl">
+          <p className="mt-[6px] text-[18px] text-[#bfa76a] font-cormorant italic leading-tight max-w-3xl mx-auto font-semibold drop-shadow-2xl">
             Oferujemy kompleksowe wsparcie techniczne dla Twojego domu i biura we Wrocławiu
           </p>
         </div>
@@ -33,7 +33,7 @@ export function Services() {
             <Link
               key={service.slug}
               href={`/uslugi/${service.slug}`}
-              className="group relative min-h-[90px] rounded-lg p-3 border-2 border-white/40 hover:border-white/60 transition-all duration-300 hover:shadow-xl flex items-start text-left bg-transparent hover:bg-white/5 w-full"
+              className="group relative min-h-[70px] rounded-lg py-2 px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl flex items-center text-left bg-black/10 hover:bg-black/15 w-full"
             >
               {/* Ikona */}
               <div className="mr-4 w-[50px] h-[50px] flex-shrink-0 flex items-center justify-center">

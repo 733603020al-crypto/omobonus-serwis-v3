@@ -1,0 +1,12 @@
+﻿Backup created: 2025-11-24_10-26-44
+Source: C:\Users\Andrii\omobonus-serwis-v3
+Items copied: 8
+Items skipped: 0
+
+Critical files:
+- tailwind.config.ts
+- postcss.config.js
+- src/app/uslugi/[slug]/page.tsx
+- src/lib/services-data.ts
+- src/components/sections/services.tsx
+- src/components/sections/hero.tsx

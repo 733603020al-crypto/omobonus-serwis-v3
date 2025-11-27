@@ -1,0 +1,12 @@
+
+[2025-11-24 11:00:23] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-24_10-59-02\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
+
+[2025-11-25 22:51:05] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_22-49-14\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
+
+[2025-11-25 22:52:38] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_22-51-14\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
+
+[2025-11-25 23:04:35] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_23-02-45\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
+
+[2025-11-25 23:33:27] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_23-30-18\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
+
+[2025-11-26 23:31:52] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-26_23-30-16\_backups\auto-backups\backup_2025-11-24_rar\omobonus-serwis-v3\.next\dev\cache\images\bs8e-dgUE955WMG7pLhoLOypEwqc6nQW_3lwbX5pFGM\14400.1764080890557._N_m9Yi-igD2s1fMtftFo0tZMK1Iogpphn8vrol2aCY.Vy8iODAtMTlhOGVlOTg1MjAi.webp�.

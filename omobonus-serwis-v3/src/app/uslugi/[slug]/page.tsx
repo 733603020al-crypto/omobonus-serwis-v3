@@ -106,7 +106,7 @@ export default async function ServicePage({
             <h1 className="text-[40px] font-cormorant font-bold text-[#ffffff] leading-[1.1]">
               {service.title}
             </h1>
-            <p className="mt-[6px] text-[18px] text-[#fff8e7] font-cormorant italic leading-tight max-w-3xl mx-auto font-semibold drop-shadow-2xl">
+            <p className="mt-[6px] text-[18px] text-[#bfa76a] font-cormorant italic leading-tight max-w-3xl mx-auto font-semibold drop-shadow-2xl">
               Pełny wykaz usług i cen, bez ukrytych kosztów (nie &quot;naprawa od 50 zł&quot; lub &quot;cena do uzgodnienia&quot;)
             </p>
           </div>
@@ -120,13 +120,13 @@ export default async function ServicePage({
                 <AccordionItem
                   key={section.id}
                   value={section.id}
-                  className="border-0 group"
+                  className="border-0 group mb-4 last:mb-0"
                 >
-                  <div className="group relative min-h-[90px] rounded-lg p-3 border-2 border-white/40 hover:border-white/60 transition-all duration-300 hover:shadow-xl bg-transparent hover:bg-white/5 w-full">
-                    <AccordionTrigger className="hover:no-underline [&>svg]:hidden w-full group">
-                      <div className="flex items-start w-full text-left">
+                  <div className="group relative min-h-[70px] rounded-lg py-2 px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl group-data-[state=open]:border-b group-data-[state=open]:border-b-[rgba(191,167,106,0.2)] w-full sticky top-0 z-10">
+                    <AccordionTrigger className="hover:no-underline [&>svg]:hidden w-full group !py-0 !items-center !gap-0">
+                      <div className="flex items-center w-full text-left">
                         {/* Lewa część - dokładnie jak na stronie głównej */}
-                        <div className="flex items-start flex-1">
+                        <div className="flex items-center flex-1">
                           {/* Ikona */}
                           <div className="mr-4 w-[50px] h-[50px] flex-shrink-0 flex items-center justify-center">
                             <Image
@@ -153,49 +153,51 @@ export default async function ServicePage({
 
                         {/* Prawa część - GRATIS / Nagłówki kolumn (ukryte dla FAQ) */}
                         {section.id !== 'faq' && (
-                          <div className="flex items-center gap-4 ml-4">
-                            {/* GRATIS lub Nagłówek "Cena, zł" */}
-                            <div className="flex items-center justify-center min-w-[120px]">
-                              {/* GRATIS - widoczne tylko gdy zamknięte */}
+                        <div className="flex items-center gap-4 ml-4">
+                          {/* GRATIS lub Nagłówek "Cena, zł" */}
+                          <div className="flex items-center justify-center min-w-[120px]">
+                            {/* GRATIS - widoczne tylko gdy zamknięte */}
                               {(section.id === 'diagnoza' || section.id === 'dojazd') && (
-                                <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] group-data-[state=open]:hidden">
+                                <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden">
                                   GRATIS
                                 </span>
-                              )}
-                              {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
-                              <div className="text-center hidden group-data-[state=open]:block">
-                                <div className="flex items-center justify-center gap-2 text-[#bfa76a] font-cormorant font-bold text-lg">
-                                  Cena, zł
-                                  <TooltipProvider>
-                                    <Tooltip>
-                                      <TooltipTrigger>
-                                        <Info className="w-4 h-4 opacity-70" />
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <p>Ceny brutto (zawierają VAT)</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                </div>
-                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-1" style={{ textShadow: '0 0 1px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.3)' }}>
-                                  (kategorie urządzeń)
-                                </span>
+                            )}
+                            {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
+                            <div className="text-center hidden group-data-[state=open]:block">
+                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff]">
+                                Cena, zł
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Info className="w-4 h-4 opacity-70" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Ceny brutto (zawierają VAT)</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                               </div>
+                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-1 leading-[1.4]" style={{ 
+                                  textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
+                                }}>
+                                (kategorie urządzeń)
+                              </span>
                             </div>
+                          </div>
 
-                            {/* Nagłówek "Czas realizacji" - widoczne tylko gdy otwarte */}
-                            <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
-                              <div className="text-[#bfa76a] font-cormorant font-bold text-lg text-center hidden group-data-[state=open]:block">
+                          {/* Nagłówek "Czas realizacji" - widoczne tylko gdy otwarte */}
+                          <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
+                              <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block">
                                 <div>Czas</div>
                                 <div>realizacji</div>
                               </div>
                             </div>
-                          </div>
+                        </div>
                         )}
                       </div>
                     </AccordionTrigger>
 
-                    <AccordionContent className="pt-4">
+                    <AccordionContent className="pt-3 pb-3 max-h-[70vh] overflow-y-auto scroll-smooth accordion-scroll relative z-10 md:border-t md:border-[rgba(200,169,107,0.3)] md:mt-2 md:border-x md:border-[rgba(191,167,106,0.3)] md:mx-2 md:mb-2 md:rounded-b-lg">
                       {/* Sprawdź czy sekcja ma subcategories (dla "naprawy" lub "faq") */}
                       {section.subcategories ? (
                         // Wewnętrzny Accordion dla podkategorii
@@ -206,20 +208,20 @@ export default async function ServicePage({
                               value={subcategory.id}
                               className={`border-0 last:border-b-0 last:mb-0 group ${
                                 section.id === 'faq' 
-                                  ? `border-b border-[#bfa76a]/30 mb-1 pb-1 ${index === 0 ? 'border-t border-[#bfa76a]/30 pt-1' : ''}` 
-                                  : `border-b border-white/20 mb-2 pb-2 ${index === 0 ? 'border-t border-white/20 pt-2' : ''}`
+                                  ? `border-b border-[#bfa76a]/30 mb-0.5 pb-0.5 ${index === 0 ? 'border-t border-[#bfa76a]/30 pt-0.5' : ''}` 
+                                  : `border-b border-white/20 mb-1.5 pb-1.5 ${index === 0 ? 'border-t border-white/20 pt-1.5' : ''}`
                               }`}
                             >
                               <AccordionTrigger className={`hover:no-underline text-left w-full !focus-visible:ring-0 !focus-visible:outline-none focus-visible:ring-transparent transition-all duration-200 ${
                                 section.id === 'faq' 
-                                  ? 'py-1.5 px-2 hover:bg-[#ffecb3]/10 rounded-lg hover:border-[#ffecb3]/20' 
-                                  : 'py-3 px-3'
+                                  ? 'py-1 px-2 rounded-lg hover:border-[#ffecb3]/20' 
+                                  : 'py-2 px-3'
                               }`}>
                                 <div className="flex-1 w-full min-w-0">
-                                  <h4 className={`font-cormorant transition-colors ${
+                                  <h4 className={`font-table-main leading-[1.3] ${
                                     section.id === 'faq'
-                                      ? 'text-lg md:text-xl font-semibold text-[#ffffff] mb-0'
-                                      : 'text-lg font-semibold text-[#ffffff] mb-1'
+                                      ? 'text-[15px] md:text-[16px] font-semibold text-[#ffffff] mb-0'
+                                      : 'text-lg font-semibold text-[#ffffff] mb-0.5'
                                   }`}>
                                     {subcategory.title}
                                   </h4>
@@ -232,15 +234,15 @@ export default async function ServicePage({
                                   )}
                                 </div>
                               </AccordionTrigger>
-                              <AccordionContent className={section.id === 'faq' ? 'pt-0.5' : 'pt-2'}>
+                              <AccordionContent className={`${section.id === 'faq' ? 'pt-0.5' : 'pt-1.5'}`}>
                                 {/* Если есть answer (FAQ), показываем ответ, иначе таблицу */}
                                 {subcategory.answer ? (
-                                  <div className={`font-table-main text-[15px] md:text-[16px] leading-[1.3] whitespace-pre-line text-[#fff8e7] ${section.id === 'faq' ? 'pt-0.5' : 'pt-3 pb-2 px-1'}`}>
+                                  <div className={`font-cormorant text-base whitespace-pre-line text-[#fff8e7] ${section.id === 'faq' ? 'pt-0.5 pl-4 leading-snug' : 'pt-2 pb-1.5 px-1 leading-normal'}`}>
                                     {subcategory.answer.split('\n').map((line, idx) => {
                                       // Поддержка жирного текста через **текст**
                                       const parts = line.split(/(\*\*.*?\*\*)/g)
                                       return (
-                                        <div key={idx} className={idx > 0 ? 'mt-4' : ''}>
+                                        <div key={idx} className={idx > 0 ? 'mt-3' : ''}>
                                           {parts.map((part, partIdx) => {
                                             if (part.startsWith('**') && part.endsWith('**')) {
                                               const boldText = part.slice(2, -2)
@@ -268,18 +270,20 @@ export default async function ServicePage({
                                         {subcategory.items.map((item, idx) => (
                                           <TableRow
                                             key={idx}
-                                            className={`border-white/20 border-b border-white/30 hover:bg-white/5 transition-colors ${idx === 0 ? 'border-t border-white/30' : ''}`}
+                                            className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
                                           >
-                                            <TableCell className="font-cormorant text-[#ffffff] py-2 !whitespace-normal md:max-w-[67%]">
+                                            <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 !whitespace-normal md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal">
                                               {(() => {
                                                 const parsed = parseServiceText(item.service)
                                                 return (
                                                   <div className="service-description-text">
-                                                    <div className="text-base md:text-lg service-description-text">
+                                                    <div className="text-[15px] md:text-[16px] service-description-text leading-[1.3]">
                                                       {parsed.main}
                                                     </div>
                                                     {parsed.parentheses && (
-                                                      <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 hidden md:block line-clamp-2 service-description-text" style={{ textShadow: '0 0 1px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.3)' }}>
+                                                      <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
+                                                        textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
+                                                      }}>
                                                         ({parsed.parentheses})
                                                       </div>
                                                     )}
@@ -287,10 +291,10 @@ export default async function ServicePage({
                                                 )
                                               })()}
                                             </TableCell>
-                                            <TableCell className="font-cormorant text-[#ffffff] text-base md:text-lg text-center py-2 align-middle font-semibold min-w-[80px]">
-                                              <div className="whitespace-pre-line leading-tight">{item.price}</div>
+                                            <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
+                                              <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
                                             </TableCell>
-                                            <TableCell className="font-cormorant text-[#ffffff] text-lg text-center py-2 align-middle hidden md:table-cell">
+                                            <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                               {item.duration}
                                             </TableCell>
                                           </TableRow>
@@ -312,22 +316,24 @@ export default async function ServicePage({
                               <col style={{ width: '16.5%' }} />
                               <col style={{ width: '16.5%' }} />
                             </colgroup>
-                            <TableBody>
-                              {section.items.map((item, idx) => (
-                                <TableRow
-                                  key={idx}
-                                  className={`border-white/20 border-b border-white/30 hover:bg-white/5 transition-colors ${idx === 0 ? 'border-t border-white/30' : ''}`}
-                                >
-                                  <TableCell className="font-cormorant text-[#ffffff] py-2 !whitespace-normal md:max-w-[67%]">
+                          <TableBody>
+                            {section.items.map((item, idx) => (
+                              <TableRow
+                                key={idx}
+                                  className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
+                              >
+                                  <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 !whitespace-normal md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal">
                                     {(() => {
                                       const parsed = parseServiceText(item.service)
                                       return (
                                         <div className="service-description-text">
-                                          <div className="text-base md:text-lg service-description-text">
+                                          <div className="text-[15px] md:text-[16px] service-description-text leading-[1.3]">
                                             {parsed.main}
                                           </div>
                                           {parsed.parentheses && (
-                                            <div className="text-xs md:text-sm italic text-[#fff8e7] mt-0.5 hidden md:block line-clamp-2 service-description-text">
+                                            <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
+                                              textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
+                                            }}>
                                               ({parsed.parentheses})
                                             </div>
                                           )}
@@ -335,17 +341,17 @@ export default async function ServicePage({
                                       )
                                     })()}
                                   </TableCell>
-                                  <TableCell className="font-cormorant text-[#ffffff] text-base md:text-lg text-center py-2 align-middle font-semibold min-w-[80px]">
-                                    <div className="whitespace-pre-line leading-tight">{item.price}</div>
+                                  <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
+                                    <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
                                   </TableCell>
-                                  <TableCell className="font-cormorant text-[#ffffff] text-lg text-center py-2 align-middle hidden md:table-cell">
-                                    {item.duration}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
+                                  <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
+                                  {item.duration}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
                       )}
                     </AccordionContent>
                   </div>

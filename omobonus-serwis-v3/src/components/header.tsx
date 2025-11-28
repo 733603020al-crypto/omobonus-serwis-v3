@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import manifest from '@/config/KANONICZNY_MANIFEST.json'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
@@ -40,7 +41,7 @@ export function Header() {
       </div>
 
       {/* Zawartość */}
-      <div className="relative max-w-6xl mx-auto px-[32px] md:px-[48px] h-full flex items-center justify-between">
+      <div className="relative w-full h-full flex items-stretch justify-between px-4 md:px-8">
         {/* Logo */}
         <Link
           href="/"
@@ -50,10 +51,22 @@ export function Header() {
               scrollToTop()
             }
           }}
-          className="text-[22px] font-cormorant tracking-wide flex gap-2 z-10"
+          className="flex items-center gap-2 z-10 h-full"
         >
-          <span className="text-white">Omobonus</span>
-          <span className="text-[#bfa76a]">serwis</span>
+          <div className="h-full w-[48px] relative flex items-center">
+            <Image
+              src="/images/Logo_Omobonus.png"
+              alt="Omobonus logo"
+              fill
+              className="object-contain object-center p-[1px]"
+              sizes="48px"
+              priority
+            />
+          </div>
+          <div className="text-[22px] font-cormorant tracking-wide flex gap-2">
+            <span className="text-white">Omobonus</span>
+            <span className="text-[#bfa76a]">serwis</span>
+          </div>
         </Link>
 
         {/* Desktop Menu */}

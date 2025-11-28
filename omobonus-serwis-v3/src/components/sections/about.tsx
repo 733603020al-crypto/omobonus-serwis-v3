@@ -4,7 +4,7 @@ import manifest from '@/config/KANONICZNY_MANIFEST.json'
 
 export function About() {
   return (
-    <section id="o-nas" className="relative py-16 md:py-24">
+    <section id="o-nas" className="relative pt-8 md:pt-12 pb-16 md:pb-24">
       {/* Tło */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -17,7 +17,17 @@ export function About() {
 
       {/* Zawartość */}
       <div className="relative max-w-7xl mx-auto px-4 md:px-6">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+        {/* Nagłówek sekcji */}
+        <div className="mb-6 text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-cormorant font-bold text-[#bfa76a] leading-tight">
+            Święty Omobonus XII wieku (łac. „Dobry człowiek")
+          </h2>
+          <p className="mt-[6px] text-lg md:text-xl text-[#bfa76a] font-cormorant italic">
+            Patron biznesmenów i przemysłowców. Był uczciwym rzemieślnikiem, który część swoich dochodów przekazywał potrzebującym.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
           {/* Lewa kolumna - obraz */}
           <div className="max-w-sm md:max-w-md mx-auto md:mx-0">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 shadow-2xl">
@@ -36,34 +46,25 @@ export function About() {
           {/* Prawa kolumna - tekst */}
           <div className="space-y-6 text-white">
             <div>
-              <h2 className="text-2xl md:text-3xl font-serif font-bold mb-4">
-                Święty Omobonus XII wieku (łac. „Dobry człowiek")
-              </h2>
-              <p className="text-lg">
-                Patron biznesmenów i przemysłowców. Był uczciwym rzemieślnikiem, który część swoich dochodów przekazywał potrzebującym.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl md:text-2xl font-serif font-semibold mb-4">
+              <h3 className="text-2xl md:text-3xl font-serif font-semibold mb-3 text-white">
                 O nas:
               </h3>
-              <p className="text-lg">
-                Jesteśmy zespołem, który wierzy, że praca może być również pomocą i służbą innym ludziom.  
-                Zysk jest potrzebny, ale nie jest naszym idolem ani bożkiem.  
-                Nie chcemy się bogacić za wszelką cenę.
+              <p className="text-[15px] md:text-[16px] text-[rgba(255,255,245,0.85)] leading-[1.3] tracking-tight">
+                Jesteśmy zespołem, który wierzy, że praca może być również pomocą i służbą innym ludziom. Zysk jest potrzebny, ale nie jest naszym idolem ani bożkiem. Nie chcemy się bogacić za wszelką cenę.
               </p>
             </div>
 
             <div>
-              <p className="text-lg font-serif text-primary">
+              <p className="text-xl md:text-2xl font-serif text-white">
                 „Szacunek do klienta i brak oszustwa" to nasze podstawowe zasady pracy.
               </p>
             </div>
 
             <div>
-              <p className="text-lg mb-4">Współpracując z nami, możesz mieć pewność, że:</p>
-              <ul className="space-y-3">
+              <p className="text-base md:text-lg text-primary mb-3">
+                Współpracując z nami, możesz mieć pewność, że:
+              </p>
+              <ul className="space-y-1.5">
                 {[
                   'podajemy prawdziwe ceny — od razu wiesz, ile to kosztuje;',
                   'nie podajemy cen netto, lecz wyłącznie ceny brutto;',
@@ -73,9 +74,9 @@ export function About() {
                   'wymienione części i podzespoły zawsze zwracamy Klientowi;',
                   'w razie potrzeby na czas naprawy zapewniamy usługę „Drukarka zastępcza".',
                 ].map((text, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-3 mt-1 flex-shrink-0" />
-                    <span className="text-primary">{text}</span>
+                  <li key={idx} className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-primary italic text-sm leading-tight">{text}</span>
                   </li>
                 ))}
               </ul>

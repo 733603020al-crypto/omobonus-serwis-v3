@@ -159,8 +159,8 @@ export default async function ServicePage({
                             {/* GRATIS - widoczne tylko gdy zamknięte */}
                               {(section.id === 'diagnoza' || section.id === 'dojazd') && (
                                 <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden">
-                                  GRATIS
-                                </span>
+                                GRATIS
+                              </span>
                             )}
                             {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
                             <div className="text-center hidden group-data-[state=open]:block">
@@ -177,7 +177,7 @@ export default async function ServicePage({
                                   </Tooltip>
                                 </TooltipProvider>
                               </div>
-                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-1 leading-[1.4]" style={{ 
+                                <span className="font-table-sub text-[15px] text-[#e6d4a0] block mt-1 leading-[1.4]" style={{ 
                                   textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
                                 }}>
                                 (kategorie urządzeń)
@@ -185,13 +185,13 @@ export default async function ServicePage({
                             </div>
                           </div>
 
-                          {/* Nagłówek "Czas realizacji" - widoczne tylko gdy otwarte */}
+                          {/* Nagłówek "Czas realizacji" - widoczne только gdy otwarte */}
                           <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
                               <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block">
                                 <div>Czas</div>
                                 <div>realizacji</div>
                               </div>
-                            </div>
+                          </div>
                         </div>
                         )}
                       </div>
@@ -309,7 +309,7 @@ export default async function ServicePage({
                         </Accordion>
                       ) : (
                         // Standardowa tabela dla sekcji bez subcategories
-                        <div className="rounded-lg border border-[#bfa76a]/10 overflow-hidden">
+                      <div className="rounded-lg border border-[#bfa76a]/10 overflow-hidden">
                           <Table className="md:table-fixed">
                             <colgroup className="hidden md:table-column-group">
                               <col style={{ width: '67%' }} />
@@ -323,27 +323,27 @@ export default async function ServicePage({
                                   className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
                               >
                                   <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 !whitespace-normal md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal">
-                                    {(() => {
-                                      const parsed = parseServiceText(item.service)
-                                      return (
+                                  {(() => {
+                                    const parsed = parseServiceText(item.service)
+                                    return (
                                         <div className="service-description-text">
                                           <div className="text-[15px] md:text-[16px] service-description-text leading-[1.3]">
-                                            {parsed.main}
-                                          </div>
-                                          {parsed.parentheses && (
+                                          {parsed.main}
+                                        </div>
+                                        {parsed.parentheses && (
                                             <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
                                               textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
                                             }}>
-                                              ({parsed.parentheses})
-                                            </div>
-                                          )}
-                                        </div>
-                                      )
-                                    })()}
-                                  </TableCell>
+                                            ({parsed.parentheses})
+                                          </div>
+                                        )}
+                                      </div>
+                                    )
+                                  })()}
+                                </TableCell>
                                   <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
                                     <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
-                                  </TableCell>
+                                </TableCell>
                                   <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                   {item.duration}
                                 </TableCell>

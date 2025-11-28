@@ -1,8 +1,0 @@
-
-[2025-11-24 11:00:23] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-24_10-59-02\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
-
-[2025-11-25 22:51:05] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_22-49-14\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
-
-[2025-11-25 22:52:38] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_22-51-14\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.
-
-[2025-11-25 23:04:35] ❌ Ошибка при создании бэкапа: Nie mo�na odnale�� cz�ci �cie�ki �C:\Users\Andrii\omobonus-serwis-v3\_backups\auto-backups\backup_2025-11-25_23-02-45\_backups\auto-backups\backup_2025-11-24_10-59-02\node_modules\next\dist\compiled\react-server-dom-turbopack-experimental\cjs\react-server-dom-turbopack-client.browser.development.js�.

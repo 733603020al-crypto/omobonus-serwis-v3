@@ -523,8 +523,62 @@ const faqSection: PricingSection = {
 }
 
 // Funkcja dodająca FAQ do sekcji cennika
-const addFaqToPricingSections = (sections: PricingSection[]): PricingSection[] => {
-  return [...sections, faqSection]
+const cloneSections = <T>(data: T): T => JSON.parse(JSON.stringify(data))
+
+const createDefaultPricingSections = (): PricingSection[] => cloneSections(defaultPricingSections)
+
+const createFaqSection = (): PricingSection => cloneSections(faqSection)
+
+const createPricingSections = (): PricingSection[] => {
+  return [...createDefaultPricingSections(), createFaqSection()]
+}
+
+const createLaptopPricingSections = (): PricingSection[] => {
+  const sections = createPricingSections()
+  const diagnosisSection = sections.find(section => section.id === 'diagnoza')
+  const targetItem = diagnosisSection?.items?.find(item =>
+    item.service.startsWith('Diagnoza i wycena w formie pisemnej (bez naprawy')
+  )
+  if (targetItem) {
+    targetItem.price = '90'
+  }
+  const transportSection = sections.find(section => section.id === 'dojazd')
+  const transportItem = transportSection?.items?.find(item =>
+    item.service.startsWith('Dojazd (przy rezygnacji z naprawy)')
+  )
+  if (transportItem) {
+    transportItem.price = '100'
+  }
+  const cleaningSection = sections.find(section => section.id === 'konserwacja')
+  if (cleaningSection) {
+    cleaningSection.items = [
+      {
+        service:
+          'PODSTAWOWY do 30 min. (przegląd i profilaktyka, zmniejsza ryzyko awarii i stresu) (czyszczenie zewnętrzne i wewnętrzne laptopa, czyszczenie wentylatora i radiatora, wymiana past termoprzewodzących CPU/GPU, usunięcie kurzu i zanieczyszczeń, testy obciążeniowe + test temperatur)',
+        price: '120',
+        duration: '1-3 dni',
+      },
+      {
+        service:
+          'STANDARD do 1 godziny (standardowa konserwacja) (Zakres PODSTAWOWY + Wymiana / dopasowanie termopadów, Konserwacja portów, Krótki test pamięci RAM i dysku SMART)',
+        price: '160',
+        duration: '1-3 dni',
+      },
+      {
+        service:
+          'PREMIUM do 2 godzin (pełna konserwacja) (Zakres STANDARD + Porządkowanie okablowania i kanałów powietrznych, Czyszczenie klawiatury i portów wewnętrznych, Aktualizacja BIOS/UEFI (jeśli wskazana), Długie testy obciążeniowe (CPU / GPU / RAM))',
+        price: '200',
+        duration: '1-3 dni',
+      },
+      {
+        service:
+          'SPECIALNE do 2 godzin (po zalaniu laptopa)\n(Uwaga!!! Prosimy o wyłączenie laptopa i wyciągnięcie baterii natychmiast po zalaniu. Demontaż całego laptopa, identyfikacja obszarów zalania, czyszczenie lub naprawa niesprawnych elementów i zabezpieczenie antykorozyjne płyty głównej i podzespołów, czyszczenie klawiatury i portów wewnętrznych, testy diagnostyczne elektroniczne i programowe, montaż laptopa. Odkurzenie i oczyszczenie wnętrza laptopa oraz uzupełnienie brakujących śrub – gratis.)',
+        price: '200\n+ części',
+        duration: '1-3 dni',
+      },
+    ]
+  }
+  return sections
 }
 
 export const services: ServiceData[] = [
@@ -534,7 +588,7 @@ export const services: ServiceData[] = [
     subtitle: 'Pełny wykaz usług i cen, bez ukrytych kosztów (nie „naprawa od 50 zł” lub „cena do uzgodnienia")',
     icon: manifest['01_serwis_laptopow'],
     description: 'Kompleksowa naprawa i konserwacja laptopów wszystkich marek.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createLaptopPricingSections(),
   },
   {
     slug: 'serwis-komputerow-stacjonarnych',
@@ -542,7 +596,7 @@ export const services: ServiceData[] = [
     subtitle: 'Pełny wykaz usług i cen, bez ukrytych kosztów',
     icon: manifest['02_serwis_komputerow_stacjonarnych'],
     description: 'Diagnostyka, naprawa i modernizacja jednostek centralnych.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'outsourcing-it',
@@ -550,7 +604,7 @@ export const services: ServiceData[] = [
     subtitle: 'Obsługa informatyczna dla firm',
     icon: manifest['03_outsourcing_it'],
     description: 'Pełna obsługa informatyczna dla Twojej firmy.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'serwis-drukarek-laserowych',
@@ -558,7 +612,7 @@ export const services: ServiceData[] = [
     subtitle: 'Profesjonalna naprawa drukarek laserowych i urządzeń wielofunkcyjnych',
     icon: manifest['04_serwis_drukarek_laserowych'],
     description: 'Profesjonalna naprawa i serwis drukarek laserowych.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'serwis-drukarek-atramentowych',
@@ -566,7 +620,7 @@ export const services: ServiceData[] = [
     subtitle: 'Specjalistyczna naprawa drukarek atramentowych',
     icon: manifest['05_serwis_drukarek_atramentowych'],
     description: 'Naprawa, udrażnianie głowic i konserwacja drukarek atramentowych.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'serwis-drukarek-termicznych',
@@ -574,7 +628,7 @@ export const services: ServiceData[] = [
     subtitle: 'Naprawa drukarek etykiet i kodów kreskowych',
     icon: manifest['06_serwis_drukarek_termicznych'],
     description: 'Serwis drukarek etykiet i kodów kreskowych.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'serwis-drukarek-iglowych',
@@ -582,7 +636,7 @@ export const services: ServiceData[] = [
     subtitle: 'Naprawa specjalistycznych drukarek igłowych',
     icon: manifest['07_serwis_drukarek_iglowych'],
     description: 'Naprawa specjalistycznych drukarek igłowych.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'serwis-ploterow',
@@ -590,7 +644,7 @@ export const services: ServiceData[] = [
     subtitle: 'Serwis i konserwacja ploterów wielkoformatowych',
     icon: manifest['08_serwis_ploterow'],
     description: 'Serwis i konserwacja ploterów wielkoformatowych.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'serwis-niszczarek',
@@ -598,7 +652,7 @@ export const services: ServiceData[] = [
     subtitle: 'Naprawa i konserwacja niszczarek dokumentów',
     icon: manifest['09_serwis_niszczarek'],
     description: 'Naprawa i konserwacja niszczarek dokumentów.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'wynajem-drukarek',
@@ -606,7 +660,7 @@ export const services: ServiceData[] = [
     subtitle: 'Dzierżawa urządzeń drukujących dla biur',
     icon: manifest['10_wynajem_drukarek'],
     description: 'Dzierżawa urządzeń drukujących dla biur i firm.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'drukarka-zastepcza',
@@ -614,7 +668,7 @@ export const services: ServiceData[] = [
     subtitle: 'Urządzenie zastępcze na czas naprawy',
     icon: manifest['11_drukarka_zastepcza'],
     description: 'Oferujemy urządzenie zastępcze na czas naprawy.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'regeneracja-tonerow',
@@ -622,7 +676,7 @@ export const services: ServiceData[] = [
     subtitle: 'Wymiana tuszy i regeneracja tonerów',
     icon: manifest['12_wymiana_tuszy_regeneracja_tonerow'],
     description: 'Wymiana tuszy i profesjonalna regeneracja tonerów.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
   {
     slug: 'odkup-komputerow',
@@ -630,6 +684,6 @@ export const services: ServiceData[] = [
     subtitle: 'Skup używanych laptopów i komputerów',
     icon: manifest['13_odkup_komputerow_laptopow'],
     description: 'Odkup używanych komputerów i laptopów.',
-    pricingSections: addFaqToPricingSections(defaultPricingSections),
+    pricingSections: createPricingSections(),
   },
 ]

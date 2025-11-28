@@ -200,7 +200,7 @@ export default async function ServicePage({
                             )}
                             {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
                             <div className="text-center hidden group-data-[state=open]:block">
-                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff]">
+                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05]">
                                 Cena, zł
                                 <TooltipProvider>
                                   <Tooltip>
@@ -213,7 +213,7 @@ export default async function ServicePage({
                                   </Tooltip>
                                 </TooltipProvider>
                               </div>
-                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-1 leading-[1.4]" style={{
+                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-0.5 leading-[1.1]" style={{
                                   textShadow: supplementTextShadow
                                 }}>
                                 (kategorie urządzeń)
@@ -223,9 +223,9 @@ export default async function ServicePage({
 
                           {/* Nagłówek "Czas realizacji" - widoczne только gdy otwarte */}
                           <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
-                              <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block">
-                                <div>Czas</div>
-                                <div>realizacji</div>
+                              <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block leading-[1.05]">
+                                <div className="leading-[1.05]">Czas</div>
+                                <div className="leading-[1.05]">realizacji</div>
                               </div>
                           </div>
                         </div>

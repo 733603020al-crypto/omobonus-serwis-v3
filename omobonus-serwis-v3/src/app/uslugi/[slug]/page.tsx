@@ -68,6 +68,42 @@ const parseServiceText = (text: string) => {
   }
 }
 
+const supplementTextShadow =
+  '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
+
+const renderPriceLines = (price: string) => {
+  return price.split('\n').map((line, idx) => {
+    const trimmed = line.trim()
+    if (!trimmed) return null
+    const isSupplement = trimmed.toLowerCase().includes('stawka z cennika')
+    if (isSupplement) {
+      return (
+        <div
+          key={`${trimmed}-${idx}`}
+          className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
+          style={{ textShadow: supplementTextShadow }}
+        >
+          ({trimmed})
+        </div>
+      )
+    }
+    return (
+      <div
+        key={`${trimmed}-${idx}`}
+        className="font-inter text-white text-[14px] md:text-[15px] leading-[1.3]"
+      >
+        {trimmed}
+      </div>
+    )
+  })
+}
+
+const renderDurationValue = (value: string) => (
+  <div className="font-inter text-white text-[14px] md:text-[15px] leading-[1.3]">
+    {value}
+  </div>
+)
+
 export async function generateStaticParams() {
   return services.map((service) => ({
     slug: service.slug,
@@ -164,7 +200,7 @@ export default async function ServicePage({
                             )}
                             {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
                             <div className="text-center hidden group-data-[state=open]:block">
-                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-white">
+                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff]">
                                 Cena, zł
                                 <TooltipProvider>
                                   <Tooltip>
@@ -177,8 +213,8 @@ export default async function ServicePage({
                                   </Tooltip>
                                 </TooltipProvider>
                               </div>
-                                <span className="font-table-sub text-[15px] text-white block mt-1 leading-[1.4]" style={{
-                                  textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
+                                <span className="font-table-sub text-[14px] text-[#ede0c4] block mt-1 leading-[1.4]" style={{
+                                  textShadow: supplementTextShadow
                                 }}>
                                 (kategorie urządzeń)
                               </span>
@@ -187,7 +223,7 @@ export default async function ServicePage({
 
                           {/* Nagłówek "Czas realizacji" - widoczne только gdy otwarte */}
                           <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
-                              <div className="text-lg md:text-xl font-cormorant font-semibold text-white text-center hidden group-data-[state=open]:block">
+                              <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block">
                                 <div>Czas</div>
                                 <div>realizacji</div>
                               </div>
@@ -218,7 +254,7 @@ export default async function ServicePage({
                                   : 'py-2 px-3'
                               }`}>
                                 <div className="flex-1 w-full min-w-0">
-                                  <h4 className={`font-table-main leading-[1.3] ${
+                            <h4 className={`font-table-main leading-[1.3] ${
                                     section.id === 'faq'
                                       ? 'text-[15px] md:text-[16px] font-semibold text-[#ffffff] mb-0'
                                       : 'text-lg font-semibold text-[#ffffff] mb-0.5'
@@ -278,7 +314,7 @@ export default async function ServicePage({
                                                 return (
                                                   <div className="service-description-text">
                                                     <div className="text-[15px] md:text-[16px] text-white service-description-text leading-[1.3]">
-                                                      {parsed.main}
+                                              {parsed.main}
                                                     </div>
                                                     {parsed.parentheses && (
                                                       <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
@@ -291,11 +327,11 @@ export default async function ServicePage({
                                                 )
                                               })()}
                                             </TableCell>
-                                            <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
-                                              <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
+                                            <TableCell className="text-center py-1 align-middle min-w-[80px] leading-[1.3]">
+                                              {renderPriceLines(item.price)}
                                             </TableCell>
-                                            <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
-                                              {item.duration}
+                                            <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
+                                              {renderDurationValue(item.duration)}
                                             </TableCell>
                                           </TableRow>
                                         ))}
@@ -341,11 +377,11 @@ export default async function ServicePage({
                                     )
                                   })()}
                                 </TableCell>
-                                  <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
-                                    <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
+                                  <TableCell className="text-center py-1 align-middle min-w-[80px] leading-[1.3]">
+                                    {renderPriceLines(item.price)}
                                 </TableCell>
-                                  <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
-                                  {item.duration}
+                                  <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
+                                  {renderDurationValue(item.duration)}
                                 </TableCell>
                               </TableRow>
                             ))}

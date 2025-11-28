@@ -52,6 +52,68 @@
     overflow-wrap: anywhere;
   }
   
+  /* Ręcznie rysowane checkboxy */
+  .checkbox-tick-wrapper {
+    position: absolute;
+    left: -6px;
+    bottom: 0;
+    width: calc(100% + 12px);
+    height: calc(100% + 6px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+
+  .checkbox-ink-effect {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: rgba(191, 167, 106, 0.35);
+    filter: blur(0.8px);
+    opacity: 0;
+    animation: checkboxInk 0.55s ease forwards;
+    pointer-events: none;
+  }
+
+  .checkbox-tick {
+    position: relative;
+    width: 40px;
+    height: 38px;
+    color: #020202;
+    transform: translate(4px, -8px);
+    stroke-dasharray: 230;
+    stroke-dashoffset: 230;
+    animation: checkboxDraw 0.5s ease forwards;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  @keyframes checkboxInk {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    60% {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.12);
+    }
+  }
+
+  @keyframes checkboxDraw {
+    0% {
+      stroke-dashoffset: 230;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  
   /* Ограничение ширины первой колонки таблицы через max-width */
   table[data-slot="table"] tbody tr td:first-child {
     max-width: 850px;
@@ -165,6 +227,7 @@
   /* Прозрачный фон для всех полей ввода в форме - включая autocomplete/autofill */
   input,
   textarea,
+  select,
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
@@ -172,12 +235,26 @@
   textarea:-webkit-autofill,
   textarea:-webkit-autofill:hover,
   textarea:-webkit-autofill:focus,
-  textarea:-webkit-autofill:active {
+  textarea:-webkit-autofill:active,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus,
+  select:-webkit-autofill:active {
     background-color: transparent !important;
     background: transparent !important;
     -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
     box-shadow: 0 0 0 1000px transparent inset !important;
     -webkit-text-fill-color: #3a2e24 !important;
+    transition: background-color 9999s ease-out;
+  }
+
+  input:-moz-autofill,
+  textarea:-moz-autofill,
+  select:-moz-autofill {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: 0 0 0 1000px transparent inset !important;
+    -moz-text-fill-color: #3a2e24 !important;
   }
   
   input:focus,

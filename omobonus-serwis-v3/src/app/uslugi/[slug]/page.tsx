@@ -164,7 +164,7 @@ export default async function ServicePage({
                             )}
                             {/* Nagłówek "Cena, zł" - widoczne tylko gdy otwarte */}
                             <div className="text-center hidden group-data-[state=open]:block">
-                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff]">
+                                <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-white">
                                 Cena, zł
                                 <TooltipProvider>
                                   <Tooltip>
@@ -177,7 +177,7 @@ export default async function ServicePage({
                                   </Tooltip>
                                 </TooltipProvider>
                               </div>
-                                <span className="font-table-sub text-[15px] text-[#e6d4a0] block mt-1 leading-[1.4]" style={{ 
+                                <span className="font-table-sub text-[15px] text-white block mt-1 leading-[1.4]" style={{
                                   textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
                                 }}>
                                 (kategorie urządzeń)
@@ -187,7 +187,7 @@ export default async function ServicePage({
 
                           {/* Nagłówek "Czas realizacji" - widoczne только gdy otwarte */}
                           <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
-                              <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block">
+                              <div className="text-lg md:text-xl font-cormorant font-semibold text-white text-center hidden group-data-[state=open]:block">
                                 <div>Czas</div>
                                 <div>realizacji</div>
                               </div>
@@ -277,7 +277,7 @@ export default async function ServicePage({
                                                 const parsed = parseServiceText(item.service)
                                                 return (
                                                   <div className="service-description-text">
-                                                    <div className="text-[15px] md:text-[16px] service-description-text leading-[1.3]">
+                                                    <div className="text-[15px] md:text-[16px] text-white service-description-text leading-[1.3]">
                                                       {parsed.main}
                                                     </div>
                                                     {parsed.parentheses && (
@@ -291,10 +291,10 @@ export default async function ServicePage({
                                                 )
                                               })()}
                                             </TableCell>
-                                            <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
+                                            <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
                                               <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
                                             </TableCell>
-                                            <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
+                                            <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                               {item.duration}
                                             </TableCell>
                                           </TableRow>
@@ -327,7 +327,7 @@ export default async function ServicePage({
                                     const parsed = parseServiceText(item.service)
                                     return (
                                         <div className="service-description-text">
-                                          <div className="text-[15px] md:text-[16px] service-description-text leading-[1.3]">
+                                          <div className="text-[15px] md:text-[16px] text-white service-description-text leading-[1.3]">
                                           {parsed.main}
                                         </div>
                                         {parsed.parentheses && (
@@ -341,10 +341,10 @@ export default async function ServicePage({
                                     )
                                   })()}
                                 </TableCell>
-                                  <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
+                                  <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle font-semibold min-w-[80px] leading-[1.3]">
                                     <div className="whitespace-pre-line leading-[1.3]">{item.price}</div>
                                 </TableCell>
-                                  <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
+                                  <TableCell className="font-table-main text-white text-[15px] md:text-[16px] text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                   {item.duration}
                                 </TableCell>
                               </TableRow>

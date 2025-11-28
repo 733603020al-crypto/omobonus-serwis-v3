@@ -131,15 +131,15 @@ export function CustomPhoneInput({ value, onChange, className = '' }: CustomPhon
           className="object-contain flex-shrink-0 pointer-events-none"
           style={{ width: '20px', height: '15px' }}
         />
-        <span className="text-black font-sans font-medium text-base leading-tight whitespace-nowrap flex-1 pointer-events-none">
+        <span className="text-black font-sans font-medium text-base leading-tight whitespace-nowrap pointer-events-none min-w-0">
           {displayName || selectedCountry.name}
         </span>
         {selectedCountry.dialCode ? (
-          <span className="text-black font-sans font-medium text-base whitespace-nowrap flex-shrink-0 pointer-events-none">
+          <span className="text-black font-sans font-medium text-base whitespace-nowrap flex-shrink-0 pointer-events-none ml-auto">
             {selectedCountry.dialCode}
           </span>
         ) : (
-          <span className="text-black font-sans font-medium text-base whitespace-nowrap opacity-50 flex-shrink-0 pointer-events-none">
+          <span className="text-black font-sans font-medium text-base whitespace-nowrap opacity-50 flex-shrink-0 pointer-events-none ml-auto">
             +
           </span>
         )}

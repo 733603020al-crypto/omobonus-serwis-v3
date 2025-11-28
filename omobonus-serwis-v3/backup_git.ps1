@@ -1,28 +1,29 @@
-$projectPath = "C:\Users\Andrii\omobonus-serwis-v3"
+$repoPath = "C:\Users\Andrii\omobonus-serwis-v3"
 
-Write-Host "Switching to project directory:" $projectPath
-Set-Location $projectPath
+# Всегда работаем в папке проекта
+Set-Location $repoPath
 
-Write-Host "Staging changes..."
+Write-Host "=== Git backup (commit + push) ==="
+
+# Добавляем все изменения
 git add .
 
-$status = git status --porcelain
-if ([string]::IsNullOrWhiteSpace($status)) {
-    Write-Host "Nothing to commit. Working tree is clean."
-    exit 0
+# Проверяем, есть ли что коммитить
+$changes = git status --porcelain
+
+if (-not $changes) {
+    Write-Host "No changes in project - nothing to commit."
 }
+else {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
+    $message   = "Auto backup: $timestamp"
 
-$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
-$commitMessage = "Auto backup: $timestamp"
+    Write-Host "Creating commit: $message"
+    git commit -m $message
 
-Write-Host "Creating commit:" $commitMessage
-git commit -m $commitMessage
-
-try {
     Write-Host "Pushing to origin/main..."
     git push origin main
-} catch {
-    Write-Warning "git push failed: $($_.Exception.Message)"
-    Write-Warning "You can run 'git push origin main' manually later."
 }
+
+Write-Host "Git backup finished."
 

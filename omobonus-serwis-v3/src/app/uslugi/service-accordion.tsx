@@ -185,7 +185,7 @@ const renderPriceLines = (price: string, link?: string) => {
     </div>
   )
 
-  return price.split('\n').map((line, idx) => {
+      return price.split('\n').map((line, idx) => {
     const trimmed = line.trim()
     if (!trimmed) return null
     const lower = trimmed.toLowerCase()
@@ -226,9 +226,13 @@ const renderPriceLines = (price: string, link?: string) => {
     if (isStandalonePlusSuffix) {
       return renderSuffixLine(trimmed, idx)
     }
-    if (isSupplement) {
+        const isPerMeasureSuffix = lower.startsWith('za ')
+        if (isSupplement) {
       return renderSuffixLine(trimmed, idx)
     }
+        if (isPerMeasureSuffix) {
+          return renderSuffixLine(trimmed, idx)
+        }
     return (
       <div
         key={`${trimmed}-${idx}`}
@@ -425,15 +429,25 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                             }`}
                           >
                             <div className="flex-1 w-full min-w-0">
-                              <h4
-                                className={`font-table-main leading-[1.3] ${
-                                  section.id === 'faq'
-                                    ? 'text-[15px] md:text-[16px] font-semibold text-[#ffffff] mb-0'
-                                    : 'text-lg font-semibold text-[#ffffff] mb-0.5'
-                                }`}
-                              >
-                                {subcategory.title}
-                              </h4>
+                              <div>
+                                <h4
+                                  className={`font-table-main leading-[1.3] ${
+                                    section.id === 'faq'
+                                      ? 'text-[15px] md:text-[16px] font-semibold text-[#ffffff] mb-0'
+                                      : 'text-lg font-semibold text-[#ffffff]'
+                                  }`}
+                                >
+                                  {subcategory.title}
+                                </h4>
+                                {subcategory.subtitle && section.id !== 'faq' && (
+                                  <div
+                                    className="font-table-sub text-[13px] md:text-[14px] text-[#f0dfbd] leading-tight italic mt-0.5"
+                                    style={{ textShadow: supplementTextShadow }}
+                                  >
+                                    ({subcategory.subtitle})
+                                  </div>
+                                )}
+                              </div>
                               {section.id !== 'faq' && (
                                 <div
                                   data-subcategory-link

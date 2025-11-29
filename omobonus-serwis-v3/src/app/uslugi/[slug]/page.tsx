@@ -65,7 +65,7 @@ const parseServiceText = (text: string) => {
   if (matchTwo) {
     return {
       main: `${matchTwo[1].trim()} (${matchTwo[2].trim()})`,
-      parentheses: matchTwo[3].trim()
+      parentheses: `(${matchTwo[3].trim()})`,
     }
   }
   // Обработка случая с одной парой скобок: "Текст (скобки)"
@@ -73,7 +73,7 @@ const parseServiceText = (text: string) => {
   if (match) {
     return {
       main: match[1].trim(),
-      parentheses: match[2].trim()
+      parentheses: `(${match[2].trim()})`,
     }
   }
   return {
@@ -93,7 +93,9 @@ const renderPriceLines = (price: string) => {
     const isHourly =
       lower.includes('/ godzinę') || lower.includes('/ godzine')
     const hasPlus =
-      lower.includes('+ część') || lower.includes('+ części')
+      lower.includes('+ część') ||
+      lower.includes('+ części') ||
+      lower.includes('+ koszt tonera')
     const isSupplement =
       lower.includes('stawka z cennika')
     if (isHourly || hasPlus) {
@@ -129,7 +131,7 @@ const renderPriceLines = (price: string) => {
           className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
           style={{ textShadow: supplementTextShadow }}
         >
-          ({trimmed})
+          {trimmed}
         </div>
       )
     }
@@ -366,7 +368,7 @@ export default async function ServicePage({
                                                       <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
                                                         textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
                                                       }}>
-                                                        ({parsed.parentheses})
+                                                        {parsed.parentheses}
                                                       </div>
                                                     )}
                                                   </div>
@@ -416,7 +418,7 @@ export default async function ServicePage({
                                             <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
                                               textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
                                             }}>
-                                            ({parsed.parentheses})
+                                            {parsed.parentheses}
                                           </div>
                                         )}
                                       </div>

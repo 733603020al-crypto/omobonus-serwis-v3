@@ -46,6 +46,77 @@ const getIconForSection = (sectionId: string) => {
 }
 
 // Funkcja pomocnicza do parsowania tekstu usługi (wydzielenie tekstu w nawiasach)
+const PROPER_NOUN_PREFIXES = [
+  'windows',
+  'google',
+  'onedrive',
+  'airprint',
+  'mopria',
+  'mac',
+  'bios',
+  'uefi',
+  'raid',
+  'hp',
+  'canon',
+  'epson',
+  'brother',
+  'xerox',
+  'kyocera',
+  'samsung',
+  'ricoh',
+  'lexmark',
+  'apple',
+  'android',
+]
+
+const hasOuterParens = (value: string) => {
+  const trimmed = value.trim()
+  return trimmed.startsWith('(') && trimmed.endsWith(')')
+}
+
+const stripOuterParens = (value: string) => {
+  if (!value) return value
+  let result = value.trim()
+  while (result.length > 1 && hasOuterParens(result)) {
+    result = result.slice(1, -1).trim()
+  }
+  return result
+}
+
+const shouldLowercaseContinuation = (value: string) => {
+  const trimmed = value.trim()
+  if (!trimmed) return false
+  const firstChar = trimmed[0]
+  if (firstChar === '(') return false
+  if (/^\d/.test(firstChar)) return false
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿĄĆĘŁŃÓŚŹŻą-źż]/.test(firstChar)) return false
+  const normalized = trimmed.toLowerCase()
+  return !PROPER_NOUN_PREFIXES.some(prefix => normalized.startsWith(prefix))
+}
+
+const lowercaseFirstLetter = (value: string) => {
+  if (!value) return value
+  return value.charAt(0).toLocaleLowerCase('pl-PL') + value.slice(1)
+}
+
+const normalizeSecondLine = (value?: string | null) => {
+  if (!value) return null
+  let result = stripOuterParens(value)
+  if (!result) return null
+  if (shouldLowercaseContinuation(result)) {
+    result = lowercaseFirstLetter(result)
+  }
+  return result
+}
+
+const stripTrailingPeriod = (value: string) => {
+  let result = value.trim()
+  if (result.endsWith('.')) {
+    result = result.slice(0, -1).trimEnd()
+  }
+  return result
+}
+
 const parseServiceText = (text: string) => {
   if (!text) {
     return {
@@ -53,33 +124,39 @@ const parseServiceText = (text: string) => {
       parentheses: null,
     }
   }
+
+  const buildResult = (main: string, secondary?: string | null) => {
+    const normalizedSecondary = normalizeSecondLine(secondary)
+    const normalizedMain =
+      normalizedSecondary && main.trim().endsWith('.')
+        ? stripTrailingPeriod(main)
+        : main.trim()
+
+    return {
+      main: normalizedMain,
+      parentheses: normalizedSecondary,
+    }
+  }
+
   if (text.includes('\n')) {
     const [firstLine, ...rest] = text.split('\n')
     const remainder = rest.join('\n').trim()
-    return {
-      main: firstLine.trim(),
-      parentheses: remainder || null,
-    }
+    return buildResult(firstLine, remainder || null)
   }
   // Обработка случая с двумя парами скобок: "Текст (скобки1) (скобки2)"
   const matchTwo = text.match(/^(.+?)\s*\((.+?)\)\s*\((.+?)\)\s*$/)
   if (matchTwo) {
-    return {
-      main: `${matchTwo[1].trim()} (${matchTwo[2].trim()})`,
-      parentheses: `(${matchTwo[3].trim()})`,
-    }
+    const mainWithFirstParens = `${matchTwo[1].trim()} (${matchTwo[2].trim()})`
+    return buildResult(mainWithFirstParens, matchTwo[3].trim())
   }
   // Обработка случая с одной парой скобок: "Текст (скобки)"
   const match = text.match(/^(.+?)\s*\((.+?)\)\s*$/)
   if (match) {
-    return {
-      main: match[1].trim(),
-      parentheses: `(${match[2].trim()})`,
-    }
+    return buildResult(match[1], match[2])
   }
   return {
-    main: text,
-    parentheses: null
+    main: text.trim(),
+    parentheses: null,
   }
 }
 
@@ -378,10 +455,14 @@ export default async function ServicePage({
                                               {parsed.main}
                                                     </div>
                                                     {parsed.parentheses && (
-                                                      <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
-                                                        textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
-                                                      }}>
-                                                        {parsed.parentheses}
+                                                      <div
+                                                        className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]"
+                                                        style={{
+                                                          textShadow:
+                                                            '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)',
+                                                        }}
+                                                      >
+                                                        ({parsed.parentheses})
                                                       </div>
                                                     )}
                                                   </div>
@@ -428,10 +509,14 @@ export default async function ServicePage({
                                           {parsed.main}
                                         </div>
                                         {parsed.parentheses && (
-                                            <div className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]" style={{ 
-                                              textShadow: '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
-                                            }}>
-                                            {parsed.parentheses}
+                                          <div
+                                            className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]"
+                                            style={{
+                                              textShadow:
+                                                '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)',
+                                            }}
+                                          >
+                                            ({parsed.parentheses})
                                           </div>
                                         )}
                                       </div>

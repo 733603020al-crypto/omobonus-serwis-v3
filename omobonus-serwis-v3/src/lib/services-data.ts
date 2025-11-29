@@ -1325,6 +1325,45 @@ const applyLaserPaperFeedSubcategory = (sections: PricingSection[]) => {
   ]
 }
 
+const applyLaserOpticsSubcategory = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const opticsSubcategory =
+    serviceSection?.subcategories?.find(sub => sub.id === 'naprawy-glowica') ||
+    serviceSection?.subcategories?.find(
+      sub => sub.title === 'Głowica drukująca i układ tuszu'
+    )
+
+  if (!opticsSubcategory) return
+
+  opticsSubcategory.title = 'Optyka i laser'
+  opticsSubcategory.items = [
+    {
+      service:
+        'Czyszczenie modułu lasera / lusterek skanera\n(usuwa blade wydruki, pasy, brak czerni – przywraca właściwy kontrast)',
+      price: '120 / 180 / 240',
+      duration: '1–3 dni',
+    },
+    {
+      service:
+        'Wymiana modułu lasera (DC Controller / LSU)\n(rozwiązuje całkowity brak wydruku lub komunikat „błąd lasera”)',
+      price: '220 / 320 / 450 + części',
+      duration: '1–3 dni',
+    },
+    {
+      service:
+        'Usunięcie komunikatu „Błąd lasera / błąd LSU / błąd skanera optycznego”\n(diagnostyka + kalibracja + czyszczenie)',
+      price: '120 / 180 / 240',
+      duration: '1–3 dni',
+    },
+    {
+      service:
+        'Wymiana taśmy / przewodów sterujących modułem optycznym\n(usuwa zaniki wydruku spowodowane przerwą lub niestabilnym sygnałem)',
+      price: '80 / 130 / 180 + części',
+      duration: '1–3 dni',
+    },
+  ]
+}
+
 const applyLaserScannerSubcategory = (sections: PricingSection[]) => {
   const serviceSection = sections.find(section => section.id === 'naprawy')
   const scannerSubcategory = serviceSection?.subcategories?.find(
@@ -1634,7 +1673,7 @@ const applyLaserAdditionalSubcategory = (sections: PricingSection[]) => {
     {
       service: 'Drukarka zastępcza (na czas naprawy)',
       price: 'Link',
-      duration: '-',
+      duration: '1 dzień',
       link: '/uslugi/drukarka-zastepcza',
     },
     {
@@ -1650,6 +1689,7 @@ const createLaserPricingSections = (): PricingSection[] => {
   const sections = createPricingSections()
   applyLaserCleaningSection(sections)
   applyLaserPaperFeedSubcategory(sections)
+  applyLaserOpticsSubcategory(sections)
   applyLaserImagingSubcategory(sections)
   applyLaserElectronicsSubcategory(sections)
   applyLaserSoftwareSubcategory(sections)

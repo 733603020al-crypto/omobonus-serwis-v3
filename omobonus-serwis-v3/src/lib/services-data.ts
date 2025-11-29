@@ -4,6 +4,7 @@ export interface PricingItem {
   service: string
   price: string
   duration: string
+  link?: string
 }
 
 export interface PricingSubcategory {
@@ -1634,6 +1635,7 @@ const applyLaserAdditionalSubcategory = (sections: PricingSection[]) => {
       service: 'Drukarka zastępcza (na czas naprawy)',
       price: 'Link',
       duration: '-',
+      link: '/uslugi/drukarka-zastepcza',
     },
     {
       service:

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import { services } from '@/lib/services-data'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
@@ -85,7 +86,19 @@ const parseServiceText = (text: string) => {
 const supplementTextShadow =
   '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
 
-const renderPriceLines = (price: string) => {
+const renderPriceLines = (price: string, link?: string) => {
+  const trimmedPrice = price?.trim()
+  if (trimmedPrice?.toLowerCase() === 'link' && link) {
+    return (
+      <Link
+        href={link}
+        className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] underline underline-offset-2 hover:text-white focus:text-white transition-colors"
+      >
+        {trimmedPrice}
+      </Link>
+    )
+  }
+
   return price.split('\n').map((line, idx) => {
     const trimmed = line.trim()
     if (!trimmed) return null
@@ -111,8 +124,8 @@ const renderPriceLines = (price: string) => {
         suffixText = `+ ${suffix}`
       }
       return (
-        <div key={`${trimmed}-${idx}`} className="leading-[1.3]">
-          <div className="font-inter text-white text-[14px] md:text-[15px]">
+        <div key={`${trimmed}-${idx}`}> 
+          <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
             {value}
           </div>
           <div
@@ -138,7 +151,7 @@ const renderPriceLines = (price: string) => {
     return (
       <div
         key={`${trimmed}-${idx}`}
-        className="font-inter text-white text-[14px] md:text-[15px] leading-[1.3]"
+        className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]"
       >
         {trimmed}
       </div>
@@ -147,7 +160,7 @@ const renderPriceLines = (price: string) => {
 }
 
 const renderDurationValue = (value: string) => (
-  <div className="font-inter text-white text-[14px] md:text-[15px] leading-[1.3]">
+  <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
     {value}
   </div>
 )
@@ -376,7 +389,7 @@ export default async function ServicePage({
                                               })()}
                                             </TableCell>
                                             <TableCell className="text-center py-1 align-middle min-w-[80px] leading-[1.3]">
-                                              {renderPriceLines(item.price)}
+                                              {renderPriceLines(item.price, item.link)}
                                             </TableCell>
                                             <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                               {renderDurationValue(item.duration)}
@@ -426,7 +439,7 @@ export default async function ServicePage({
                                   })()}
                                 </TableCell>
                                   <TableCell className="text-center py-1 align-middle min-w-[80px] leading-[1.3]">
-                                    {renderPriceLines(item.price)}
+                                    {renderPriceLines(item.price, item.link)}
                                 </TableCell>
                                   <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                   {renderDurationValue(item.duration)}

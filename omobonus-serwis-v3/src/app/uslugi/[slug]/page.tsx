@@ -176,54 +176,59 @@ const renderPriceLines = (price: string, link?: string) => {
     )
   }
 
+  const renderSuffixLine = (text: string, key?: string | number) => (
+    <div
+      key={key ? `${text}-${key}` : undefined}
+      className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
+      style={{ textShadow: supplementTextShadow }}
+    >
+      {text}
+    </div>
+  )
+
   return price.split('\n').map((line, idx) => {
     const trimmed = line.trim()
     if (!trimmed) return null
     const lower = trimmed.toLowerCase()
     const isHourly =
       lower.includes('/ godzinę') || lower.includes('/ godzine')
-    const hasPlus =
-      lower.includes('+ część') ||
-      lower.includes('+ części') ||
-      lower.includes('+ koszt tonera')
-    const isSupplement =
-      lower.includes('stawka z cennika')
-    if (isHourly || hasPlus) {
-      let value = trimmed
-      let suffixText = ''
-      if (isHourly) {
-        const [val, suffix] = trimmed.split('/').map(part => part.trim())
-        value = val
-        suffixText = `/ ${suffix}`
-      } else {
-        const [val, suffix] = trimmed.split('+').map(part => part.trim())
-        value = val
-        suffixText = `+ ${suffix}`
-      }
+    const plusIndex = trimmed.indexOf('+')
+    const hasInlinePlusSuffix = plusIndex > 0
+    const isStandalonePlusSuffix = plusIndex === 0
+    const isSupplement = lower.includes('stawka z cennika')
+    if (isHourly) {
+      const [val, suffix] = trimmed.split('/').map(part => part.trim())
+      const suffixText = suffix ? `/ ${suffix}` : ''
       return (
-        <div key={`${trimmed}-${idx}`}> 
-          <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
-            {value}
-          </div>
-          <div
-            className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
-            style={{ textShadow: supplementTextShadow }}
-          >
-            {suffixText}
-          </div>
+        <div key={`${trimmed}-${idx}`}>
+          {val && (
+            <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
+              {val}
+            </div>
+          )}
+          {suffixText && renderSuffixLine(suffixText)}
         </div>
       )
     }
-    if (isSupplement) {
+    if (hasInlinePlusSuffix) {
+      const value = trimmed.slice(0, plusIndex).trim()
+      const suffixText = trimmed.slice(plusIndex).trim()
       return (
-        <div
-          key={`${trimmed}-${idx}`}
-          className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
-          style={{ textShadow: supplementTextShadow }}
-        >
-          {trimmed}
+        <div key={`${trimmed}-${idx}`}>
+          {value && (
+            <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
+              {value}
+            </div>
+          )}
+          {suffixText && renderSuffixLine(suffixText)}
         </div>
       )
+    }
+    if (isStandalonePlusSuffix) {
+      return renderSuffixLine(trimmed, idx)
+    }
+    if (isSupplement) {
+      return renderSuffixLine(trimmed, idx)
     }
     return (
       <div

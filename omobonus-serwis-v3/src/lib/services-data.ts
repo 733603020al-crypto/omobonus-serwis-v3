@@ -533,22 +533,30 @@ const createPricingSections = (): PricingSection[] => {
   return [...createDefaultPricingSections(), createFaqSection()]
 }
 
-const createLaptopPricingSections = (): PricingSection[] => {
-  const sections = createPricingSections()
+const updateDiagnosisPrice = (sections: PricingSection[], price: string) => {
   const diagnosisSection = sections.find(section => section.id === 'diagnoza')
   const targetItem = diagnosisSection?.items?.find(item =>
     item.service.startsWith('Diagnoza i wycena w formie pisemnej (bez naprawy')
   )
   if (targetItem) {
-    targetItem.price = '90'
+    targetItem.price = price
   }
+}
+
+const updateDojazdReturnPrice = (sections: PricingSection[], price: string) => {
   const transportSection = sections.find(section => section.id === 'dojazd')
-  const transportItem = transportSection?.items?.find(item =>
+  const targetItem = transportSection?.items?.find(item =>
     item.service.startsWith('Dojazd (przy rezygnacji z naprawy)')
   )
-  if (transportItem) {
-    transportItem.price = '100'
+  if (targetItem) {
+    targetItem.price = price
   }
+}
+
+const createLaptopPricingSections = (): PricingSection[] => {
+  const sections = createPricingSections()
+  updateDiagnosisPrice(sections, '90')
+  updateDojazdReturnPrice(sections, '100')
   const cleaningSection = sections.find(section => section.id === 'konserwacja')
   if (cleaningSection) {
     cleaningSection.items = [
@@ -578,6 +586,690 @@ const createLaptopPricingSections = (): PricingSection[] => {
       },
     ]
   }
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const softwareSubcategory = serviceSection?.subcategories?.[0]
+  if (softwareSubcategory) {
+    softwareSubcategory.title = 'Oprogramowanie'
+    softwareSubcategory.items = [
+      {
+        service:
+          'Instalacja systemu Windows/Linux z aktualizacjami i sterownikami (bez zachowania danych) (Nie instalujemy oprogramowania bez ważnej i legalnej licencji. Pomagamy w zakupie licencji.)',
+        price: '150',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Instalacja systemu z zachowaniem danych',
+        price: '200',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Instalacja systemu operacyjnego MAC OS X',
+        price: '250',
+        duration: '1-2 dni',
+      },
+      {
+        service:
+          'Instalacja i konfiguracja oprogramowania (pakietów biurowych/multimedialnych) / sterowników',
+        price: '120 / godzinę',
+        duration: '1-2 dni',
+      },
+      {
+        service:
+          'Naprawa i optymalizacja systemu operacyjnego Windows (problemy z uruchomieniem systemu, zapętlanie się przy starcie, restartowanie się, zawieszanie się lub wolna praca)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service:
+          'Kopia (odzyskanie) danych z uszkodzonego systemu\n(w przypadku awarii systemu Windows, aby odzyskać dokumenty, zdjęcia, filmy i inne pliki)',
+        price: '150',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Przywracanie systemu z partycji Recovery (jeśli dostępne)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Rozwiązywanie problemów z aktualizacjami Windows (odzyskiwanie systemu po błędnej aktualizacji / BSOD)',
+        price: '100-180',
+        duration: '1-2 dni',
+      },
+      {
+        service:
+          'Odwirusownie (usunięcie wirusów, trojanów, spyware, malware, adware, ransomware i innych złośliwych programów)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service:
+          'Usunięcie haseł systemowych, zabezpieczających system operacyjny, dysk lub BIOS (jeśli legalne i możliwe)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Odzyskiwanie haseł użytkownika (jeśli legalne)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Upgrade (aktualizacja) BIOS-u (bez uszkodzenia kości i wylutowania)',
+        price: '50',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Reset / naprawa / rekonstrukcja UEFI/BIOS ustawień',
+        price: '80-120',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Reset/odzyskiwanie BIOS/UEFI (po błędnym flashu / update)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Programowanie BIOS (odczyt / rewrite / flash z pliku)',
+        price: '100',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Programowanie BIOSu po wylutowaniu w programatorze',
+        price: '150',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Indywidualna konfiguracja/naprawa systemu Windows',
+        price: '120 / godzinę',
+        duration: '-',
+      },
+      {
+        service: 'Zdalna pomoc informatyka',
+        price: '120 / godzinę',
+        duration: '-',
+      },
+    ]
+  }
+  const boardSubcategory = serviceSection?.subcategories?.[1]
+  if (boardSubcategory) {
+    boardSubcategory.title = 'Płyta główna / zasilanie / podzespoły'
+    boardSubcategory.items = [
+      {
+        service: 'Wymiana płyty głównej (przekładka + konfiguracja)',
+        price: '180 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa płyty głównej (przerwane ścieżki, zimne luty, mikrolutowanie)',
+        price: '200-350 + części',
+        duration: '2-7 dni',
+      },
+      {
+        service: 'Wymiana gniazda USB / HDMI / Audio / DC-jack, …',
+        price: '150 + część',
+        duration: '2-5 dni',
+      },
+      {
+        service:
+          'Wymiana lub przelutowanie uszkodzonego gniazda zasilającego (częste wkładanie/wyciąganie wtyczki zasilacza bądź spowodowane upadkiem laptopa)',
+        price: '150 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana baterii dla układu CMOS (BIOS) na płycie głównej',
+        price: '50-150',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa układu ładowania (charge controller / MOSFET / BQ / ISL)',
+        price: '180-260 + części',
+        duration: '2-7 dni',
+      },
+      {
+        service: 'Wymiana układów zasilania (PU, PD, KBC/EC)',
+        price: '220-360 + części',
+        duration: '3-7 dni',
+      },
+      {
+        service: 'Wymiana przewodu (zewnętrzny kabel) / gniazda zasilacza',
+        price: '50 + część',
+        duration: '1 dzień',
+      },
+      {
+        service: 'Wymiana / rozbudowa pamięci RAM + test stabilności',
+        price: '70 + część',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Naprawa problemów z kartą sieciową (sterowniki / usługi / reset)',
+        price: '60-120',
+        duration: '1 dzień',
+      },
+      {
+        service: 'Wymiana karty Wi-Fi (M.2 / miniPCIe) + konfiguracja',
+        price: '90 + część',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Naprawa Bluetooth (sterowniki / konflikty / parowanie urządzeń)',
+        price: '50-120',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Wymiana napędu / nagrywarki',
+        price: '50 + część',
+        duration: '1-3 dni',
+      },
+    ]
+  }
+  const coolingSubcategory = serviceSection?.subcategories?.[2]
+  if (coolingSubcategory) {
+    coolingSubcategory.title = 'Układ chłodzenia i czystość'
+    coolingSubcategory.items = [
+      {
+        service: 'Diagnostyka układu chłodzenia (pomiar temperatur przed/po czyszczeniu)',
+        price: '40',
+        duration: '1 dzień',
+      },
+      {
+        service: 'Wymiana wentylatora chłodzenia (montaż nowego)',
+        price: '100 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana radiatora',
+        price: '100 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Czyszczenie układu chłodzenia w laptopach gamingowych (2-3 wentylatory)',
+        price: '220',
+        duration: '1-3 dni',
+      },
+    ]
+  }
+  const disksSubcategory = serviceSection?.subcategories?.[3]
+  if (disksSubcategory) {
+    disksSubcategory.title = 'Dyski i dane'
+    disksSubcategory.items = [
+      {
+        service: 'Diagnoza dysku + SMART / test powierzchni',
+        price: '50',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Kopia zapasowa danych',
+        price: '120',
+        duration: '1-2 dni',
+      },
+      {
+        service: 'Migracja danych / klonowanie dysku (stary dysk -> nowy dysk)',
+        price: '80-140',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana dysku HDD -> SSD + migracja danych',
+        price: '130 + nośnik',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Montaż dysku M.2 NVMe / SATA (z konfiguracją)',
+        price: '120 + część',
+        duration: '1-2 dni',
+      },
+    ]
+  }
+  const recoverySubcategory = serviceSection?.subcategories?.[4]
+  if (recoverySubcategory) {
+    recoverySubcategory.title = 'Odzyskanie / usuwanie danych'
+    recoverySubcategory.items = getRecoveryItems()
+  }
+  const screenSubcategory = serviceSection?.subcategories?.[5]
+  if (screenSubcategory) {
+    screenSubcategory.title = 'Ekran i obudowa'
+    screenSubcategory.items = [
+      {
+        service: 'Wymiana uszkodzonej matrycy LCD/LED (standard, bez klejenia)',
+        price: '180 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana taśmy sygnałowej matrycy (brak podświetlenia matrycy)',
+        price: '120 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana ramki ekranu (front bezel)',
+        price: '100 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana zawiasów',
+        price: '120 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa pękniętych mocowań zawiasów, obudowy (wzmocnienie / klejenie)',
+        price: '140-240',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana obudowy – klapy ekranu (pokrywa matrycy) lub obudowy dolnej',
+        price: '180 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana kamery internetowej / mikrofonu / audio',
+        price: '100 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana lub uzupełnienie pojedynczych elementów obudowy (śruby, mocowania, klipsy)',
+        price: '20-60',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana baterii wewnętrznej (integralnej w zamkniętej obudowie)',
+        price: '120 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa lub wymiana przycisku zasilania',
+        price: '100 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Przełożenie podzespołów do nowej obudowy',
+        price: '250',
+        duration: '1-3 dni',
+      },
+    ]
+  }
+  const keyboardSubcategory = serviceSection?.subcategories?.[6]
+  if (keyboardSubcategory) {
+    keyboardSubcategory.title = 'Klawiatura / touchpad'
+    keyboardSubcategory.items = [
+      {
+        service: 'Czyszczenie klawiatury + dezynfekcja (bez rozbierania)',
+        price: '40',
+        duration: 'od ręki',
+      },
+      {
+        service: 'Wymiana pojedynczego klawisza (keycap / stabilizator, jeśli możliwe)',
+        price: '20-40 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa lub wymiana klawiatury przykręcanej',
+        price: '120 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa lub wymiana klawiatury zintegrowanej z obudową (lutowanej lub klejonej)',
+        price: '150 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Wymiana klawiatury podświetlanej (RGB / LED)',
+        price: '150 + część',
+        duration: '1-3 dni',
+      },
+      {
+        service: 'Naprawa lub wymiana touchpada (trackpad)',
+        price: '120 + część',
+        duration: '1-3 dni',
+      },
+    ]
+  }
+  return sections
+}
+
+const applyDesktopCleaningSection = (sections: PricingSection[]) => {
+  const cleaningSection = sections.find(section => section.id === 'konserwacja')
+  if (!cleaningSection) return
+  cleaningSection.items = [
+    {
+      service:
+        'PODSTAWOWY do 30 min.\n(przegląd i profilaktyka, zmniejsza ryzyko awarii i stresu – demontaż obudowy, czyszczenie wentylatorów i radiatorów, wymiana past termoprzewodzących CPU/GPU, usunięcie kurzu i zanieczyszczeń, testy obciążeniowe + test temperatur)',
+      price: '120',
+      duration: '1-3 dni',
+    },
+    {
+      service:
+        'STANDARD do 1 godziny (standardowa konserwacja)\n(Zakres PODSTAWOWY + wymiana / dopasowanie termopadów, konserwacja portów, krótki test pamięci RAM i dysku SMART)',
+      price: '160',
+      duration: '1-3 dni',
+    },
+    {
+      service:
+        'PREMIUM do 2 godzin (pełna konserwacja)\n(Zakres STANDARD + porządkowanie okablowania i kanałów powietrznych, czyszczenie klawiatury i portów wewnętrznych, aktualizacja BIOS/UEFI (jeśli wskazana), długie testy obciążeniowe (CPU / GPU / RAM))',
+      price: '200',
+      duration: '1-3 dni',
+    },
+  ]
+}
+
+const applyDesktopSoftwareSubcategory = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const softwareSubcategory = serviceSection?.subcategories?.[0]
+  if (!softwareSubcategory) return
+  softwareSubcategory.title = 'Oprogramowanie'
+  softwareSubcategory.items = [
+    {
+      service:
+        'Instalacja systemu Windows/Linux z aktualizacjami i sterownikami (bez zachowania danych) (Nie instalujemy oprogramowania bez ważnej i legalnej licencji (pirackich wersji). Pomagamy w zakupie licencji.)',
+      price: '150',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Instalacja systemu z zachowaniem danych',
+      price: '200',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Instalacja systemu operacyjnego MAC OS X',
+      price: '250',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Instalacja i konfiguracja oprogramowania\n(pakietów biurowych/multimedialnych) / sterowników',
+      price: '120 / godzinę',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Naprawa i optymalizacja systemu operacyjnego Windows (problemy z uruchomieniem systemu, zapętlanie się przy starcie, restartowanie się, zawieszanie się lub wolna praca)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Kopia (odzyskanie) danych z uszkodzonego systemu\n(w przypadku awarii systemu Windows, aby odzyskać dokumenty (word, excel, itp), zdjęcia, filmy i inne pliki)',
+      price: '150',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Przywracanie systemu z partycji Recovery (jeśli dostępne)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Rozwiązywanie problemów z aktualizacjami Windows (odzyskiwanie systemu po błędnej aktualizacji / BSOD)',
+      price: '100-180',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Odwirusownie (usunięcie wirusów, trojanów, spyware, malware, adware, ransomware i innych złośliwych programów)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Usunięcie haseł systemowych, zabezpieczających system operacyjny, dysk lub BIOS (jeśli legalne i możliwe)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Odzyskiwanie haseł użytkownika (jeśli legalne)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Upgrade (aktualizacja) BIOS-u (bez uszkodzenia kości i wylutowania)',
+      price: '50',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Reset / naprawa / rekonstrukcja UEFI/BIOS ustawień',
+      price: '80-120',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Reset/odzyskiwanie BIOS/UEFI (po błędnym flashu / update)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Programowanie BIOS (odczyt / rewrite / flash z pliku)',
+      price: '100',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Programowanie BIOSu po wylutowaniu w programatorze',
+      price: '150',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Konfiguracja RAID (0/1/5/10)',
+      price: '180',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Indywidualna konfiguracja/naprawa systemu Windows',
+      price: '120 / godzinę',
+      duration: '-',
+    },
+    {
+      service: 'Zdalna pomoc informatyka',
+      price: '120 / godzinę',
+      duration: '-',
+    },
+  ]
+}
+
+const applyDesktopHardwareSubcategory = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const hardwareSubcategory = serviceSection?.subcategories?.[1]
+  if (!hardwareSubcategory) return
+  hardwareSubcategory.title = 'Płyta główna / zasilanie / podzespoły'
+  hardwareSubcategory.items = [
+    {
+      service: 'Wymiana procesora',
+      price: '50 + część',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Wymiana płyty głównej (przekładka + konfiguracja)',
+      price: '120 + część',
+      duration: '1-3 dni',
+    },
+    {
+      service:
+        'Naprawa płyty głównej (przerwane ścieżki, zimne luty, mikrolutowanie)',
+      price: '200-350 + części',
+      duration: '2-7 dni',
+    },
+    {
+      service: 'Wymiana gniazda USB / HDMI / Audio / DC-jack, …',
+      price: '150 + część',
+      duration: '2-5 dni',
+    },
+    {
+      service:
+        'Wymiana baterii dla układu CMOS (BIOS) na płycie głównej',
+      price: '50',
+      duration: '1-3 dni',
+    },
+    {
+      service:
+        'Naprawa układu ładowania (charge controller / MOSFET / BQ / ISL)',
+      price: '180-260 + części',
+      duration: '2-7 dni',
+    },
+    {
+      service: 'Wymiana układów zasilania (PU, PD, KBC/EC)',
+      price: '220-360 + części',
+      duration: '3-7 dni',
+    },
+    {
+      service:
+        'Wymiana części/podzespołów w komputerze stacjonarnym\n(karta grafiki, pamięć RAM, …). Testy diagnostyczne',
+      price: '50 + część',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Wymiana zasilacza',
+      price: '50-120 + część',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Naprawa problemów z kartą sieciową (sterowniki / usługi / reset)',
+      price: '60-120',
+      duration: '1 dzień',
+    },
+    {
+      service:
+        'Naprawa Bluetooth (sterowniki / konflikty / parowanie urządzeń)',
+      price: '50-120',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Wymiana napędu / nagrywarki',
+      price: '50 + część',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Naprawa przycisku POWER / panelu przedniego',
+      price: '70 + części',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Wymiana obudowy (pełna przekładka)',
+      price: '200',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Montaż komputera stacjonarnego\n(możemy zamontować z części dostarczonych przez Klienta, lub zakupionych przez nas)',
+      price: '120 / godzinę',
+      duration: '1-3 dni',
+    },
+  ]
+}
+
+const applyDesktopCoolingSubcategory = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const coolingSubcategory = serviceSection?.subcategories?.[2]
+  if (!coolingSubcategory) return
+  coolingSubcategory.title = 'Układ chłodzenia i czystość'
+  coolingSubcategory.items = [
+    {
+      service:
+        'Diagnostyka układu chłodzenia (pomiar temperatur przed/po czyszczeniu)',
+      price: '40',
+      duration: '1 dzień',
+    },
+    {
+      service: 'Wymiana wentylatora chłodzenia (montaż nowego)',
+      price: '50 + część',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Wymiana radiatora',
+      price: '50 + część',
+      duration: '1-3 dni',
+    },
+  ]
+}
+
+const applyDesktopStorageSubcategory = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const storageSubcategory = serviceSection?.subcategories?.[3]
+  if (!storageSubcategory) return
+  storageSubcategory.title = 'Dyski i dane'
+  storageSubcategory.items = [
+    {
+      service: 'Diagnoza dysku + SMART / test powierzchni',
+      price: '50',
+      duration: '1-2 dni',
+    },
+    {
+      service: 'Kopia zapasowa danych',
+      price: '120',
+      duration: '1-2 dni',
+    },
+    {
+      service:
+        'Migracja danych / klonowanie dysku (stary dysk → nowy dysk)',
+      price: '80-140',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Wymiana dysku HDD → SSD + migracja danych',
+      price: '130 + nośnik',
+      duration: '1-3 dni',
+    },
+    {
+      service: 'Montaż dysku M.2 NVMe / SATA (z konfiguracją)',
+      price: '120 + część',
+      duration: '1-2 dni',
+    },
+  ]
+}
+
+const getRecoveryItems = (): PricingItem[] => [
+  {
+    service: 'Oszacowanie możliwości odzyskania danych z uszkodzonego nośnika',
+    price: '50',
+    duration: '1-2 dni',
+  },
+  {
+    service:
+      'Odzyskanie danych (usuniętych plików) po skasowaniu ze sprawnego nośnika (dokumenty, zdjęcia lub filmy, przez przypadkowe ich usunięcie, sformatowanie dysku lub przywrócenie systemu Windows)',
+    price: '120-200',
+    duration: '1-5 dni',
+  },
+  {
+    service:
+      'Odzyskiwanie danych (uszkodzenia logiczne – nośnik (np. dysk twardy) zachował sprawność)',
+    price: '180-260',
+    duration: '1-5 dni',
+  },
+  {
+    service:
+      'Odzyskanie danych z uszkodzonego nośnika (fizycznie lub elektronicznie uszkodzonych dysków HDD i SSD)',
+    price: 'od 500',
+    duration: '5-15 dni',
+  },
+  {
+    service: 'Trwałe usuwanie danych',
+    price: '50',
+    duration: '1-2 dni',
+  },
+]
+
+const applyDesktopRecoverySubcategory = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  const recoverySubcategory = serviceSection?.subcategories?.[4]
+  if (!recoverySubcategory) return
+  recoverySubcategory.title = 'Odzyskanie / usuwanie danych'
+  recoverySubcategory.items = getRecoveryItems()
+}
+
+const removeDesktopExtraSubcategories = (sections: PricingSection[]) => {
+  const serviceSection = sections.find(section => section.id === 'naprawy')
+  if (!serviceSection?.subcategories) return
+  serviceSection.subcategories = serviceSection.subcategories.filter(
+    subcategory =>
+      subcategory.title !== 'Oprogramowanie i konfiguracja' &&
+      subcategory.title !== 'Usługi dodatkowe'
+  )
+}
+
+const createDesktopPricingSections = (): PricingSection[] => {
+  const sections = createPricingSections()
+  updateDiagnosisPrice(sections, '90')
+  updateDojazdReturnPrice(sections, '100')
+  applyDesktopCleaningSection(sections)
+  applyDesktopSoftwareSubcategory(sections)
+  applyDesktopHardwareSubcategory(sections)
+  applyDesktopCoolingSubcategory(sections)
+  applyDesktopStorageSubcategory(sections)
+  applyDesktopRecoverySubcategory(sections)
+  removeDesktopExtraSubcategories(sections)
   return sections
 }
 
@@ -596,7 +1288,7 @@ export const services: ServiceData[] = [
     subtitle: 'Pełny wykaz usług i cen, bez ukrytych kosztów',
     icon: manifest['02_serwis_komputerow_stacjonarnych'],
     description: 'Diagnostyka, naprawa i modernizacja jednostek centralnych.',
-    pricingSections: createPricingSections(),
+    pricingSections: createDesktopPricingSections(),
   },
   {
     slug: 'outsourcing-it',

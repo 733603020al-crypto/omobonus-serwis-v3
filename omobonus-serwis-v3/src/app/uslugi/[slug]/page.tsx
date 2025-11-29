@@ -46,6 +46,20 @@ const getIconForSection = (sectionId: string) => {
 
 // Funkcja pomocnicza do parsowania tekstu usługi (wydzielenie tekstu w nawiasach)
 const parseServiceText = (text: string) => {
+  if (!text) {
+    return {
+      main: '',
+      parentheses: null,
+    }
+  }
+  if (text.includes('\n')) {
+    const [firstLine, ...rest] = text.split('\n')
+    const remainder = rest.join('\n').trim()
+    return {
+      main: firstLine.trim(),
+      parentheses: remainder || null,
+    }
+  }
   // Обработка случая с двумя парами скобок: "Текст (скобки1) (скобки2)"
   const matchTwo = text.match(/^(.+?)\s*\((.+?)\)\s*\((.+?)\)\s*$/)
   if (matchTwo) {
@@ -75,7 +89,39 @@ const renderPriceLines = (price: string) => {
   return price.split('\n').map((line, idx) => {
     const trimmed = line.trim()
     if (!trimmed) return null
-    const isSupplement = trimmed.toLowerCase().includes('stawka z cennika')
+    const lower = trimmed.toLowerCase()
+    const isHourly =
+      lower.includes('/ godzinę') || lower.includes('/ godzine')
+    const hasPlus =
+      lower.includes('+ część') || lower.includes('+ części')
+    const isSupplement =
+      lower.includes('stawka z cennika')
+    if (isHourly || hasPlus) {
+      let value = trimmed
+      let suffixText = ''
+      if (isHourly) {
+        const [val, suffix] = trimmed.split('/').map(part => part.trim())
+        value = val
+        suffixText = `/ ${suffix}`
+      } else {
+        const [val, suffix] = trimmed.split('+').map(part => part.trim())
+        value = val
+        suffixText = `+ ${suffix}`
+      }
+      return (
+        <div key={`${trimmed}-${idx}`} className="leading-[1.3]">
+          <div className="font-inter text-white text-[14px] md:text-[15px]">
+            {value}
+          </div>
+          <div
+            className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
+            style={{ textShadow: supplementTextShadow }}
+          >
+            {suffixText}
+          </div>
+        </div>
+      )
+    }
     if (isSupplement) {
       return (
         <div

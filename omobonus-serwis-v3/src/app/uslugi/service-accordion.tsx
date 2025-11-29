@@ -331,14 +331,14 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
     return (
       <div
-        className="relative pointer-events-auto w-[min(calc(100vw-64px),900px)] max-h-[88vh] overflow-y-auto rounded-2xl border border-[rgba(200,169,107,0.45)] shadow-[0_22px_45px_rgba(0,0,0,0.5)] text-[#f8eacd]"
+        className="relative pointer-events-auto w-[min(calc(100vw-64px),900px)] max-h-[88vh] overflow-y-auto rounded-2xl border border-[rgba(215,185,120,0.55)] shadow-[0_30px_55px_rgba(0,0,0,0.6)] text-[#f8eacd]"
         style={{
           backgroundImage: "url('/images/services-background.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
-        <div className="absolute inset-0 rounded-2xl bg-[rgba(0,0,0,0.5)] pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl bg-[rgba(32,21,8,0.8)] pointer-events-none" />
         <div className="relative p-6 md:p-7 space-y-6">
           <div className="text-center space-y-2">
             <h4 className="text-[22px] md:text-[26px] font-cormorant font-semibold text-white tracking-wide">

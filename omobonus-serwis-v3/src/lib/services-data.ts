@@ -24,6 +24,20 @@ export interface PricingSection {
   subcategories?: PricingSubcategory[] // Podkategorie (dla "naprawy" lub "faq")
 }
 
+export interface PriceTooltipCategory {
+  title: string
+  description: string
+  features: string[]
+  examples: string[]
+}
+
+export interface PriceTooltipRichContent {
+  type: 'deviceCategories'
+  title: string
+  description: string
+  categories: PriceTooltipCategory[]
+}
+
 export interface ServiceData {
   slug: string
   title: string
@@ -31,7 +45,11 @@ export interface ServiceData {
   icon: string
   description: string // Krótki opis na kafelki
   pricingSections: PricingSection[]
+  priceTooltip?: string
+  priceTooltipRich?: PriceTooltipRichContent
 }
+
+export const DEFAULT_PRICE_TOOLTIP = 'Ceny brutto (zawierają VAT)'
 
 // Domyślne sekcje cennika (aby nie powtarzać kodu dla każdej usługi na start)
 const defaultPricingSections: PricingSection[] = [
@@ -2592,6 +2610,31 @@ export const services: ServiceData[] = [
     icon: manifest['04_serwis_drukarek_laserowych'],
     description: 'Profesjonalna naprawa i serwis drukarek laserowych.',
     pricingSections: createLaserPricingSections(),
+    priceTooltipRich: {
+      type: 'deviceCategories',
+      title: 'Kategorie urządzeń',
+      description: 'Wybierz orientacyjnie, do której grupy należy Twoja drukarka. Dzięki temu łatwiej dopasujesz przedział cenowy.',
+      categories: [
+        {
+          title: 'Drukarka domowa',
+          description: 'Urządzenie do użytku domowego lub okazjonalnego drukowania. Małe modele A4, zwykle tańsze w zakupie.',
+          features: ['małe wymiary', 'wolniejszy druk', 'podstawowe funkcje'],
+          examples: ['HP DeskJet 2720', 'Canon MG3650s'],
+        },
+        {
+          title: 'Drukarka biurowa',
+          description: 'Do pracy w małych i średnich biurach. Przystosowane do częstszego drukowania i pracy w sieci.',
+          features: ['szybszy druk', 'LAN / Wi-Fi', 'wyższa trwałość'],
+          examples: ['Brother DCP-J105', 'Epson L3150'],
+        },
+        {
+          title: 'Drukarka biznesowa',
+          description: 'Duże urządzenia A4/A3 do intensywnej pracy i dużych wolumenów wydruku.',
+          features: ['bardzo wysoka wytrzymałość', 'szybkie tonery i kasety', 'serwisowe funkcje zarządzania'],
+          examples: ['Epson L6570', 'Canon MAXIFY GX4040'],
+        },
+      ],
+    },
   },
   {
     slug: 'serwis-drukarek-atramentowych',
@@ -2608,6 +2651,8 @@ export const services: ServiceData[] = [
     icon: manifest['06_serwis_drukarek_termicznych'],
     description: 'Serwis drukarek etykiet i kodów kreskowych.',
     pricingSections: createThermalPricingSections(),
+    priceTooltip:
+      'Ceny brutto osobno dla drukarek: biurkowych / półprzemysłowych / przemysłowych (robocizna, bez materiałów eksploatacyjnych)',
   },
   {
     slug: 'serwis-drukarek-iglowych',

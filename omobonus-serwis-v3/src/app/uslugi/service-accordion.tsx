@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import manifest from '@/config/KANONICZNY_MANIFEST.json'
+import { DEFAULT_PRICE_TOOLTIP } from '@/lib/services-data'
 import type { ServiceData } from '@/lib/services-data'
 import {
   Accordion,
@@ -185,7 +186,7 @@ const renderPriceLines = (price: string, link?: string) => {
     </div>
   )
 
-      return price.split('\n').map((line, idx) => {
+  return price.split('\n').map((line, idx) => {
     const trimmed = line.trim()
     if (!trimmed) return null
     const lower = trimmed.toLowerCase()
@@ -195,6 +196,7 @@ const renderPriceLines = (price: string, link?: string) => {
     const hasInlinePlusSuffix = plusIndex > 0
     const isStandalonePlusSuffix = plusIndex === 0
     const isSupplement = lower.includes('stawka z cennika')
+    const isPerMeasureSuffix = lower.startsWith('za ')
     if (isHourly) {
       const [val, suffix] = trimmed.split('/').map(part => part.trim())
       const suffixText = suffix ? `/ ${suffix}` : ''
@@ -223,16 +225,9 @@ const renderPriceLines = (price: string, link?: string) => {
         </div>
       )
     }
-    if (isStandalonePlusSuffix) {
+    if (isStandalonePlusSuffix || isSupplement || isPerMeasureSuffix) {
       return renderSuffixLine(trimmed, idx)
     }
-        const isPerMeasureSuffix = lower.startsWith('za ')
-        if (isSupplement) {
-      return renderSuffixLine(trimmed, idx)
-    }
-        if (isPerMeasureSuffix) {
-          return renderSuffixLine(trimmed, idx)
-        }
     return (
       <div
         key={`${trimmed}-${idx}`}
@@ -284,6 +279,13 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const [openSubcategory, setOpenSubcategory] = useState<string | null>(null)
   const sectionRefs = useRef<ScrollRefs>({})
   const subcategoryRefs = useRef<ScrollRefs>({})
+  const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
+
+  const renderPriceTooltipContent = () => (
+    <p className="max-w-xs text-sm leading-snug text-[#f8f1db]">
+      {priceTooltip}
+    </p>
+  )
 
   const handleSectionChange = (value: string | null) => {
     setOpenSection(prev => (prev === value ? null : value))
@@ -380,9 +382,9 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                   <TooltipTrigger>
                                     <Info className="w-4 h-4 opacity-70" />
                                   </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Ceny brutто (zawierają VAT)</p>
-                                  </TooltipContent>
+                              <TooltipContent sideOffset={4}>
+                                {renderPriceTooltipContent()}
+                              </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
                             </div>

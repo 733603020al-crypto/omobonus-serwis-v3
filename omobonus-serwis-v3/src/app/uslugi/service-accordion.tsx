@@ -195,6 +195,7 @@ const renderPriceLines = (price: string, link?: string) => {
     const plusIndex = trimmed.indexOf('+')
     const hasInlinePlusSuffix = plusIndex > 0
     const isStandalonePlusSuffix = plusIndex === 0
+    const isStandaloneNumericPlus = isStandalonePlusSuffix && /^\+\s*\d/.test(trimmed)
     const isSupplement = lower.includes('stawka z cennika')
     const isPerMeasureSuffix = lower.startsWith('za ')
     if (isHourly) {
@@ -225,6 +226,17 @@ const renderPriceLines = (price: string, link?: string) => {
         </div>
       )
     }
+    if (isStandaloneNumericPlus) {
+      return (
+        <div
+          key={`${trimmed}-${idx}`}
+          className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]"
+        >
+          {trimmed}
+        </div>
+      )
+    }
+
     if (isStandalonePlusSuffix || isSupplement || isPerMeasureSuffix) {
       return renderSuffixLine(trimmed, idx)
     }
@@ -274,18 +286,101 @@ const scrollIntoViewIfNeeded = (
   })
 }
 
+const DEVICE_CATEGORIES = [
+  {
+    title: 'Drukarka domowa',
+    description:
+      'Urządzenie do użytku domowego (okazjonalnego drukowania). Małe modele A4',
+    features: ['małe wymiary', 'wolniejszy druk', 'podstawowe funkcje'],
+    examples: '',
+  },
+  {
+    title: 'Drukarka biurowa',
+    description:
+      'Do pracy w małych i średnich biurach. Przystosowana do częstszego drukowania i pracy w sieci.',
+    features: ['średni rozmiar', 'szybszy druk', 'wyższa trwałość'],
+    examples: '',
+  },
+  {
+    title: 'Drukarka biznesowa',
+    description:
+      'Duże urządzenia A4/A3 do intensywnej codziennej pracy i dużych wolumenów wydruku.',
+    features: ['bardzo wysoka wytrzymałość', 'duże, wydajne tonery i kasety', 'przystosowana do dużych nakładów druku'],
+    examples: '',
+  },
+]
+
 const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const [openSection, setOpenSection] = useState<string | null>(null)
   const [openSubcategory, setOpenSubcategory] = useState<string | null>(null)
+  const [isCategoryTooltipOpen, setCategoryTooltipOpen] = useState(false)
   const sectionRefs = useRef<ScrollRefs>({})
   const subcategoryRefs = useRef<ScrollRefs>({})
   const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
+  const isLaserService = service.slug === 'serwis-drukarek-laserowych'
+  const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
 
-  const renderPriceTooltipContent = () => (
-    <p className="max-w-xs text-sm leading-snug text-[#f8f1db]">
-      {priceTooltip}
-    </p>
-  )
+  const renderPriceTooltipContent = () => {
+    if (!isLaserService) {
+      return (
+        <p className="max-w-xs text-sm leading-snug text-[#f8f1db]">
+          {priceTooltip}
+        </p>
+      )
+    }
+
+    return (
+      <div
+        className="relative pointer-events-auto w-[min(calc(100vw-64px),900px)] max-h-[88vh] overflow-y-auto rounded-2xl border border-[rgba(200,169,107,0.45)] shadow-[0_22px_45px_rgba(0,0,0,0.5)] text-[#f8eacd]"
+        style={{
+          backgroundImage: "url('/images/services-background.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 rounded-2xl bg-[rgba(0,0,0,0.5)] pointer-events-none" />
+        <div className="relative p-6 md:p-7 space-y-6">
+          <div className="text-center space-y-2">
+            <h4 className="text-[22px] md:text-[26px] font-cormorant font-semibold text-white tracking-wide">
+              Kategorie urządzeń
+            </h4>
+            <p className="text-[15px] md:text-[17px] text-[rgba(255,255,245,0.85)] leading-snug font-cormorant">
+              W cenniku pierwsza cena dotyczy drukarki domowej, druga – biurowej, trzecia – biznesowej
+            </p>
+            <div className="mt-1 flex items-center justify-center gap-1">
+              <span className="text-[15px] md:text-[17px] text-[rgba(255,255,245,0.85)] font-cormorant">(np.</span>
+              <div className="flex items-center">
+                <div className="drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]">
+                  {renderPriceLines('50 / 100 / 150')}
+                </div>
+              </div>
+              <span className="text-[15px] md:text-[17px] text-[rgba(255,255,245,0.85)] font-cormorant">)</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            {DEVICE_CATEGORIES.map(category => (
+              <div
+                key={category.title}
+                className="bg-[rgba(255,255,255,0.08)] border border-[rgba(191,167,106,0.35)] rounded-xl p-4 flex flex-col h-full shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] text-center"
+              >
+                <div>
+                  <div className="text-xl font-cormorant font-semibold text-white">{category.title}</div>
+                  <p className="text-xs md:text-sm text-[#f0dfbd] leading-snug mt-1 whitespace-pre-line">
+                    {category.description}
+                  </p>
+                </div>
+                <ul className="text-[13px] text-[#d5c39f] leading-snug space-y-1 font-table-sub text-left list-disc list-inside mt-auto pt-2">
+                  {category.features.map(feature => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const handleSectionChange = (value: string | null) => {
     setOpenSection(prev => (prev === value ? null : value))
@@ -378,12 +473,37 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                             <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05]">
                               Cena, zł
                               <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <Info className="w-4 h-4 opacity-70" />
+                                <Tooltip
+                                  onOpenChange={open => {
+                                    if (isLaserService) {
+                                      setCategoryTooltipOpen(open)
+                                    }
+                                  }}
+                                >
+                                  <TooltipTrigger asChild>
+                                    <span className="inline-flex cursor-help text-white/80">
+                                      <Info className="w-4 h-4 opacity-70" />
+                                    </span>
                                   </TooltipTrigger>
-                              <TooltipContent sideOffset={4}>
-                                {renderPriceTooltipContent()}
+                              <TooltipContent
+                                {...(isLaserService
+                                  ? {
+                                      side: 'left' as const,
+                                      align: 'center' as const,
+                                      sideOffset: 16,
+                                      collisionPadding: 16,
+                                      className: 'p-0 border-none bg-transparent shadow-none max-w-none rounded-none',
+                                    }
+                                  : { sideOffset: 4 })}
+                              >
+                                {isLaserService ? (
+                                  <>
+                                    <div className="fixed inset-0 bg-[rgba(0,0,0,0.35)] pointer-events-none" />
+                                    <div className="relative">{renderPriceTooltipContent()}</div>
+                                  </>
+                                ) : (
+                                  renderPriceTooltipContent()
+                                )}
                               </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
@@ -504,7 +624,13 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                             )
                                           })()}
                                         </TableCell>
-                                        <TableCell className="text-center py-1 align-middle min-w-[80px] leading-[1.3]">
+                                        <TableCell
+                                          className={`text-center py-1 align-middle min-w-[80px] leading-[1.3] ${
+                                            shouldHighlightPrices
+                                              ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.65)] brightness-110'
+                                              : ''
+                                          }`}
+                                        >
                                           {renderPriceLines(item.price, item.link)}
                                         </TableCell>
                                         <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">

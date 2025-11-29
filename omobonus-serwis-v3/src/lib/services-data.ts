@@ -71,7 +71,7 @@ const defaultPricingSections: PricingSection[] = [
       },
       {
         service: 'Diagnoza i wycena w formie pisemnej (bez naprawy, np. dla ubezpieczyciela)',
-        price: '50 / 70 / 90 zł',
+        price: '50 / 70 / 90',
         duration: '1-3 dni',
       },
       {

@@ -5,13 +5,46 @@ import manifest from '@/config/KANONICZNY_MANIFEST.json'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
+
+const BrandWordmark = ({ className }: { className?: string }) => (
+  <div className={cn('text-[22px] font-cormorant tracking-wide flex gap-2', className)}>
+    <span className="text-white">Omobonus</span>
+    <span className="text-[#bfa76a]">serwis</span>
+  </div>
+)
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    return () => document.removeEventListener('pointerdown', handlePointerDown)
+  }, [isOpen])
 
   const scrollToSection = (id: string) => {
     if (pathname !== '/') {
@@ -63,10 +96,7 @@ export function Header() {
               priority
             />
           </div>
-          <div className="text-[22px] font-cormorant tracking-wide flex gap-2">
-            <span className="text-white">Omobonus</span>
-            <span className="text-[#bfa76a]">serwis</span>
-          </div>
+          <BrandWordmark />
         </Link>
 
         {/* Desktop Menu */}
@@ -128,69 +158,84 @@ export function Header() {
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="bg-background border-border">
-            <div className="flex flex-col gap-6 mt-8">
-              <Link
-                href="/"
-                className="text-foreground font-serif text-xl font-bold"
-                onClick={(e) => {
-                  if (pathname === '/') {
+          <SheetContent
+            side="right"
+            className="bg-transparent p-0 w-[78vw] max-w-[360px] sm:max-w-[420px] border-l-0"
+          >
+            <div
+              ref={mobileMenuRef}
+              className="relative rounded-l-lg border border-[#bfa76a]/30 overflow-hidden"
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url('${manifest.Background_1}')` }}
+              />
+              <div className="absolute inset-0 bg-black/55" />
+              <div className="relative z-10 flex flex-col px-6 py-8 gap-6 text-left font-cormorant text-[20px] text-white">
+                <Link
+                  href="/"
+                  className="inline-flex"
+                  onClick={(e) => {
+                    if (pathname === '/') {
+                      e.preventDefault()
+                      scrollToTop()
+                    }
+                    setIsOpen(false)
+                  }}
+                >
+                  <BrandWordmark />
+                </Link>
+                <nav className="flex flex-col gap-4">
+                  <Link
+                    href="/#uslugi"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      scrollToSection('uslugi')
+                    }}
+                    className="hover:text-white transition-colors"
+                  >
+                    Usługi
+                  </Link>
+                  <Link
+                    href="/#o-nas"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      scrollToSection('o-nas')
+                    }}
+                    className="hover:text-white transition-colors"
+                  >
+                    O nas
+                  </Link>
+                  <Link
+                    href="/#kontakt"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      scrollToSection('kontakt')
+                    }}
+                    className="hover:text-white transition-colors"
+                  >
+                    Kontakt
+                  </Link>
+                  <Link
+                    href="https://omobonus.com.pl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Sklep
+                  </Link>
+                </nav>
+                <Button
+                  variant="outline"
+                  className="w-full border-[#bfa76a]/80 text-white text-[18px] font-cormorant rounded-full bg-transparent hover:bg-[#bfa76a]/15"
+                  onClick={(e) => {
                     e.preventDefault()
-                    scrollToTop()
-                  }
-                  setIsOpen(false)
-                }}
-              >
-                Omobonus serwis
-              </Link>
-              <Link
-                href="/#uslugi"
-                onClick={(e) => {
-                  e.preventDefault()
-                  scrollToSection('uslugi')
-                }}
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Usługi
-              </Link>
-              <Link
-                href="/#o-nas"
-                onClick={(e) => {
-                  e.preventDefault()
-                  scrollToSection('o-nas')
-                }}
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                O nas
-              </Link>
-              <Link
-                href="/#kontakt"
-                onClick={(e) => {
-                  e.preventDefault()
-                  scrollToSection('kontakt')
-                }}
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Kontakt
-              </Link>
-              <Link
-                href="https://omobonus.com.pl"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Sklep
-              </Link>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={(e) => {
-                  e.preventDefault()
-                  scrollToSection('kontakt')
-                }}
-              >
-                Wyślij zgłoszenie
-              </Button>
+                    scrollToSection('kontakt')
+                  }}
+                >
+                  Wyślij zgłoszenie
+                </Button>
+              </div>
             </div>
           </SheetContent>
         </Sheet>

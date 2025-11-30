@@ -313,6 +313,7 @@ const DEVICE_CATEGORIES = [
 const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const [openSection, setOpenSection] = useState<string | null>(null)
   const [openSubcategory, setOpenSubcategory] = useState<string | null>(null)
+  const [openFaq, setOpenFaq] = useState<string | null>(null)
   const [isCategoryTooltipOpen, setCategoryTooltipOpen] = useState(false)
   const sectionRefs = useRef<ScrollRefs>({})
   const subcategoryRefs = useRef<ScrollRefs>({})
@@ -400,6 +401,12 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
     if (!openSection) return
     scrollIntoViewIfNeeded(sectionRefs.current[openSection], SECTION_SCROLL_OFFSET)
   }, [openSection])
+
+  useEffect(() => {
+    if (openSection !== 'faq' && openFaq) {
+      setOpenFaq(null)
+    }
+  }, [openSection, openFaq])
 
   useEffect(() => {
     if (!openSubcategory || openSection !== 'naprawy') return
@@ -530,6 +537,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                   {section.subcategories ? (
                     (() => {
                       const isRepairSection = section.id === 'naprawy'
+                      const isFaqSection = section.id === 'faq'
                       const subcategoryItems = section.subcategories.map((subcategory, index) => (
                         <AccordionItem
                           key={subcategory.id}
@@ -651,6 +659,20 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                             collapsible
                             value={getSubcategoryValue(section.id)}
                             onValueChange={value => handleSubcategoryChange(section.id, value)}
+                            className="w-full"
+                          >
+                            {subcategoryItems}
+                          </Accordion>
+                        )
+                      }
+
+                      if (isFaqSection) {
+                        return (
+                          <Accordion
+                            type="single"
+                            collapsible
+                            value={openFaq ?? undefined}
+                            onValueChange={value => setOpenFaq(value ?? null)}
                             className="w-full"
                           >
                             {subcategoryItems}

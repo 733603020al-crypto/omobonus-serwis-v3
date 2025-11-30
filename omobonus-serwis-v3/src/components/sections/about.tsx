@@ -54,14 +54,17 @@ export function About() {
               </p>
             </div>
 
-            <div>
+            <div className="space-y-1">
+              <p className="text-2xl md:text-3xl font-serif font-semibold text-white">
+                „Szacunek do klienta i brak oszustwa"
+              </p>
               <p className="text-xl md:text-2xl font-serif text-white">
-                „Szacunek do klienta i brak oszustwa" to nasze podstawowe zasady pracy.
+                to nasze podstawowe zasady pracy
               </p>
             </div>
 
             <div>
-              <p className="text-base md:text-lg text-primary mb-3">
+              <p className="text-base md:text-lg text-[#bfa76a] mb-3">
                 Współpracując z nami, możesz mieć pewność, że:
               </p>
               <ul className="space-y-1.5">
@@ -76,7 +79,7 @@ export function About() {
                 ].map((text, idx) => (
                   <li key={idx} className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-primary italic text-sm leading-tight">{text}</span>
+                    <span className="text-[#bfa76a] italic text-sm leading-tight">{text}</span>
                   </li>
                 ))}
               </ul>

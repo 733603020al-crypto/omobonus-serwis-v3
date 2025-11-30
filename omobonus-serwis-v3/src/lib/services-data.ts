@@ -480,9 +480,10 @@ const faqSection: PricingSection = {
     },
     {
       id: 'faq-4',
-      title: 'Czy oferujecie dojazd do Klienta? I czy mogę samodzielnie dostarczyć urządzenie do naprawy?',
+      title: 'Czy oferujecie dojazd do Klienta? Czy mogę samodzielnie dostarczyć urządzenie do naprawy?',
       items: [],
-      answer: 'Tak, działamy we Wrocławiu i okolicach.\n\n**Dojazd i diagnoza są GRATIS**, jeśli klient akceptuje koszt naprawy. W przypadku prostych usterek możemy naprawić urządzenie na miejscu, a w razie potrzeby zabierzemy ją do naszego serwisu.\n\nW przypadku rezygnacji koszt wynosi **50 zł brutto** (czas + dojazd derwisanta).\n\nI tak, również Państwo mogą samodzielnie dostarczyć do naszej siedziby we Wrocławiu. Przy dostawie urządzenia do naszej siedziby gwarantujemy kompleksową, szybką i bezpłatną diagnostykę w obecności klienta, ciepłe powitanie i darmową kawę (herbatę).',
+      answer:
+        'Tak, świadczymy usługi serwisowe we Wrocławiu i okolicach.\n\nDojazd serwisanta i diagnoza są GRATIS, jeśli Klient akceptuje zaproponowany koszt naprawy. W przypadku prostych usterek możemy naprawić urządzenie na miejscu, a jeśli zajdzie taka potrzeba – zabierzemy je do naszego serwisu.\n\nW przypadku rezygnacji z naprawy koszt wizyty wynosi 50 zł brutto (czas + dojazd serwisanta).\n\nOczywiście mogą Państwo również samodzielnie dostarczyć urządzenie do naszej siedziby we Wrocławiu. Na miejscu zapewniamy kompleksową, szybką i bezpłatną diagnostykę w obecności Klienta, miłe przywitanie oraz darmową kawę lub herbatę.',
     },
     {
       id: 'faq-5',

@@ -27,6 +27,18 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
+const defaultFormValues: Partial<FormValues> = {
+  name: '',
+  phone: '',
+  email: '',
+  address: '',
+  deviceType: undefined,
+  deviceModel: '',
+  problemDescription: '',
+  replacementPrinter: false,
+  agreements: undefined,
+}
+
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -39,17 +51,7 @@ export function Contact() {
     reset,
   } = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      phone: '',
-      email: '',
-      address: '',
-      deviceType: undefined,
-      deviceModel: '',
-      problemDescription: '',
-      replacementPrinter: false,
-      agreements: undefined as any,
-    },
+    defaultValues: defaultFormValues,
   })
 
   const onSubmit = async (data: FormValues) => {
@@ -68,7 +70,7 @@ export function Contact() {
       }
 
       setShowSuccessModal(true)
-      reset()
+      reset(defaultFormValues)
     } catch (error) {
       console.error('Error submitting form:', error)
       alert('Wystąpił błąd podczas wysyłania formularza. Spróbuj ponownie.')

@@ -10,8 +10,10 @@ interface CustomPhoneInputProps {
   className?: string
 }
 
+const DEFAULT_COUNTRY = countries[1]
+
 export function CustomPhoneInput({ value, onChange, className = '' }: CustomPhoneInputProps) {
-  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[1]) // По умолчанию Польша
+  const [selectedCountry, setSelectedCountry] = useState<Country>(DEFAULT_COUNTRY) // По умолчанию Польша
   const [phoneNumber, setPhoneNumber] = useState('')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -20,24 +22,28 @@ export function CustomPhoneInput({ value, onChange, className = '' }: CustomPhon
 
   // Инициализация: извлекаем код страны и номер из value
   useEffect(() => {
-    if (value) {
-      // Ищем страну по коду
-      const country = countries.find(c => value.startsWith(c.dialCode))
-      if (country) {
-        setSelectedCountry(country)
-        const number = value.replace(country.dialCode, '').trim().replace(/\D/g, '')
-        // Форматируем номер согласно формату страны
-        if (country.phoneFormat && number.length > 0) {
-          const formatted = formatPhoneNumber(number, country.phoneFormat)
-          setPhoneNumber(formatted)
-        } else {
-          setPhoneNumber(number)
-        }
-      } else {
-        setPhoneNumber(value)
-      }
+    if (!value) {
+      setSelectedCountry(DEFAULT_COUNTRY)
+      setPhoneNumber('')
+      return
     }
-  }, [])
+
+    // Ищем страну по коду
+    const country = countries.find(c => value.startsWith(c.dialCode))
+    if (country) {
+      setSelectedCountry(country)
+      const number = value.replace(country.dialCode, '').trim().replace(/\D/g, '')
+      if (country.phoneFormat && number.length > 0) {
+        const formatted = formatPhoneNumber(number, country.phoneFormat)
+        setPhoneNumber(formatted)
+      } else {
+        setPhoneNumber(number)
+      }
+    } else {
+      setSelectedCountry(DEFAULT_COUNTRY)
+      setPhoneNumber(value)
+    }
+  }, [value])
 
   // Закрытие выпадающего списка при клике вне компонента
   useEffect(() => {
@@ -114,14 +120,17 @@ export function CustomPhoneInput({ value, onChange, className = '' }: CustomPhon
     : selectedCountry.name
 
   return (
-    <div ref={containerRef} className={`relative w-full flex items-start gap-0 ${className}`}>
+    <div
+      ref={containerRef}
+      className={`relative w-full flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 ${className}`}
+    >
       {/* Первая строка: Флаг + Название + Код (справа) + Кнопка выпадающего списка */}
       <button
         type="button"
         ref={selectorRowRef}
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="group flex items-center gap-3 border border-black/60 rounded-sm px-4 py-2 cursor-pointer hover:border-2 hover:border-black/80 hover:bg-[rgba(0,0,0,0.05)] hover:shadow-[0_0_4px_rgba(0,0,0,0.3)] focus:border-2 focus:border-black/80 focus:bg-[rgba(0,0,0,0.05)] focus:shadow-[0_0_4px_rgba(0,0,0,0.3)] transition-all duration-250"
-        style={{ height: '42px', width: `${fixedDropdownWidth}px`, minWidth: `${fixedDropdownWidth}px` }}
+        className="group flex items-center gap-3 border border-black/60 rounded-sm px-4 py-2 cursor-pointer hover:border-2 hover:border-black/80 hover:bg-[rgba(0,0,0,0.05)] hover:shadow-[0_0_4px_rgba(0,0,0,0.3)] focus:border-2 focus:border-black/80 focus:bg-[rgba(0,0,0,0.05)] focus:shadow-[0_0_4px_rgba(0,0,0,0.3)] transition-all duration-250 w-full sm:w-[280px] sm:min-w-[280px]"
+        style={{ height: '42px' }}
       >
         <Image
           src={selectedCountry.flagImage}
@@ -159,13 +168,13 @@ export function CustomPhoneInput({ value, onChange, className = '' }: CustomPhon
       </button>
 
       {/* Поле ввода (горизонтально рядом с селектором страны) */}
-      <div className="flex-1">
+      <div className="flex-1 w-full">
         <input
           type="tel"
           value={phoneNumber} // Display only the number part
           onChange={handlePhoneChange}
           placeholder={getPlaceholder()}
-          className="w-full !bg-transparent border border-black/60 rounded-sm px-4 py-2 text-black text-lg md:text-xl font-sans font-medium placeholder:text-black/60 focus:outline-none hover:border-2 hover:border-black/80 hover:bg-[rgba(0,0,0,0.05)] hover:shadow-[0_0_4px_rgba(0,0,0,0.3)] focus:border-2 focus:border-black/80 focus:bg-[rgba(0,0,0,0.05)] focus:shadow-[0_0_4px_rgba(0,0,0,0.3)] transition-all duration-250"
+          className="w-full !bg-transparent border border-black/60 rounded-sm px-4 py-2 text-black text-lg md:text-xl font-sans font-medium placeholder:text-black/60 focus:outline-none hover:border-2 hover:border-black/80 hover:bg-[rgba(0,0,0,0.05)] hover:shadow-[0_0_4px_rgba(0,0,0,0.3)] focus:border-2 focus:border-black/80 focus:bg-[rgba(0,0,0,0.05)] focus:shadow-[0_0_4px_rgba(0,0,0,0.3)] transition-all duration-250 mt-2 sm:mt-0"
           style={{ backgroundColor: 'transparent', height: '42px' }}
         />
       </div>

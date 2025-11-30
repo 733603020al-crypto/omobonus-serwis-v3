@@ -753,6 +753,44 @@
       inset 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
   }
 
+  .modal-card-outer {
+    background-image: 
+      linear-gradient(
+        to bottom,
+        rgba(58, 43, 23, 0.50) 0%,
+        rgba(52, 36, 20, 0.85) 100%
+      ),
+      url('/images/services-background.png');
+    background-color: transparent;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 
+      0 6px 16px rgba(0, 0, 0, 0.5),
+      0 3px 8px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 245, 200, 0.15),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .modal-card-inner {
+    background-image: 
+      linear-gradient(
+        to bottom,
+        rgba(58, 43, 23, 0.48) 0%,
+        rgba(52, 36, 20, 0.82) 100%
+      ),
+      url('/images/services-background.png');
+    background-color: transparent;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 2px 6px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 245, 200, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+  }
+
   /* Благородный золотой цвет для подзаголовка - как на странице "Nasze Usługi" */
   .golden-glow-text {
     color: #bfa76a;

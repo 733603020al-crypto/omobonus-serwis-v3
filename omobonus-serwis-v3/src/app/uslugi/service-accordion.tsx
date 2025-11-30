@@ -327,7 +327,6 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
   const isLaserService = service.slug === 'serwis-drukarek-laserowych'
   const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
-  const isLaptopService = service.slug === 'serwis-laptopow'
   const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
 
   const renderPriceTooltipContent = () => {
@@ -484,12 +483,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
                     {section.id !== 'faq' && (
                       <>
-                        <div
-                          className={cn(
-                            'flex items-center gap-3 ml-3 sm:gap-4 sm:ml-4 flex-shrink-0',
-                            isLaptopService && section.id === 'diagnoza' ? 'hidden md:flex' : ''
-                          )}
-                        >
+                        <div className="flex items-center gap-3 ml-3 sm:gap-4 sm:ml-4 flex-shrink-0">
                           <div
                             className={cn(
                               'flex items-center justify-center',

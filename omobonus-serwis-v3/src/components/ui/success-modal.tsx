@@ -31,10 +31,10 @@ export function SuccessModal({ isOpen, onClose }: SuccessModalProps) {
 
       {/* Modal content */}
       <div
-        className="relative z-10 w-full max-w-md rounded-lg shadow-2xl overflow-visible animate-modal-appear"
+        className="relative z-10 w-full max-w-lg rounded-lg shadow-2xl overflow-visible animate-modal-appear"
         onClick={(e) => e.stopPropagation()}
         style={{
-          backgroundImage: 'url(/images/Background_1.png)',
+          backgroundImage: "url('/images/services-background.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -60,19 +60,25 @@ export function SuccessModal({ isOpen, onClose }: SuccessModalProps) {
         </div>
 
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/50 rounded-lg" />
+        <div
+          className="absolute inset-0 rounded-lg pointer-events-none"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        />
 
-        <div className="relative z-10 p-8 md:p-10 text-center">
+        <div className="relative z-10 p-8 md:p-10 text-center space-y-3">
           {/* Success message */}
           <h3 className="text-white text-3xl md:text-4xl font-cormorant font-bold mb-4 drop-shadow-lg">
             Dziękujemy za zgłoszenie!
           </h3>
 
-          <p className="text-white/90 text-base md:text-lg font-sans mb-2 drop-shadow-md">
-            Twoja wiadomość została pomyślnie wysłana. Skontaktujemy się z Tobą w najbliższym czasie, aby potwierdzić szczegóły.{' '}
-            <span className="italic">
-              Prosimy o cierpliwość — Twoje zgłoszenie jest już w dobrych rękach.
-            </span>
+          <p className="text-white/90 text-base md:text-lg font-sans drop-shadow-md">
+            Twoja wiadomość została pomyślnie wysłana.
+          </p>
+          <p className="text-white/90 text-base md:text-lg font-sans drop-shadow-md">
+            Skontaktujemy się z Tobą w najbliższym czasie, aby potwierdzić szczegóły.
+          </p>
+          <p className="text-white/90 text-base md:text-lg font-sans drop-shadow-md">
+            Prosimy o cierpliwość — Twoje zgłoszenie jest już w dobrych rękach
           </p>
 
           {/* OK button */}
@@ -87,3 +93,4 @@ export function SuccessModal({ isOpen, onClose }: SuccessModalProps) {
     </div>
   )
 }
+

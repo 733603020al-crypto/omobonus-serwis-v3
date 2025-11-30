@@ -1313,7 +1313,7 @@ const applyLaserPaperFeedSubcategory = (sections: PricingSection[]) => {
   paperSubcategory.items = [
     {
       service:
-        'Usuwanie zaciętego papieru / ciał obcych z toru papieru\n(spinacze, resztki papieru, kurz) (typowa przyczyna powtarzających się zacięć)',
+        'Usuwanie zaciętego papieru / ciał obcych z toru papieru\n(spinacze, resztki papieru, kurz, ... - typowa przyczyna powtarzających się zacięć)',
       price: '40 / 70 / 100',
       duration: 'od ręki',
     },
@@ -1325,7 +1325,7 @@ const applyLaserPaperFeedSubcategory = (sections: PricingSection[]) => {
     },
     {
       service:
-        'Czyszczenie lub wymiana prowadnic, rolek lub klap rejestracji papieru.\nRównież w module duplex (eliminuje przechylone wydruki i „krzywe prowadzenie”)',
+        'Czyszczenie lub wymiana prowadnic, rolek lub klap rejestracji papieru.\nRównież w module duplex, eliminuje przechylone wydruki i „krzywe prowadzenie”',
       price: '90 / 140 / 180 + części',
       duration: '1-3 dni',
     },
@@ -1337,7 +1337,7 @@ const applyLaserPaperFeedSubcategory = (sections: PricingSection[]) => {
     },
     {
       service:
-        'Naprawa lub wymiana sprzęgła poboru / solenoidu\n(typowa usterka HP/Brother – papier wchodzi za wcześnie lub wcale)',
+        'Naprawa lub wymiana sprzęgła poboru / solenoidu\n(typowa usterka HP/Brother – papier wchodzi za wcześnie lub wcale nie wchodzi)',
       price: '100 / 150 / 200 + części',
       duration: '1-3 dni',
     },
@@ -1455,13 +1455,13 @@ const applyLaserImagingSubcategory = (sections: PricingSection[]) => {
   imagingSubcategory.items = [
     {
       service:
-        'Wymiana bębna obrazującego i listwy czyszczącej bębna (cleaning blade)\n(drum / image unit). Reset licznika. Kalibracja kolorów / rejestracji po wymianie modułów (eliminuje pasy i zabrudzenia powtarzalne na kartce)',
+        'Wymiana bębna obrazującego i listwy czyszczącej bębna (cleaning blade)\n(drum / image unit). Reset licznika. Kalibracja kolorów / rejestracji po wymianie modułów\n(eliminuje pasy i zabrudzenia powtarzalne na kartce)',
       price: '120 / 170 / 240 + części',
       duration: '1-3 dni',
     },
     {
       service:
-        'Wymiana pasa transferowego lub rolki transferowej.\nKalibracja kolorów / rejestracji po wymianie modułów (usuwa kolorowe smugi, przesunięcia kolorów i brudzenie papieru)',
+        'Wymiana pasa transferowego lub rolki transferowej.\nKalibracja kolorów / rejestracji po wymianie modułów\n(usuwa kolorowe smugi, przesunięcia kolorów i brudzenie papieru)',
       price: '160 / 240 / 320 + części',
       duration: '1-3 dni',
     },
@@ -1479,7 +1479,7 @@ const applyLaserImagingSubcategory = (sections: PricingSection[]) => {
     },
     {
       service:
-        'Regeneracja / serwis zespołu utrwalającego (fuser)\n(czyszczenie, wymiana folii / wałka dociskowego, elementu grzejnego, termistora, bezpiecznika fusera, kół zębatych, łożysk, tulei, smarowanie, testy) (usuwa rozmazywanie tonera i zaginanie papieru)',
+        'Regeneracja / serwis zespołu utrwalającego (fuser)\n(czyszczenie, wymiana folii / wałka dociskowego, elementu grzejnego, termistora, bezpiecznika fusera, kół zębatych, łożysk, tulei, smarowanie, testy - usuwa rozmazywanie tonera i zaginanie papieru)',
       price: '150 / 200 / 250 + części',
       duration: '1-3 dni',
     },
@@ -1552,7 +1552,7 @@ const applyLaserElectronicsSubcategory = (sections: PricingSection[]) => {
     },
     {
       service:
-        'Naprawa lub wymiana uszkodzonego panelu sterowania\n(przyciski, taśmy, sensory), panelu dotykowego / ekranu LCD',
+        'Naprawa lub wymiana uszkodzonego panelu sterowania\n(przyciski, taśmy, sensory), panelu dotykowego / ekranu LCD)',
       price: '140 / 200 / 260\n+ część',
       duration: '2-5 dni',
     },
@@ -1885,7 +1885,7 @@ const applyInkjetElectronicsSubcategory = (sections: PricingSection[]) => {
     },
     {
       service:
-        'Naprawa lub wymiana uszkodzonego panelu sterowania (przyciski, taśmy, sensory), panelu dotykowego / ekranu LCD',
+        'Naprawa lub wymiana uszkodzonego panelu sterowania (przyciski, taśmy, sensory), panelu dotykowego / ekranu LCD)',
       price: '140 / 200 / 260 + część',
       duration: '2-5 dni',
     },

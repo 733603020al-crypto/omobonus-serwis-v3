@@ -291,13 +291,13 @@ const DEVICE_CATEGORIES = [
     title: 'Drukarka domowa',
     description:
       'Urządzenie do użytku domowego (okazjonalnego drukowania). Małe modele A4',
-    features: ['małe wymiary', 'wolniejszy druk', 'podstawowe funkcje'],
+    features: ['małe wymiary', 'wolniejszy druk'],
     examples: '',
   },
   {
     title: 'Drukarka biurowa',
     description:
-      'Do pracy w małych i średnich biurach. Przystosowana do częstszego drukowania i pracy w sieci.',
+      'Do pracy w małych i średnich biurach. Do częstszego drukowania.',
     features: ['średni rozmiar', 'szybszy druk', 'wyższa trwałość'],
     examples: '',
   },
@@ -305,7 +305,7 @@ const DEVICE_CATEGORIES = [
     title: 'Drukarka biznesowa',
     description:
       'Duże urządzenia A4/A3 do intensywnej codziennej pracy i dużych wolumenów wydruku.',
-    features: ['bardzo wysoka wytrzymałość', 'duże, wydajne tonery i kasety', 'przystosowana do dużych nakładów druku'],
+    features: ['do dużych nakładów z wysoką wytrzymałością'],
     examples: '',
   },
 ]
@@ -331,14 +331,14 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
     return (
       <div
-        className="relative pointer-events-auto w-[min(calc(100vw-64px),900px)] max-h-[88vh] overflow-y-auto rounded-2xl border border-[rgba(215,185,120,0.55)] shadow-[0_30px_55px_rgba(0,0,0,0.6)] text-[#f8eacd]"
+        className="relative pointer-events-auto w-[min(calc(100vw-64px),900px)] max-h-[88vh] overflow-y-auto rounded-2xl border border-[rgba(200,169,107,0.45)] shadow-[0_22px_45px_rgba(0,0,0,0.5)] text-[#f8eacd]"
         style={{
           backgroundImage: "url('/images/services-background.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
-        <div className="absolute inset-0 rounded-2xl bg-[rgba(32,21,8,0.8)] pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl bg-[rgba(0,0,0,0.5)] pointer-events-none" />
         <div className="relative p-6 md:p-7 space-y-6">
           <div className="text-center space-y-2">
             <h4 className="text-[22px] md:text-[26px] font-cormorant font-semibold text-white tracking-wide">
@@ -369,11 +369,9 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                     {category.description}
                   </p>
                 </div>
-                <ul className="text-[13px] text-[#d5c39f] leading-snug space-y-1 font-table-sub text-left list-disc list-inside mt-auto pt-2">
-                  {category.features.map(feature => (
-                    <li key={feature}>{feature}</li>
-                  ))}
-                </ul>
+                <p className="text-[13px] text-[rgba(255,255,245,0.85)] leading-snug font-table-sub text-center mt-auto pt-2">
+                  {category.features.join(', ')}
+                </p>
               </div>
             ))}
           </div>

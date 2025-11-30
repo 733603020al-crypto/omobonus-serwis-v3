@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import manifest from '@/config/KANONICZNY_MANIFEST.json'
@@ -310,6 +311,12 @@ const DEVICE_CATEGORIES = [
   },
 ]
 
+const SPECIAL_TOOLTIP_SERVICES = new Set([
+  'serwis-drukarek-laserowych',
+  'serwis-drukarek-atramentowych',
+  'serwis-drukarek-termicznych',
+])
+
 const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const [openSection, setOpenSection] = useState<string | null>(null)
   const [openSubcategory, setOpenSubcategory] = useState<string | null>(null)
@@ -319,6 +326,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const subcategoryRefs = useRef<ScrollRefs>({})
   const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
   const isLaserService = service.slug === 'serwis-drukarek-laserowych'
+  const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
   const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
 
   const renderPriceTooltipContent = () => {
@@ -443,7 +451,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
               <div className="group relative min-h-[70px] rounded-lg py-2 px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl group-data-[state=open]:border-b group-data-[state=open]:border-b-[rgba(191,167,106,0.2)] w-full bg-[rgba(5,5,5,0.85)]">
                 <AccordionTrigger className="hover:no-underline [&>svg]:hidden w-full group !py-0 !items-center !gap-0">
                   <div className="flex items-center w-full text-left">
-                    <div className="flex items-center flex-1">
+                    <div className="flex items-center flex-1 min-w-0">
                       <div className="mr-4 w-[50px] h-[50px] flex-shrink-0 flex items-center justify-center">
                         <Image
                           src={getIconForSection(section.id)}
@@ -457,7 +465,14 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
                       <div className="flex-1">
                         <h3 className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] group-hover:text-white transition-colors mb-1 leading-tight">
-                          {section.title}
+                          <span className="md:hidden">
+                            {section.id === 'konserwacja'
+                              ? 'Czyszczenie i konserwacja'
+                              : section.id === 'naprawy'
+                              ? 'Naprawy i usługi serwisowe'
+                              : section.title}
+                          </span>
+                          <span className="hidden md:inline">{section.title}</span>
                         </h3>
                         <div className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform group-data-[state=open]:hidden">
                           <span>{section.id === 'faq' ? 'Zobacz' : 'Zobacz cennik'}</span>
@@ -467,16 +482,31 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                     </div>
 
                     {section.id !== 'faq' && (
-                      <div className="flex items-center gap-4 ml-4">
-                        <div className="flex items-center justify-center min-w-[120px]">
+                      <div className="flex items-center gap-3 ml-3 sm:gap-4 sm:ml-4 flex-shrink-0">
+                        <div
+                          className={cn(
+                            'flex items-center justify-center',
+                            section.id === 'diagnoza' || section.id === 'dojazd'
+                              ? 'min-w-[96px] sm:min-w-[120px]'
+                              : 'min-w-0 sm:min-w-[120px]'
+                          )}
+                        >
                           {(section.id === 'diagnoza' || section.id === 'dojazd') && (
-                            <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden">
+                            <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden whitespace-nowrap">
                               GRATIS
                             </span>
                           )}
                           <div className="text-center hidden group-data-[state=open]:block">
-                            <div className="flex items-center justify-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05]">
-                              Cena, zł
+                            <div
+                              className={cn(
+                                'flex items-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05] whitespace-nowrap',
+                                section.id === 'diagnoza' || section.id === 'dojazd'
+                                  ? 'justify-center'
+                                  : 'justify-end'
+                              )}
+                            >
+                              <span className="hidden sm:inline">Cena, zł</span>
+                              <span className="inline sm:hidden">Cena</span>
                               <TooltipProvider>
                                 <Tooltip
                                   onOpenChange={open => {
@@ -490,31 +520,30 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       <Info className="w-4 h-4 opacity-70" />
                                     </span>
                                   </TooltipTrigger>
-                              <TooltipContent
-                                {...(isLaserService
-                                  ? {
-                                      side: 'left' as const,
-                                      align: 'center' as const,
-                                      sideOffset: 16,
-                                      collisionPadding: 16,
-                                      className: 'p-0 border-none bg-transparent shadow-none max-w-none rounded-none',
-                                    }
-                                  : { sideOffset: 4 })}
-                              >
-                                {isLaserService ? (
-                                  <>
-                                    <div className="fixed inset-0 bg-[rgba(0,0,0,0.35)] pointer-events-none" />
-                                    <div className="relative">{renderPriceTooltipContent()}</div>
-                                  </>
-                                ) : (
-                                  renderPriceTooltipContent()
-                                )}
-                              </TooltipContent>
+                                  <TooltipContent
+                                    {...(isLaserService
+                                      ? {
+                                          side: 'left' as const,
+                                          align: 'center' as const,
+                                          sideOffset: 16,
+                                          collisionPadding: 16,
+                                          className: 'p-0 border-none bg-transparent shadow-none max-w-none rounded-none',
+                                        }
+                                      : { sideOffset: 4 })}
+                                  >
+                                    {isSpecialTooltipService ? (
+                                      renderPriceTooltipContent()
+                                    ) : (
+                                      <p className="max-w-xs text-sm leading-snug text-[#f8f1db]">
+                                        cena z VAT (brutto)
+                                      </p>
+                                    )}
+                                  </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
                             </div>
                             <span
-                              className="font-table-sub text-[14px] text-[#ede0c4] block mt-0.5 leading-[1.1]"
+                              className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 leading-[1.1] hidden sm:block"
                               style={{ textShadow: supplementTextShadow }}
                             >
                               (kategorie urządzeń)
@@ -522,7 +551,14 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-center min-w-[120px] hidden md:flex">
+                        <div
+                          className={cn(
+                            'items-center justify-center hidden md:flex',
+                            section.id === 'diagnoza' || section.id === 'dojazd'
+                              ? 'min-w-[120px]'
+                              : 'min-w-0'
+                          )}
+                        >
                           <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block leading-[1.05]">
                             <div className="leading-[1.05]">Czas</div>
                             <div className="leading-[1.05]">realizacji</div>

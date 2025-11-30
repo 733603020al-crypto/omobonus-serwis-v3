@@ -327,6 +327,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
   const isLaserService = service.slug === 'serwis-drukarek-laserowych'
   const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
+  const isLaptopService = service.slug === 'serwis-laptopow'
   const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
 
   const renderPriceTooltipContent = () => {
@@ -482,89 +483,110 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                     </div>
 
                     {section.id !== 'faq' && (
-                      <div className="flex items-center gap-3 ml-3 sm:gap-4 sm:ml-4 flex-shrink-0">
+                      <>
                         <div
                           className={cn(
-                            'flex items-center justify-center',
-                            section.id === 'diagnoza' || section.id === 'dojazd'
-                              ? 'min-w-[96px] sm:min-w-[120px]'
-                              : 'min-w-0 sm:min-w-[120px]'
+                            'flex items-center gap-3 ml-3 sm:gap-4 sm:ml-4 flex-shrink-0',
+                            isLaptopService && section.id === 'diagnoza' ? 'hidden md:flex' : ''
                           )}
                         >
-                          {(section.id === 'diagnoza' || section.id === 'dojazd') && (
-                            <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden whitespace-nowrap">
-                              GRATIS
-                            </span>
-                          )}
-                          <div className="text-center hidden group-data-[state=open]:block">
-                            <div
-                              className={cn(
-                                'flex items-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05] whitespace-nowrap',
-                                section.id === 'diagnoza' || section.id === 'dojazd'
-                                  ? 'justify-center'
-                                  : 'justify-end'
-                              )}
-                            >
-                              <span className="hidden sm:inline">Cena, zł</span>
-                              <span className="inline sm:hidden">Cena</span>
-                              <TooltipProvider>
-                                <Tooltip
-                                  onOpenChange={open => {
-                                    if (isLaserService) {
-                                      setCategoryTooltipOpen(open)
-                                    }
-                                  }}
-                                >
-                                  <TooltipTrigger asChild>
-                                    <span className="inline-flex cursor-help text-white/80">
-                                      <Info className="w-4 h-4 opacity-70" />
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent
-                                    {...(isLaserService
-                                      ? {
-                                          side: 'left' as const,
-                                          align: 'center' as const,
-                                          sideOffset: 16,
-                                          collisionPadding: 16,
-                                          className: 'p-0 border-none bg-transparent shadow-none max-w-none rounded-none',
-                                        }
-                                      : { sideOffset: 4 })}
+                          <div
+                            className={cn(
+                              'flex items-center justify-center',
+                              section.id === 'diagnoza' || section.id === 'dojazd'
+                                ? 'min-w-[96px] sm:min-w-[120px]'
+                                : 'min-w-0 sm:min-w-[120px]'
+                            )}
+                          >
+                            {(section.id === 'diagnoza' || section.id === 'dojazd') && (
+                              <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden whitespace-nowrap">
+                                GRATIS
+                              </span>
+                            )}
+                            <div className="text-center hidden group-data-[state=open]:block w-full">
+                              <div
+                                className={cn(
+                                  'flex items-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05] whitespace-nowrap',
+                                  section.id === 'diagnoza' || section.id === 'dojazd'
+                                    ? 'justify-center'
+                                    : 'justify-end'
+                                )}
+                              >
+                                <span className="hidden sm:inline">Cena, zł</span>
+                                <span className="inline sm:hidden">Cena</span>
+                                <TooltipProvider delayDuration={100}>
+                                  <Tooltip
+                                    onOpenChange={open => {
+                                      if (isLaserService) {
+                                        setCategoryTooltipOpen(open)
+                                      }
+                                    }}
                                   >
-                                    {isSpecialTooltipService ? (
-                                      renderPriceTooltipContent()
-                                    ) : (
-                                      <p className="max-w-xs text-sm leading-snug text-[#f8f1db]">
-                                        cena z VAT (brutto)
-                                      </p>
-                                    )}
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                                    <TooltipTrigger asChild>
+                                      <span
+                                      role="button"
+                                      tabIndex={0}
+                                      aria-label="Informacja o cenach"
+                                      onClick={event => event.stopPropagation()}
+                                      onPointerDown={event => event.stopPropagation()}
+                                      onKeyDown={event => {
+                                        if (event.key === 'Enter' || event.key === ' ') {
+                                          event.preventDefault()
+                                          event.stopPropagation()
+                                        }
+                                      }}
+                                        className="inline-flex items-center justify-center text-white/80 rounded-full focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none ml-1 -mr-2 sm:mr-0 p-2 sm:p-1 cursor-pointer"
+                                      >
+                                        <Info className="w-4 h-4 opacity-70 pointer-events-none" />
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      {...(isLaserService
+                                        ? {
+                                            side: 'left' as const,
+                                            align: 'center' as const,
+                                            sideOffset: 16,
+                                            collisionPadding: 16,
+                                            className: 'p-0 border-none bg-transparent shadow-none max-w-none rounded-none',
+                                          }
+                                        : { sideOffset: 4 })}
+                                    >
+                                      {isSpecialTooltipService ? (
+                                        renderPriceTooltipContent()
+                                      ) : (
+                                        <p className="max-w-xs text-sm leading-snug text-[#f8f1db]">
+                                          cena z VAT (brutto)
+                                        </p>
+                                      )}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                              <span
+                                className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 leading-[1.1] hidden sm:block"
+                                style={{ textShadow: supplementTextShadow }}
+                              >
+                                (kategorie urządzeń)
+                              </span>
                             </div>
-                            <span
-                              className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 leading-[1.1] hidden sm:block"
-                              style={{ textShadow: supplementTextShadow }}
-                            >
-                              (kategorie urządzeń)
-                            </span>
+                          </div>
+
+                          <div
+                            className={cn(
+                              'items-center justify-center hidden md:flex',
+                              section.id === 'diagnoza' || section.id === 'dojazd'
+                                ? 'min-w-[120px]'
+                                : 'min-w-0'
+                            )}
+                          >
+                            <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block leading-[1.05]">
+                              <div className="leading-[1.05]">Czas</div>
+                              <div className="leading-[1.05]">realizacji</div>
+                            </div>
                           </div>
                         </div>
 
-                        <div
-                          className={cn(
-                            'items-center justify-center hidden md:flex',
-                            section.id === 'diagnoza' || section.id === 'dojazd'
-                              ? 'min-w-[120px]'
-                              : 'min-w-0'
-                          )}
-                        >
-                          <div className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] text-center hidden group-data-[state=open]:block leading-[1.05]">
-                            <div className="leading-[1.05]">Czas</div>
-                            <div className="leading-[1.05]">realizacji</div>
-                          </div>
-                        </div>
-                      </div>
+                      </>
                     )}
                   </div>
                 </AccordionTrigger>

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Paperclip, X } from 'lucide-react'
 import Link from 'next/link'
 import manifest from '@/config/KANONICZNY_MANIFEST.json'
 import { CustomPhoneInput } from '@/components/ui/custom-phone-input'
@@ -39,9 +39,32 @@ const defaultFormValues: Partial<FormValues> = {
   agreements: undefined,
 }
 
+const MAX_FILE_SIZE_MB = 25
+const ACCEPTED_PREFIXES = [
+  'image/',
+  'video/',
+  'text/',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-excel.sheet.macroEnabled.12',
+  'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+]
+
+type AttachmentPreview = {
+  id: string
+  file: File
+  url: string
+  kind: 'image' | 'video' | 'file'
+}
+
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [attachments, setAttachments] = useState<AttachmentPreview[]>([])
+  const [attachmentError, setAttachmentError] = useState<string | null>(null)
 
   const {
     register,
@@ -57,12 +80,17 @@ export function Contact() {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true)
     try {
+      const formData = new FormData()
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value as string | Blob)
+      })
+      attachments.forEach(preview => {
+        formData.append('attachments', preview.file)
+      })
+
       const response = await fetch('/api/send-email', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        body: formData,
       })
 
       if (!response.ok) {
@@ -71,6 +99,9 @@ export function Contact() {
 
       setShowSuccessModal(true)
       reset(defaultFormValues)
+      attachments.forEach(preview => URL.revokeObjectURL(preview.url))
+      setAttachments([])
+      setAttachmentError(null)
     } catch (error) {
       console.error('Error submitting form:', error)
       alert('Wystąpił błąd podczas wysyłania formularza. Spróbuj ponownie.')
@@ -251,6 +282,121 @@ export function Contact() {
               {errors.problemDescription && (
                 <p className="text-red-600 text-sm">{errors.problemDescription.message}</p>
               )}
+            </div>
+
+            {/* Załączniki */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <label className="text-black font-bold font-sans text-base md:text-lg">
+                  Załącz zdjęcia / filmy (opcjonalnie)
+                </label>
+                <label
+                  htmlFor="attachments"
+                  className="inline-flex items-center gap-1 text-[#3a2e24] text-sm font-semibold cursor-pointer border border-[#3a2e24]/40 rounded-full px-3 py-1 hover:bg-[#3a2e24]/10 transition-colors"
+                >
+                  <Paperclip className="w-4 h-4" />
+                  Dodaj
+                </label>
+              </div>
+              <p className="text-[#3a2e24] text-sm italic font-sans">
+                Załączone materiały pomogą nam szybciej i dokładniej zidentyfikować problem oraz
+                przygotować wycenę naprawy
+              </p>
+              <input
+                id="attachments"
+                type="file"
+                accept="image/*,video/*,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
+                multiple
+                className="hidden"
+                onChange={event => {
+                  const files = Array.from(event.target.files ?? [])
+                  if (!files.length) return
+
+                  let error: string | null = null
+                  const nextPreviews: AttachmentPreview[] = []
+
+                  files.forEach(file => {
+                    const typeValid = ACCEPTED_PREFIXES.some(prefix => file.type.startsWith(prefix))
+                    const sizeValid = file.size <= MAX_FILE_SIZE_MB * 1024 * 1024
+
+                    if (!typeValid) {
+                      error = 'Możesz przesłać tylko zdjęcia lub wideo.'
+                      return
+                    }
+
+                    if (!sizeValid) {
+                      error = `Plik ${file.name} jest zbyt duży (maks. ${MAX_FILE_SIZE_MB} MB).`
+                      return
+                    }
+
+                    const kind = file.type.startsWith('image/')
+                      ? 'image'
+                      : file.type.startsWith('video/')
+                      ? 'video'
+                      : 'file'
+
+                    nextPreviews.push({
+                      id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`,
+                      file,
+                      url: URL.createObjectURL(file),
+                      kind,
+                    })
+                  })
+
+                  setAttachmentError(error)
+                  if (nextPreviews.length) {
+                    setAttachments(prev => [...prev, ...nextPreviews])
+                  }
+                  event.target.value = ''
+                }}
+              />
+
+              {attachments.length > 0 && (
+                <div className="bg-white/5 border border-[#3a2e24]/20 rounded-lg p-3 space-y-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {attachments.map(preview => (
+                      <div key={preview.id} className="relative group">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAttachments(prev => {
+                              const rest = prev.filter(item => {
+                                if (item.id === preview.id) {
+                                  URL.revokeObjectURL(item.url)
+                                }
+                                return item.id !== preview.id
+                              })
+                              return rest
+                            })
+                          }}
+                          className="absolute top-1 right-1 bg-black/70 rounded-full p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                          aria-label={`Usuń ${preview.file.name}`}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                        <div className="w-full aspect-video border border-[#3a2e24]/30 rounded-md overflow-hidden bg-black/20 flex items-center justify-center">
+                          {preview.kind === 'image' ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={preview.url}
+                              alt={preview.file.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="text-[#bfa76a] text-xs text-center px-2 leading-tight">
+                              <p className="font-semibold mb-1">
+                                {preview.kind === 'video' ? 'VIDEO' : 'PLIK'}
+                              </p>
+                              <p className="break-all">{preview.file.name}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {attachmentError && <p className="text-red-600 text-sm">{attachmentError}</p>}
             </div>
 
             {/* Checkboxy */}

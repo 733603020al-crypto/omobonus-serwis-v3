@@ -187,6 +187,27 @@ const renderPriceLines = (price: string, link?: string) => {
     </div>
   )
 
+  const renderValueLine = (text: string, key?: string | number) => {
+    if (!text) return null
+    const compact = text.replace(/\s*\/\s*/g, '/')
+    const hasVariant = compact !== text
+    return (
+      <div
+        key={key ? `${text}-${key}` : undefined}
+        className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]"
+      >
+        {hasVariant ? (
+          <>
+            <span className="md:hidden">{compact}</span>
+            <span className="hidden md:inline">{text}</span>
+          </>
+        ) : (
+          text
+        )}
+      </div>
+    )
+  }
+
   return price.split('\n').map((line, idx) => {
     const trimmed = line.trim()
     if (!trimmed) return null
@@ -199,16 +220,13 @@ const renderPriceLines = (price: string, link?: string) => {
     const isStandaloneNumericPlus = isStandalonePlusSuffix && /^\+\s*\d/.test(trimmed)
     const isSupplement = lower.includes('stawka z cennika')
     const isPerMeasureSuffix = lower.startsWith('za ')
+    const isDoCenySuffix = lower === 'do ceny'
     if (isHourly) {
       const [val, suffix] = trimmed.split('/').map(part => part.trim())
       const suffixText = suffix ? `/ ${suffix}` : ''
       return (
         <div key={`${trimmed}-${idx}`}>
-          {val && (
-            <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
-              {val}
-            </div>
-          )}
+          {val && renderValueLine(val, `${trimmed}-${idx}-value`)}
           {suffixText && renderSuffixLine(suffixText)}
         </div>
       )
@@ -218,37 +236,19 @@ const renderPriceLines = (price: string, link?: string) => {
       const suffixText = trimmed.slice(plusIndex).trim()
       return (
         <div key={`${trimmed}-${idx}`}>
-          {value && (
-            <div className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
-              {value}
-            </div>
-          )}
+          {value && renderValueLine(value, `${trimmed}-${idx}-value`)}
           {suffixText && renderSuffixLine(suffixText)}
         </div>
       )
     }
     if (isStandaloneNumericPlus) {
-      return (
-        <div
-          key={`${trimmed}-${idx}`}
-          className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]"
-        >
-          {trimmed}
-        </div>
-      )
+      return renderValueLine(trimmed, `${trimmed}-${idx}`)
     }
 
-    if (isStandalonePlusSuffix || isSupplement || isPerMeasureSuffix) {
+    if (isStandalonePlusSuffix || isSupplement || isPerMeasureSuffix || isDoCenySuffix) {
       return renderSuffixLine(trimmed, idx)
     }
-    return (
-      <div
-        key={`${trimmed}-${idx}`}
-        className="font-inter text-[13px] md:text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3]"
-      >
-        {trimmed}
-      </div>
-    )
+    return renderValueLine(trimmed, `${trimmed}-${idx}`)
   })
 }
 
@@ -430,7 +430,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   }, [openSubcategory, openSection])
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 md:px-6 pb-20 relative z-10">
+    <div className="container max-w-4xl mx-auto px-1.5 sm:px-4 md:px-6 pb-20 relative z-10">
       <div className="flex flex-col gap-4">
         <Accordion
           type="single"
@@ -448,7 +448,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                 sectionRefs.current[section.id] = node
               }}
             >
-              <div className="group relative min-h-[70px] rounded-lg py-2 px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl group-data-[state=open]:border-b group-data-[state=open]:border-b-[rgba(191,167,106,0.2)] w-full bg-[rgba(5,5,5,0.85)]">
+              <div className="group relative min-h-[70px] rounded-lg py-1.5 px-1.5 sm:py-2 sm:px-2 md:px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl group-data-[state=open]:border-b group-data-[state=open]:border-b-[rgba(191,167,106,0.2)] w-full bg-[rgba(5,5,5,0.85)]">
                 <AccordionTrigger className="hover:no-underline [&>svg]:hidden w-full group !py-0 !items-center !gap-0">
                   <div className="flex items-center w-full text-left">
                     <div className="flex items-center flex-1 min-w-0">
@@ -516,11 +516,8 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       }
                                     }}
                                   >
-                                    <TooltipTrigger asChild>
-                                      <span
-                                      role="button"
-                                      tabIndex={0}
-                                      aria-label="Informacja o cenach"
+                                    <TooltipTrigger
+                                      className="ml-1 -mr-2 sm:mr-0"
                                       onClick={event => event.stopPropagation()}
                                       onPointerDown={event => event.stopPropagation()}
                                       onKeyDown={event => {
@@ -529,7 +526,12 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           event.stopPropagation()
                                         }
                                       }}
-                                        className="inline-flex items-center justify-center text-white/80 rounded-full focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none ml-1 -mr-2 sm:mr-0 p-2 sm:p-1 cursor-pointer"
+                                    >
+                                      <span
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Informacja o cenach"
+                                        className="inline-flex items-center justify-center text-white/80 rounded-full focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none p-2 sm:p-1 cursor-pointer"
                                       >
                                         <Info className="w-4 h-4 opacity-70 pointer-events-none" />
                                       </span>
@@ -605,7 +607,9 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                         >
                           <AccordionTrigger
                             className={`hover:no-underline text-left w-full !focus-visible:ring-0 !focus-visible:outline-none focus-visible:ring-transparent transition-all duration-200 ${
-                              section.id === 'faq' ? 'py-1 px-2 rounded-lg hover:border-[#ffecb3]/20' : 'py-2 px-3'
+                              section.id === 'faq'
+                                ? 'py-1 px-2 rounded-lg hover:border-[#ffecb3]/20'
+                                : 'py-1.5 px-1.5 md:py-2 md:px-3'
                             }`}
                           >
                             <div className="flex-1 w-full min-w-0">
@@ -650,7 +654,11 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               </div>
                             ) : (
                               <div className="rounded-lg border border-[#bfa76a]/10 overflow-hidden">
-                                <Table className="md:table-fixed">
+                                <Table className="table-fixed md:table-fixed border-collapse">
+                                  <colgroup className="md:hidden">
+                                    <col style={{ width: 'calc(100% - 125px)' }} />
+                                    <col style={{ width: '125px' }} />
+                                  </colgroup>
                                   <colgroup className="hidden md:table-column-group">
                                     <col style={{ width: '67%' }} />
                                     <col style={{ width: '16.5%' }} />
@@ -662,7 +670,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                         key={idx}
                                         className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
                                       >
-                                        <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 !whitespace-normal md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal">
+                                        <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 pl-0.5 pr-0.5 md:pl-2 md:pr-2 !whitespace-normal md:w-auto md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal overflow-hidden">
                                           {(() => {
                                             const parsed = parseServiceText(item.service)
                                             return (
@@ -683,14 +691,16 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           })()}
                                         </TableCell>
                                         <TableCell
-                                          className={`text-center py-1 align-middle min-w-[80px] leading-[1.3] ${
+                                          className={cn(
+                                            'py-1 pl-0.5 pr-1 md:pl-2 md:pr-2 align-middle leading-[1.3] text-left md:text-center !whitespace-normal md:w-auto md:min-w-[80px]',
                                             shouldHighlightPrices
                                               ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.65)] brightness-110'
                                               : ''
-                                          }`}
+                                          )}
                                         >
                                           {renderPriceLines(item.price, item.link)}
                                         </TableCell>
+                                        {/* Третья колонка рендерится только на десктопе */}
                                         <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                           {renderDurationValue(item.duration)}
                                         </TableCell>
@@ -740,7 +750,11 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                     })()
                   ) : (
                     <div className="rounded-lg border border-[#bfa76a]/10 overflow-hidden">
-                      <Table className="md:table-fixed">
+                      <Table className="table-fixed md:table-fixed border-collapse">
+                        <colgroup className="md:hidden">
+                          <col style={{ width: 'calc(100% - 125px)' }} />
+                          <col style={{ width: '125px' }} />
+                        </colgroup>
                         <colgroup className="hidden md:table-column-group">
                           <col style={{ width: '67%' }} />
                           <col style={{ width: '16.5%' }} />
@@ -752,7 +766,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               key={idx}
                               className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
                             >
-                              <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 !whitespace-normal md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal">
+                              <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 pl-0.5 pr-0.5 md:pl-2 md:pr-2 !whitespace-normal md:w-auto md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal overflow-hidden">
                                 {(() => {
                                   const parsed = parseServiceText(item.service)
                                   return (
@@ -772,9 +786,10 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                   )
                                 })()}
                               </TableCell>
-                              <TableCell className="text-center py-1 align-middle min-w-[80px] leading-[1.3]">
+                              <TableCell className="py-1 pl-0.5 pr-1 md:pl-2 md:pr-2 align-middle leading-[1.3] text-left md:text-center !whitespace-normal md:w-auto md:min-w-[80px]">
                                 {renderPriceLines(item.price, item.link)}
                               </TableCell>
+                              {/* Третья колонка рендерится только на десктопе */}
                               <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
                                 {renderDurationValue(item.duration)}
                               </TableCell>

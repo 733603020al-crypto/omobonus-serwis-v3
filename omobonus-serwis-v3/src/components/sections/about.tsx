@@ -69,13 +69,13 @@ export function About() {
               </p>
               <ul className="space-y-1.5">
                 {[
-                  'podajemy prawdziwe ceny — od razu wiesz, ile to kosztuje;',
+                  'podajemy prawdziwe ceny, (nie „naprawa od 50 zł” lub „cena do uzgodnienia”), dlatego od razu wiesz, ile to kosztuje;',
                   'nie podajemy cen netto, lecz wyłącznie ceny brutto;',
-                  'podczas diagnozy otrzymujesz nie tylko tabelkę z wyceną, ale też zdjęcia usterek;',
+                  'podczas diagnozy otrzymujesz nie tylko suchą tabelkę z wyceną naprawy, ale też zdjęcia uszkodzeń;',
                   'jeśli naprawa się nie opłaca – powiemy to otwarcie;',
                   'nie wymieniamy części bez potrzeby;',
                   'wymienione części i podzespoły zawsze zwracamy Klientowi;',
-                  'w razie potrzeby na czas naprawy zapewniamy usługę „Drukarka zastępcza".',
+                  'w razie potrzeby na czas naprawy zapewniamy usługę „Drukarka zastępcza”.',
                 ].map((text, idx) => (
                   <li key={idx} className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />

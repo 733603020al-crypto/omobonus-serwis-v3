@@ -76,7 +76,7 @@ const defaultPricingSections: PricingSection[] = [
       },
       {
         service: 'Usługi w trybie ekspresowym (do 24 godzin, stawka z cennika)',
-        price: 'stawka z cennika\n+ 100%',
+        price: '+ 100%\ndo ceny',
         duration: '24 h',
       },
     ],
@@ -108,7 +108,7 @@ const defaultPricingSections: PricingSection[] = [
       },
       {
         service: 'Usługi w trybie ekspresowym (do 24 godzin)',
-        price: 'stawka z cennika\n+ 100%',
+        price: '+ 100%\ndo ceny',
         duration: '24 h',
       },
     ],

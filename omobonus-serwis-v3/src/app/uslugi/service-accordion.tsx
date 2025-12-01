@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -258,6 +258,48 @@ export const renderDurationValue = (value: string) => (
   </div>
 )
 
+// Мобильная версия строки услуги (flex layout)
+const renderMobileServiceRow = (
+  item: { service: string; price: string; duration: string; link?: string },
+  idx: number,
+  isFirst: boolean,
+  isLast: boolean,
+  shouldHighlightPrices: boolean,
+  parseServiceText: (text: string) => { main: string; parentheses: string | null },
+  priceColumnRef?: React.RefObject<HTMLDivElement | null> | null,
+) => {
+  const parsed = parseServiceText(item.service)
+  return (
+    <div
+      key={`mobile-${idx}`}
+      className={`flex items-start w-full gap-1 border-white/20 border-b border-white/30 ${
+        isFirst ? 'border-t border-white/30' : ''
+      } ${isLast ? '' : ''} py-1`}
+      style={{ outline: '1px solid red' }}
+    >
+      {/* Левая колонка - описание */}
+      <div className="flex-1 min-w-0 pl-0.5" style={{ outline: '1px solid blue' }}>
+        <div className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] text-white leading-[1.3] tracking-tight">
+          {parsed.main}
+        </div>
+      </div>
+      {/* Правая колонка - цена */}
+      <div
+        ref={idx === 0 ? priceColumnRef : null}
+        className={cn(
+          'flex-shrink-0 w-[70px] text-center leading-[1.3] pr-2',
+          shouldHighlightPrices
+            ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.65)] brightness-110'
+            : ''
+        )}
+        style={{ outline: '2px solid green' }}
+      >
+        {renderPriceLines(item.price, item.link)}
+      </div>
+    </div>
+  )
+}
+
 type ScrollRefs = Record<string, HTMLDivElement | null>
 
 const SECTION_SCROLL_OFFSET = 120
@@ -328,6 +370,28 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const isLaserService = service.slug === 'serwis-drukarek-laserowych'
   const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
   const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
+
+  // Refs для измерения размеров контейнеров
+  const cenaHeaderRef = useRef<HTMLDivElement | null>(null)
+  const priceColumnRef = useRef<HTMLDivElement | null>(null)
+  const sectionCardRef = useRef<HTMLDivElement | null>(null)
+  const accordionTriggerRef = useRef<HTMLButtonElement | null>(null)
+  const accordionContentRef = useRef<HTMLDivElement | null>(null)
+  
+  // Состояние для хранения размеров
+  const [measurements, setMeasurements] = useState<{
+    cenaHeader: { width: number; left: number; right: number; paddingLeft: number; paddingRight: number } | null
+    priceColumn: { width: number; left: number; right: number; paddingLeft: number; paddingRight: number } | null
+    sectionCard: { width: number; left: number; right: number; paddingLeft: number; paddingRight: number } | null
+    accordionTrigger: { width: number; left: number; right: number; paddingLeft: number; paddingRight: number } | null
+    accordionContent: { width: number; left: number; right: number; paddingLeft: number; paddingRight: number } | null
+  }>({
+    cenaHeader: null,
+    priceColumn: null,
+    sectionCard: null,
+    accordionTrigger: null,
+    accordionContent: null,
+  })
 
   const renderPriceTooltipContent = () => {
     if (!isLaserService) {
@@ -429,8 +493,307 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
     scrollIntoViewIfNeeded(parentRef, SECTION_SCROLL_OFFSET, true)
   }, [openSubcategory, openSection])
 
+  // Измерение размеров контейнеров (только для мобильных)
+  useEffect(() => {
+    const measureContainers = () => {
+      // Проверяем, что мы на мобильной версии (ширина экрана < 768px = md breakpoint)
+      const isMobile = window.innerWidth < 768
+      if (!isMobile) {
+        return // Измеряем только на мобильных
+      }
+
+      const newMeasurements: typeof measurements = {
+        cenaHeader: null,
+        priceColumn: null,
+        sectionCard: null,
+        accordionTrigger: null,
+        accordionContent: null,
+      }
+
+      // Измерение контейнера с "Cena"
+      if (cenaHeaderRef.current) {
+        const rect = cenaHeaderRef.current.getBoundingClientRect()
+        const styles = window.getComputedStyle(cenaHeaderRef.current)
+        newMeasurements.cenaHeader = {
+          width: rect.width,
+          left: rect.left,
+          right: rect.right,
+          paddingLeft: parseFloat(styles.paddingLeft) || 0,
+          paddingRight: parseFloat(styles.paddingRight) || 0,
+        }
+      }
+
+      // Измерение контейнера с колонкой цен
+      if (priceColumnRef.current) {
+        const rect = priceColumnRef.current.getBoundingClientRect()
+        const styles = window.getComputedStyle(priceColumnRef.current)
+        newMeasurements.priceColumn = {
+          width: rect.width,
+          left: rect.left,
+          right: rect.right,
+          paddingLeft: parseFloat(styles.paddingLeft) || 0,
+          paddingRight: parseFloat(styles.paddingRight) || 0,
+        }
+      }
+
+      // Измерение родительского контейнера секции
+      if (sectionCardRef.current) {
+        const rect = sectionCardRef.current.getBoundingClientRect()
+        const styles = window.getComputedStyle(sectionCardRef.current)
+        newMeasurements.sectionCard = {
+          width: rect.width,
+          left: rect.left,
+          right: rect.right,
+          paddingLeft: parseFloat(styles.paddingLeft) || 0,
+          paddingRight: parseFloat(styles.paddingRight) || 0,
+        }
+      }
+
+      // Измерение AccordionTrigger (где находится "Cena")
+      if (accordionTriggerRef.current) {
+        const rect = accordionTriggerRef.current.getBoundingClientRect()
+        const styles = window.getComputedStyle(accordionTriggerRef.current)
+        newMeasurements.accordionTrigger = {
+          width: rect.width,
+          left: rect.left,
+          right: rect.right,
+          paddingLeft: parseFloat(styles.paddingLeft) || 0,
+          paddingRight: parseFloat(styles.paddingRight) || 0,
+        }
+      }
+
+      // Измерение AccordionContent (где находится таблица с ценами)
+      if (accordionContentRef.current) {
+        const rect = accordionContentRef.current.getBoundingClientRect()
+        const styles = window.getComputedStyle(accordionContentRef.current)
+        newMeasurements.accordionContent = {
+          width: rect.width,
+          left: rect.left,
+          right: rect.right,
+          paddingLeft: parseFloat(styles.paddingLeft) || 0,
+          paddingRight: parseFloat(styles.paddingRight) || 0,
+        }
+      }
+
+      setMeasurements(newMeasurements)
+
+      // Вывод размеров в консоль с фокусом на ключевые измерения
+      const trigger = newMeasurements.accordionTrigger
+      const content = newMeasurements.accordionContent
+      
+      if (trigger && content && newMeasurements.cenaHeader) {
+        const cena = newMeasurements.cenaHeader
+        const card = newMeasurements.sectionCard
+        
+        // Ключевые измерения
+        const triggerWidth = trigger.width
+        const triggerRight = trigger.right
+        const contentWidth = content.width
+        const contentRight = content.right
+        const rightDiff = contentRight - triggerRight
+        
+        // Анализ доступного пространства для "Cena"
+        const cenaWidth = cena.width
+        const cenaRight = cena.right
+        const availableSpaceInTrigger = triggerRight - cenaRight
+        const leftPartWidth = cena.left - trigger.left
+        const rightPartWidth = triggerRight - cena.right
+        
+        console.log('\n' + '='.repeat(80))
+        console.log('📐 КЛЮЧЕВЫЕ ИЗМЕРЕНИЯ (мобильная версия < 768px)')
+        console.log('='.repeat(80))
+        
+        console.log('\n1️⃣ ACCORDION TRIGGER (где находится "Cena"):')
+        console.log(`   • Ширина: ${triggerWidth.toFixed(1)}px`)
+        console.log(`   • Правая граница: ${triggerRight.toFixed(1)}px`)
+        console.log(`   • Левая граница: ${trigger.left.toFixed(1)}px`)
+        
+        console.log('\n2️⃣ ACCORDION CONTENT (где находятся строки с ценами):')
+        console.log(`   • Ширина: ${contentWidth.toFixed(1)}px`)
+        console.log(`   • Правая граница: ${contentRight.toFixed(1)}px`)
+        console.log(`   • Левая граница: ${content.left.toFixed(1)}px`)
+        
+        console.log('\n3️⃣ РАЗНИЦА МЕЖДУ ПРАВЫМИ ГРАНИЦАМИ:')
+        if (rightDiff === 0) {
+          console.log(`   ✅ Правые границы СОВПАДАЮТ (разница: ${rightDiff.toFixed(1)}px)`)
+        } else if (rightDiff > 0) {
+          console.log(`   ⚠️  Content правее Trigger на: ${rightDiff.toFixed(1)}px`)
+          console.log(`   → AccordionContent выступает за правый край AccordionTrigger`)
+        } else {
+          console.log(`   ⚠️  Trigger правее Content на: ${Math.abs(rightDiff).toFixed(1)}px`)
+          console.log(`   → AccordionTrigger выступает за правый край AccordionContent`)
+        }
+        
+        console.log('\n4️⃣ ПРОВЕРКА: ПОМЕЩАЕТСЯ ЛИ БЛОК "Cena" В ПРАВУЮ ЧАСТЬ РОДИТЕЛЯ?')
+        console.log(`   • Ширина блока "Cena": ${cenaWidth.toFixed(1)}px`)
+        console.log(`   • Доступное место справа от "Cena" в Trigger: ${availableSpaceInTrigger.toFixed(1)}px`)
+        console.log(`   • Левая часть Trigger (до "Cena"): ${leftPartWidth.toFixed(1)}px`)
+        console.log(`   • Правая часть Trigger (после "Cena"): ${rightPartWidth.toFixed(1)}px`)
+        
+        if (availableSpaceInTrigger >= 0) {
+          console.log(`   ✅ Есть свободное место справа: ${availableSpaceInTrigger.toFixed(1)}px`)
+          
+          // Проверяем, достаточно ли места для выравнивания
+          const neededShift = rightDiff // Сколько нужно сдвинуть "Cena" вправо
+          if (neededShift > 0 && availableSpaceInTrigger >= neededShift) {
+            console.log(`   ✅ Достаточно места для выравнивания!`)
+            console.log(`   → Можно сдвинуть "Cena" вправо на ${neededShift.toFixed(1)}px`)
+          } else if (neededShift > 0 && availableSpaceInTrigger < neededShift) {
+            console.log(`   ❌ НЕ достаточно места для полного выравнивания`)
+            console.log(`   → Нужно: ${neededShift.toFixed(1)}px, доступно: ${availableSpaceInTrigger.toFixed(1)}px`)
+            console.log(`   → Нехватка: ${(neededShift - availableSpaceInTrigger).toFixed(1)}px`)
+          }
+        } else {
+          console.log(`   ❌ "Cena" выходит за правый край Trigger!`)
+          console.log(`   → Превышение: ${Math.abs(availableSpaceInTrigger).toFixed(1)}px`)
+        }
+        
+        if (card) {
+          console.log('\n5️⃣ ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ:')
+          console.log(`   • Родительская карточка (правая граница): ${card.right.toFixed(1)}px`)
+          console.log(`   • Разница: Content vs Карточка: ${(contentRight - card.right).toFixed(1)}px`)
+          console.log(`   • Разница: Trigger vs Карточка: ${(triggerRight - card.right).toFixed(1)}px`)
+        }
+        
+        console.log('\n' + '='.repeat(80) + '\n')
+      }
+    }
+
+    // Измеряем при открытии секции и при изменении размера окна
+    if (openSection && openSection !== 'faq') {
+      // Небольшая задержка для рендеринга
+      setTimeout(measureContainers, 100)
+    }
+
+    window.addEventListener('resize', measureContainers)
+    return () => window.removeEventListener('resize', measureContainers)
+  }, [openSection])
+
+  // Компонент для отображения размеров
+  const MeasurementDisplay = () => {
+    if (!openSection || openSection === 'faq') return null
+    if (!measurements.cenaHeader || !measurements.priceColumn || !measurements.sectionCard) return null
+
+    const cena = measurements.cenaHeader
+    const price = measurements.priceColumn
+    const card = measurements.sectionCard
+    const trigger = measurements.accordionTrigger
+    const content = measurements.accordionContent
+
+    const rightDiff = price.right - cena.right
+    const leftDiff = price.left - cena.left
+
+    // Формируем текст для копирования
+    const copyText = `🟡 Карточка секции (жёлтая рамка):
+width: ${card.width.toFixed(1)}px
+left: ${card.left.toFixed(1)}px
+right: ${card.right.toFixed(1)}px
+paddingLeft: ${card.paddingLeft.toFixed(1)}px
+paddingRight: ${card.paddingRight.toFixed(1)}px
+
+🔵 Контейнер "Cena" (голубая рамка):
+width: ${cena.width.toFixed(1)}px
+left: ${cena.left.toFixed(1)}px
+right: ${cena.right.toFixed(1)}px
+paddingLeft: ${cena.paddingLeft.toFixed(1)}px
+paddingRight: ${cena.paddingRight.toFixed(1)}px
+
+🟢 Колонка цен (зелёная рамка):
+width: ${price.width.toFixed(1)}px
+left: ${price.left.toFixed(1)}px
+right: ${price.right.toFixed(1)}px
+paddingLeft: ${price.paddingLeft.toFixed(1)}px
+paddingRight: ${price.paddingRight.toFixed(1)}px
+
+📊 Разница:
+Разница правых краёв (price.right - cena.right): ${rightDiff.toFixed(1)}px
+Разница левых краёв (price.left - cena.left): ${leftDiff.toFixed(1)}px`
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(copyText)
+      alert('Измерения скопированы в буфер обмена!')
+    }
+
+    return (
+      <div className="fixed bottom-4 left-4 bg-black/95 text-white text-xs p-3 rounded-lg z-50 border-2 border-yellow-400 md:hidden max-w-[300px] font-mono">
+        <div className="font-bold mb-2 text-yellow-400 flex items-center justify-between">
+          <span>📏 Измерения (мобильная)</span>
+          <button
+            onClick={handleCopy}
+            className="text-xs bg-yellow-400/20 hover:bg-yellow-400/30 px-2 py-1 rounded border border-yellow-400/50"
+          >
+            Копировать
+          </button>
+        </div>
+        
+        <div className="mb-2">
+          <div className="text-yellow-300 font-semibold mb-1">🟡 Карточка секции:</div>
+          <div className="pl-2 text-[10px] leading-tight">
+            <div>width: {card.width.toFixed(1)}px</div>
+            <div>left: {card.left.toFixed(1)}px</div>
+            <div>right: {card.right.toFixed(1)}px</div>
+            <div>paddingLeft: {card.paddingLeft.toFixed(1)}px</div>
+            <div>paddingRight: {card.paddingRight.toFixed(1)}px</div>
+          </div>
+        </div>
+
+        {trigger && (
+          <div className="mb-2">
+            <div className="text-pink-300 font-semibold mb-1">🩷 AccordionTrigger:</div>
+            <div className="pl-2 text-[10px] leading-tight">
+              <div>width: {trigger.width.toFixed(1)}px</div>
+              <div>left: {trigger.left.toFixed(1)}px</div>
+              <div>right: {trigger.right.toFixed(1)}px</div>
+            </div>
+          </div>
+        )}
+
+        <div className="mb-2">
+          <div className="text-cyan-300 font-semibold mb-1">🔵 Контейнер "Cena":</div>
+          <div className="pl-2 text-[10px] leading-tight">
+            <div>width: {cena.width.toFixed(1)}px</div>
+            <div>left: {cena.left.toFixed(1)}px</div>
+            <div>right: {cena.right.toFixed(1)}px</div>
+            <div>paddingLeft: {cena.paddingLeft.toFixed(1)}px</div>
+            <div>paddingRight: {cena.paddingRight.toFixed(1)}px</div>
+          </div>
+        </div>
+
+        {content && (
+          <div className="mb-2">
+            <div className="text-indigo-300 font-semibold mb-1">💜 AccordionContent:</div>
+            <div className="pl-2 text-[10px] leading-tight">
+              <div>width: {content.width.toFixed(1)}px</div>
+              <div>left: {content.left.toFixed(1)}px</div>
+              <div>right: {content.right.toFixed(1)}px</div>
+            </div>
+          </div>
+        )}
+
+        <div className="mb-2">
+          <div className="text-green-300 font-semibold mb-1">🟢 Колонка цен:</div>
+          <div className="pl-2 text-[10px] leading-tight">
+            <div>width: {price.width.toFixed(1)}px</div>
+            <div>left: {price.left.toFixed(1)}px</div>
+            <div>right: {price.right.toFixed(1)}px</div>
+            <div>paddingLeft: {price.paddingLeft.toFixed(1)}px</div>
+            <div>paddingRight: {price.paddingRight.toFixed(1)}px</div>
+          </div>
+        </div>
+
+        <div className="mt-3 pt-2 border-t border-white/20">
+          <div className="text-red-300 font-semibold mb-1">📊 Разница:</div>
+          <div className="pl-2 text-[10px] leading-tight">
+            <div>right diff: {rightDiff.toFixed(1)}px</div>
+            <div>left diff: {leftDiff.toFixed(1)}px</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="container max-w-4xl mx-auto px-1.5 sm:px-4 md:px-6 pb-20 relative z-10">
+    <div className="container max-w-4xl mx-auto px-0 sm:px-4 md:px-6 pb-20 relative z-10">
       <div className="flex flex-col gap-4">
         <Accordion
           type="single"
@@ -448,10 +811,32 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                 sectionRefs.current[section.id] = node
               }}
             >
-              <div className="group relative min-h-[70px] rounded-lg py-1.5 px-1.5 sm:py-2 sm:px-2 md:px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl group-data-[state=open]:border-b group-data-[state=open]:border-b-[rgba(191,167,106,0.2)] w-full bg-[rgba(5,5,5,0.85)]">
-                <AccordionTrigger className="hover:no-underline [&>svg]:hidden w-full group !py-0 !items-center !gap-0">
-                  <div className="flex items-center w-full text-left">
-                    <div className="flex items-center flex-1 min-w-0">
+              <div 
+                ref={section.id === openSection ? sectionCardRef : null}
+                className="group relative min-h-[70px] rounded-lg py-1.5 px-0 sm:py-2 md:px-3 border-2 border-[rgba(200,169,107,0.5)] hover:border-[rgba(200,169,107,0.85)] transition-all duration-300 hover:shadow-xl group-data-[state=open]:border-b group-data-[state=open]:border-b-[rgba(191,167,106,0.2)] w-full bg-[rgba(5,5,5,0.85)] md:outline-none" 
+                style={{ outline: '2px solid yellow' }}
+              >
+                <AccordionTrigger 
+                  ref={(node) => {
+                    if (section.id === openSection && node) {
+                      accordionTriggerRef.current = node as HTMLButtonElement
+                    }
+                  }}
+                  className="hover:no-underline [&>svg]:hidden w-full group !py-0 !items-center !gap-0 md:outline-none" 
+                  style={{ outline: '2px solid pink' }}
+                >
+                  <div className={cn(
+                    "flex items-center w-full text-left md:outline-none",
+                    section.id === 'konserwacja'
+                      ? 'md:justify-between'  // На десктопе используем space-between для правильного позиционирования
+                      : ''
+                  )} style={{ outline: '2px solid lime' }}>
+                    <div className={cn(
+                      "flex items-center min-w-0 md:outline-none",
+                      section.id === 'konserwacja'
+                        ? 'flex-1 md:max-w-[calc(100%-140px)]'  // На десктопе ограничиваем максимальную ширину левой части
+                        : 'flex-1'
+                    )} style={{ outline: '2px solid aqua' }}>
                       <div className="mr-4 w-[50px] h-[50px] flex-shrink-0 flex items-center justify-center">
                         <Image
                           src={getIconForSection(section.id)}
@@ -483,31 +868,44 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
                     {section.id !== 'faq' && (
                       <>
-                        <div className="flex items-center gap-3 ml-3 sm:gap-4 sm:ml-4 flex-shrink-0">
+                        <div className={cn(
+                          "flex items-center gap-3 sm:gap-4 flex-shrink-0 md:outline-none",
+                          section.id === 'konserwacja'
+                            ? 'ml-3 sm:ml-0 md:ml-0'  // На десктопе убираем отступ слева
+                            : 'ml-3 sm:ml-4'  // Для остальных оставляем как было
+                        )} style={{ outline: '2px solid purple' }}>
                           <div
                             className={cn(
-                              'flex items-center justify-center',
+                              'flex items-center justify-center md:outline-none',
                               section.id === 'diagnoza' || section.id === 'dojazd'
                                 ? 'min-w-[96px] sm:min-w-[120px]'
                                 : 'min-w-0 sm:min-w-[120px]'
                             )}
+                            style={{ outline: '2px solid orange' }}
                           >
                             {(section.id === 'diagnoza' || section.id === 'dojazd') && (
                               <span className="text-lg md:text-xl font-table-accent text-[rgba(255,255,245,0.85)] group-data-[state=open]:hidden whitespace-nowrap">
                                 GRATIS
                               </span>
                             )}
-                            <div className="text-center hidden group-data-[state=open]:block w-full">
+                            <div 
+                              ref={section.id === openSection ? cenaHeaderRef : null}
+                              className="text-center hidden group-data-[state=open]:block w-full md:outline-none" 
+                              style={{ outline: '2px solid cyan' }}
+                            >
                               <div
                                 className={cn(
-                                  'flex items-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05] whitespace-nowrap',
+                                  'flex items-center gap-2 text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-[1.05] whitespace-nowrap md:outline-none',
                                   section.id === 'diagnoza' || section.id === 'dojazd'
                                     ? 'justify-center'
+                                    : section.id === 'konserwacja'
+                                    ? 'justify-end md:justify-center'
                                     : 'justify-end'
                                 )}
+                                style={{ outline: '2px solid magenta' }}
                               >
                                 <span className="hidden sm:inline">Cena, zł</span>
-                                <span className="inline sm:hidden">Cena</span>
+                                <span className="inline sm:hidden" style={{ outline: '2px solid red' }}>Cena</span>
                                 <TooltipProvider delayDuration={100}>
                                   <Tooltip
                                     onOpenChange={open => {
@@ -517,7 +915,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     }}
                                   >
                                     <TooltipTrigger
-                                      className="ml-1 -mr-2 sm:mr-0"
+                                      className="ml-1 -mr-2 sm:mr-0 hidden md:inline-flex"
                                       onClick={event => event.stopPropagation()}
                                       onPointerDown={event => event.stopPropagation()}
                                       onKeyDown={event => {
@@ -587,7 +985,15 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                   </div>
                 </AccordionTrigger>
 
-                <AccordionContent className="pt-3 pb-3 max-h-[70vh] overflow-y-auto scroll-smooth accordion-scroll relative z-10 md:border-t md:border-[rgba(200,169,107,0.3)] md:mt-2 md:border-x md:border-[rgba(191,167,106,0.3)] md:mx-2 md:mb-2 md:rounded-b-lg">
+                <AccordionContent 
+                  ref={(node) => {
+                    if (section.id === openSection && node) {
+                      accordionContentRef.current = node as HTMLDivElement
+                    }
+                  }}
+                  className="pt-3 pb-3 max-h-[70vh] overflow-y-auto scroll-smooth accordion-scroll relative z-10 md:border-t md:border-[rgba(200,169,107,0.3)] md:mt-2 md:border-x md:border-[rgba(191,167,106,0.3)] md:mx-2 md:mb-2 md:rounded-b-lg md:outline-none" 
+                  style={{ outline: '2px solid indigo' }}
+                >
                   {section.subcategories ? (
                     (() => {
                       const isRepairSection = section.id === 'naprawy'
@@ -653,61 +1059,73 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 {subcategory.answer}
                               </div>
                             ) : (
-                              <div className="rounded-lg border border-[#bfa76a]/10 overflow-hidden">
-                                <Table className="table-fixed md:table-fixed border-collapse">
-                                  <colgroup className="md:hidden">
-                                    <col style={{ width: 'calc(100% - 125px)' }} />
-                                    <col style={{ width: '125px' }} />
-                                  </colgroup>
-                                  <colgroup className="hidden md:table-column-group">
-                                    <col style={{ width: '67%' }} />
-                                    <col style={{ width: '16.5%' }} />
-                                    <col style={{ width: '16.5%' }} />
-                                  </colgroup>
-                                  <TableBody>
-                                    {subcategory.items.map((item, idx) => (
-                                      <TableRow
-                                        key={idx}
-                                        className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
-                                      >
-                                        <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 pl-0.5 pr-0.5 md:pl-2 md:pr-2 !whitespace-normal md:w-auto md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal overflow-hidden">
-                                          {(() => {
-                                            const parsed = parseServiceText(item.service)
-                                            return (
-                                              <div className="service-description-text">
-                                                <div className="text-[15px] md:text-[16px] text-white service-description-text leading-[1.3]">
-                                                  {parsed.main}
-                                                </div>
-                                                {parsed.parentheses && (
-                                                  <div
-                                                    className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]"
-                                                    style={{ textShadow: supplementTextShadow }}
-                                                  >
-                                                    ({parsed.parentheses})
-                                                  </div>
-                                                )}
-                                              </div>
-                                            )
-                                          })()}
-                                        </TableCell>
-                                        <TableCell
-                                          className={cn(
-                                            'py-1 pl-0.5 pr-1 md:pl-2 md:pr-2 align-middle leading-[1.3] text-left md:text-center !whitespace-normal md:w-auto md:min-w-[80px]',
-                                            shouldHighlightPrices
-                                              ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.65)] brightness-110'
-                                              : ''
-                                          )}
+                              <div className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden">
+                                {/* Мобильная версия - flex layout */}
+                                <div className="block md:hidden">
+                                  {subcategory.items.map((item, idx) =>
+                                    renderMobileServiceRow(
+                                      item,
+                                      idx,
+                                      idx === 0,
+                                      idx === subcategory.items.length - 1,
+                                      shouldHighlightPrices,
+                                      parseServiceText,
+                                      priceColumnRef,
+                                    ),
+                                  )}
+                                </div>
+                                {/* Десктопная версия - HTML таблица */}
+                                <div className="hidden md:block">
+                                  <Table className="table-fixed border-collapse">
+                                    <colgroup>
+                                      <col style={{ width: '67%' }} />
+                                      <col style={{ width: '16.5%' }} />
+                                      <col style={{ width: '16.5%' }} />
+                                    </colgroup>
+                                    <TableBody>
+                                      {subcategory.items.map((item, idx) => (
+                                        <TableRow
+                                          key={idx}
+                                          className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
                                         >
-                                          {renderPriceLines(item.price, item.link)}
-                                        </TableCell>
-                                        {/* Третья колонка рендерится только на десктопе */}
-                                        <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
-                                          {renderDurationValue(item.duration)}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
+                                          <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 pl-2 pr-2 !whitespace-normal w-auto max-w-[67%] leading-[1.3] tracking-normal overflow-hidden">
+                                            {(() => {
+                                              const parsed = parseServiceText(item.service)
+                                              return (
+                                                <div className="service-description-text">
+                                                  <div className="text-[16px] text-white service-description-text leading-[1.3]">
+                                                    {parsed.main}
+                                                  </div>
+                                                  {parsed.parentheses && (
+                                                    <div
+                                                      className="font-table-sub text-[14px] text-[#ede0c4] mt-0 line-clamp-2 service-description-text leading-[1.4]"
+                                                      style={{ textShadow: supplementTextShadow }}
+                                                    >
+                                                      ({parsed.parentheses})
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )
+                                            })()}
+                                          </TableCell>
+                                          <TableCell
+                                            className={cn(
+                                              'py-1 pl-2 pr-2 align-middle leading-[1.3] text-center w-auto min-w-[80px]',
+                                              shouldHighlightPrices
+                                                ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.65)] brightness-110'
+                                                : ''
+                                            )}
+                                          >
+                                            {renderPriceLines(item.price, item.link)}
+                                          </TableCell>
+                                          <TableCell className="text-center py-1 align-middle leading-[1.3]">
+                                            {renderDurationValue(item.duration)}
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </div>
                               </div>
                             )}
                           </AccordionContent>
@@ -749,54 +1167,66 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                       )
                     })()
                   ) : (
-                    <div className="rounded-lg border border-[#bfa76a]/10 overflow-hidden">
-                      <Table className="table-fixed md:table-fixed border-collapse">
-                        <colgroup className="md:hidden">
-                          <col style={{ width: 'calc(100% - 125px)' }} />
-                          <col style={{ width: '125px' }} />
-                        </colgroup>
-                        <colgroup className="hidden md:table-column-group">
-                          <col style={{ width: '67%' }} />
-                          <col style={{ width: '16.5%' }} />
-                          <col style={{ width: '16.5%' }} />
-                        </colgroup>
-                        <TableBody>
-                          {section.items?.map((item, idx) => (
-                            <TableRow
-                              key={idx}
-                              className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
-                            >
-                              <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 pl-0.5 pr-0.5 md:pl-2 md:pr-2 !whitespace-normal md:w-auto md:max-w-[67%] leading-[1.3] tracking-tight md:tracking-normal overflow-hidden">
-                                {(() => {
-                                  const parsed = parseServiceText(item.service)
-                                  return (
-                                    <div className="service-description-text">
-                                      <div className="text-[15px] md:text-[16px] text-white service-description-text leading-[1.3]">
-                                        {parsed.main}
-                                      </div>
-                                      {parsed.parentheses && (
-                                        <div
-                                          className="font-table-sub text-[14px] text-[#ede0c4] mt-0 hidden md:block line-clamp-2 service-description-text leading-[1.4]"
-                                          style={{ textShadow: supplementTextShadow }}
-                                        >
-                                          ({parsed.parentheses})
+                    <div className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden">
+                      {/* Мобильная версия - flex layout */}
+                      <div className="block md:hidden">
+                        {section.items?.map((item, idx) =>
+                          renderMobileServiceRow(
+                            item,
+                            idx,
+                            idx === 0,
+                            idx === (section.items?.length ?? 0) - 1,
+                            false,
+                            parseServiceText,
+                            priceColumnRef,
+                          ),
+                        )}
+                      </div>
+                      {/* Десктопная версия - HTML таблица */}
+                      <div className="hidden md:block">
+                        <Table className="table-fixed border-collapse">
+                          <colgroup>
+                            <col style={{ width: '67%' }} />
+                            <col style={{ width: '16.5%' }} />
+                            <col style={{ width: '16.5%' }} />
+                          </colgroup>
+                          <TableBody>
+                            {section.items?.map((item, idx) => (
+                              <TableRow
+                                key={idx}
+                                className={`border-white/20 border-b border-white/30 ${idx === 0 ? 'border-t border-white/30' : ''}`}
+                              >
+                                <TableCell className="font-table-main text-[rgba(255,255,245,0.85)] py-1 pl-2 pr-2 !whitespace-normal w-auto max-w-[67%] leading-[1.3] tracking-normal overflow-hidden">
+                                  {(() => {
+                                    const parsed = parseServiceText(item.service)
+                                    return (
+                                      <div className="service-description-text">
+                                        <div className="text-[16px] text-white service-description-text leading-[1.3]">
+                                          {parsed.main}
                                         </div>
-                                      )}
-                                    </div>
-                                  )
-                                })()}
-                              </TableCell>
-                              <TableCell className="py-1 pl-0.5 pr-1 md:pl-2 md:pr-2 align-middle leading-[1.3] text-left md:text-center !whitespace-normal md:w-auto md:min-w-[80px]">
-                                {renderPriceLines(item.price, item.link)}
-                              </TableCell>
-                              {/* Третья колонка рендерится только на десктопе */}
-                              <TableCell className="text-center py-1 align-middle hidden md:table-cell leading-[1.3]">
-                                {renderDurationValue(item.duration)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                                        {parsed.parentheses && (
+                                          <div
+                                            className="font-table-sub text-[14px] text-[#ede0c4] mt-0 line-clamp-2 service-description-text leading-[1.4]"
+                                            style={{ textShadow: supplementTextShadow }}
+                                          >
+                                            ({parsed.parentheses})
+                                          </div>
+                                        )}
+                                      </div>
+                                    )
+                                  })()}
+                                </TableCell>
+                                <TableCell className="py-1 pl-2 pr-2 align-middle leading-[1.3] text-center w-auto min-w-[80px]">
+                                  {renderPriceLines(item.price, item.link)}
+                                </TableCell>
+                                <TableCell className="text-center py-1 align-middle leading-[1.3]">
+                                  {renderDurationValue(item.duration)}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
                     </div>
                   )}
                 </AccordionContent>
@@ -805,6 +1235,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
           ))}
         </Accordion>
       </div>
+      <MeasurementDisplay />
     </div>
   )
 }

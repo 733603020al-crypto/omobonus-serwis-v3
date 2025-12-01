@@ -39,9 +39,20 @@ export default async function ServicePage({
             <h1 className="text-[40px] font-cormorant font-bold text-[#ffffff] leading-[1.1]">
               {service.title}
             </h1>
-            <p className="mt-[6px] text-[18px] text-[#bfa76a] font-cormorant italic leading-tight max-w-3xl mx-auto font-semibold drop-shadow-2xl">
-              Pełny wykaz usług i cen, bez ukrytych kosztów (nie "naprawa od 50 zł" lub "cena do uzgodnienia")
-            </p>
+            {service.slug === 'wynajem-drukarek' ? (
+              <div className="mt-[6px] max-w-3xl mx-auto space-y-1">
+                <p className="text-[18px] text-[#bfa76a] font-cormorant italic leading-tight font-semibold drop-shadow-2xl">
+                  Wynajmij drukarkę z serwisem i tonerem w cenie. Bez ukrytych kosztów. W cenie serwis i materiały.
+                </p>
+                <p className="text-[18px] text-[#bfa76a] font-cormorant italic leading-tight font-semibold drop-shadow-2xl">
+                  Ty martwisz się tylko o papier i prąd. Zapomnij o problemach z serwisem lub kończącym się tonerem.
+                </p>
+              </div>
+            ) : (
+              <p className="mt-[6px] text-[18px] text-[#bfa76a] font-cormorant italic leading-tight max-w-3xl mx-auto font-semibold drop-shadow-2xl">
+                Pełny wykaz usług i cen, bez ukrytych kosztów (nie "naprawa od 50 zł" lub "cena do uzgodnienia")
+              </p>
+            )}
           </div>
         </div>
 

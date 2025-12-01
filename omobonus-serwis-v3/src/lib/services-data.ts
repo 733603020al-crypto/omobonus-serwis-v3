@@ -13,6 +13,7 @@ export interface PricingSubcategory {
   items: PricingItem[]
   subtitle?: string
   answer?: string // Odpowiedź dla FAQ (z obsługą formatowania)
+  price?: string // Цена для отображения в заголовке подменю
 }
 
 export interface PricingSection {
@@ -2579,6 +2580,58 @@ const createDesktopPricingSections = (): PricingSection[] => {
   return sections
 }
 
+const createWynajemPricingSections = (): PricingSection[] => {
+  const sections = createPricingSections()
+  
+  // Добавляем два пустых аккордеона
+  sections.push({
+    id: 'akordeon-1',
+    title: 'Laserowe (format A4) czynsz wynajmu miesięcznie',
+    items: [],
+    subcategories: [
+      {
+        id: 'drukarki-mono',
+        title: 'Drukarki mono',
+        items: [],
+        price: '30 / 50 / 100',
+      },
+      {
+        id: 'drukarki-kolor',
+        title: 'Drukarki kolor',
+        items: [],
+        price: '50 / 100 / 150',
+      },
+      {
+        id: 'mfu-mono',
+        title: 'MFU mono',
+        items: [],
+        price: '80 / 100 / 150',
+      },
+      {
+        id: 'mfu-kolor',
+        title: 'MFU kolor',
+        items: [],
+        price: '100 / 150 / 200',
+      },
+    ],
+  })
+
+  sections.push({
+    id: 'akordeon-2',
+    title: 'Laserowe (format A3/A4) czynsz wynajmu miesięcznie',
+    items: [],
+    subcategories: [
+      {
+        id: 'podkategoria-2',
+        title: 'Podmenu 2',
+        items: [],
+      },
+    ],
+  })
+
+  return sections
+}
+
 export const services: ServiceData[] = [
   {
     slug: 'serwis-laptopow',
@@ -2685,7 +2738,7 @@ export const services: ServiceData[] = [
     subtitle: 'Dzierżawa urządzeń drukujących dla biur',
     icon: manifest['10_wynajem_drukarek'],
     description: 'Dzierżawa urządzeń drukujących dla biur i firm.',
-    pricingSections: createPricingSections(),
+    pricingSections: createWynajemPricingSections(),
   },
   {
     slug: 'drukarka-zastepcza',

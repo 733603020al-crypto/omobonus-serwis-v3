@@ -313,8 +313,11 @@ const WynajemTable = ({
   }
 }) => {
   const [columnWidths, setColumnWidths] = useState<{ icon: number; text: number; price1: number; price2: number; price3: number } | null>(null)
-  const [leftOffset, setLeftOffset] = useState<number>(0)
-  const tableContainerRef = useRef<HTMLDivElement>(null)
+  
+  // Фиксированный отступ слева для выравнивания нижней таблицы под верхним рядом
+  // Примерно равен расстоянию от левого края контейнера до начала иконки (12px)
+  // Скорректировано визуально для идеального совпадения
+  const leftOffset = 12
 
   useEffect(() => {
     if (subcategoryId !== 'drukarki-mono' || !headerRefs.prices[0]?.current) return
@@ -325,34 +328,13 @@ const WynajemTable = ({
       const price1El = headerRefs.prices[0]?.current
       const price2El = headerRefs.prices[1]?.current
       const price3El = headerRefs.prices[2]?.current
-      const tableContainer = tableContainerRef.current
 
-      if (iconEl && textEl && price1El && price2El && price3El && tableContainer) {
+      if (iconEl && textEl && price1El && price2El && price3El) {
         const iconRect = iconEl.getBoundingClientRect()
         const textRect = textEl.getBoundingClientRect()
         const price1Rect = price1El.getBoundingClientRect()
         const price2Rect = price2El.getBoundingClientRect()
         const price3Rect = price3El.getBoundingClientRect()
-        const tableContainerRect = tableContainer.getBoundingClientRect()
-
-        // Измеряем реальное расстояние от начала контейнера таблицы до начала текста "Drukarki mono"
-        const textLeft = textRect.left
-        const tableLeft = tableContainerRect.left
-        const iconWidth = iconRect.width
-        const iconLeft = iconRect.left
-        
-        // Реальное смещение от начала контейнера до начала текста "Drukarki mono"
-        const textOffsetFromContainer = textLeft - tableLeft
-        
-        // Реальное смещение от начала контейнера до начала иконки
-        const iconOffsetFromContainer = iconLeft - tableLeft
-        
-        // Для выравнивания текста в нижней таблице под "Drukarki mono"
-        // Применяем отступ к первой колонке (иконке), равный позиции иконки в верхнем ряду
-        // Но с учетом того, что визуально нужно выровнять текст, вычитаем половину ширины иконки
-        const firstColumnOffset = iconOffsetFromContainer - (iconWidth * 0.5)
-        
-        setLeftOffset(Math.max(0, firstColumnOffset))
 
         setColumnWidths({
           icon: iconRect.width,
@@ -394,14 +376,13 @@ const WynajemTable = ({
 
   return (
     <div 
-      ref={tableContainerRef}
       className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden border-2 border-red-500"
     >
       <div className="overflow-x-auto md:overflow-x-visible">
         {/* Десктоп: flex с динамическими размерами из верхнего ряда */}
         <div 
           className="hidden md:block"
-          style={leftOffset > 0 ? { marginLeft: `${leftOffset}px`, width: `calc(100% - ${leftOffset}px)` } : undefined}
+          style={{ marginLeft: `${leftOffset}px`, width: `calc(100% - ${leftOffset}px)` }}
         >
           {tableData.map((row, idx) => (
             <div

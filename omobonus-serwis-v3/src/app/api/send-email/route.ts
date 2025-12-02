@@ -20,9 +20,73 @@ const mapDeviceType = (value: string) => {
 const boolToText = (value: string | null) =>
   value === 'true' || value === 'on' ? 'Tak' : 'Nie'
 
+// Функция для безопасного экранирования HTML
+const escapeHtml = (text: string | null | undefined): string => {
+  if (!text) return ''
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+// Функция для форматирования телефона (+48 778 786 796)
+const formatPhone = (phone: string | null | undefined): string => {
+  if (!phone) return 'Nie podano'
+  // Убираем все нецифровые символы кроме +
+  let cleaned = phone.replace(/[^\d+]/g, '')
+  
+  // Если начинается с +48, форматируем как +48 XXX XXX XXX
+  if (cleaned.startsWith('+48')) {
+    const digits = cleaned.substring(3).replace(/\D/g, '')
+    if (digits.length === 9) {
+      return `+48 ${digits.substring(0, 3)} ${digits.substring(3, 6)} ${digits.substring(6)}`
+    }
+    return phone
+  }
+  
+  // Если начинается с 48, добавляем +
+  if (cleaned.startsWith('48')) {
+    const digits = cleaned.substring(2).replace(/\D/g, '')
+    if (digits.length === 9) {
+      return `+48 ${digits.substring(0, 3)} ${digits.substring(3, 6)} ${digits.substring(6)}`
+    }
+  }
+  
+  return phone
+}
+
+// Генерация номера заявки DDMMYY-XXX
+// Для простоты используем timestamp и последние 3 цифры
+const generateTicketNumber = (): string => {
+  const now = new Date()
+  const day = String(now.getDate()).padStart(2, '0')
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const year = String(now.getFullYear()).slice(-2)
+  
+  // Используем последние 3 цифры timestamp для уникальности
+  const timestamp = Date.now()
+  const sequence = String(timestamp).slice(-3)
+  
+  return `${day}${month}${year}-${sequence}`
+}
+
 export async function POST(request: NextRequest) {
+  console.log('📩 Форма wywołała /api/send-email')
   try {
     const formData = await request.formData()
+    
+    // Log всех данных формы
+    const formEntries: Record<string, any> = {}
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        formEntries[key] = { name: value.name, size: value.size, type: value.type }
+      } else {
+        formEntries[key] = value
+      }
+    }
+    console.log('📋 Dane z formularza:', formEntries)
 
     const name = (formData.get('name') as string) ?? ''
     const phone = (formData.get('phone') as string) ?? ''
@@ -47,11 +111,187 @@ export async function POST(request: NextRequest) {
           )
         : undefined
 
+    const currentYear = new Date().getFullYear()
+    const ticketNumber = generateTicketNumber()
+    const formattedPhone = formatPhone(phone)
+    
+    // URL изображения фона
+    const backgroundImageUrl = 'https://www.omobonus.com.pl/images/zmiety%20arkusz%20papieru%202.png'
+    
+    // HTML-шаблон письма
+    const emailHtml = `
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Nowe zgłoszenie serwisowe ${ticketNumber}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Times New Roman', serif;">
+  <!-- Wrapper таблица с фоном для Outlook и других клиентов -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-image: url('${backgroundImageUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 30px 20px;">
+    <!--[if mso]>
+    <tr>
+      <td>
+        <v:rect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" fill="t" stroke="f" style="position:absolute;left:0;top:0;width:100%;height:100%;">
+          <v:fill type="frame" src="${backgroundImageUrl}" color="transparent"/>
+        </v:rect>
+      </td>
+    </tr>
+    <![endif]-->
+    <tr>
+      <td style="background-color: rgba(0, 0, 0, 0.5); padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td align="center" style="padding: 30px 20px;">
+              <!-- Основной контент -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: rgba(248, 240, 220, 0.95); border-radius: 4px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: 2px solid #bfa76a;">
+                <!-- Header z логотипом -->
+                <tr>
+                  <td style="background-color: rgba(58, 46, 36, 0.9); padding: 30px 40px 25px; text-align: center; border-bottom: 2px solid #bfa76a;">
+                    <img src="https://www.omobonus.com.pl/images/Logo_Omobonus.png" alt="Omobonus Serwis" width="200" height="auto" style="max-width: 200px; height: auto; display: block; margin: 0 auto; border: 0; outline: none; text-decoration: none;" />
+                  </td>
+                </tr>
+                
+                <!-- Заголовок с номером заявки -->
+                <tr>
+                  <td style="padding: 25px 40px 15px; text-align: center;">
+                    <h1 style="margin: 0 0 5px 0; color: #3a2e24; font-size: 26px; font-weight: 700; font-family: 'Times New Roman', serif; letter-spacing: 0.5px;">Nowe zgłoszenie serwisowe</h1>
+                    <p style="margin: 0; color: #bfa76a; font-size: 16px; font-weight: 600; font-family: 'Times New Roman', serif;">Numer zgłoszenia: <span style="color: #3a2e24;">${ticketNumber}</span></p>
+                  </td>
+                </tr>
+                
+                <!-- Содержимое письма -->
+                <tr>
+                  <td style="padding: 0 40px 25px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <!-- Имя и фамилия -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Imię i nazwisko:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;">${escapeHtml(name) || 'Nie podano'}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Телефон -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Numer telefonu:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;"><a href="tel:${escapeHtml(phone)}" style="color: #3a2e24; text-decoration: none; font-weight: 500;">${escapeHtml(formattedPhone)}</a></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Email -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Adres e-mail:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;"><a href="mailto:${escapeHtml(email)}" style="color: #3a2e24; text-decoration: none; font-weight: 500;">${escapeHtml(email) || 'Nie podano'}</a></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Адрес -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Adres:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;">${escapeHtml(address) || 'Nie podano'}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Тип устройства -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Typ urządzenia:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;">${escapeHtml(deviceType) || 'Nie podano'}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Модель устройства -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Model urządzenia:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;">${escapeHtml(deviceModel) || 'Nie podano'}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Описание проблемы -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Opis problemu:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif; white-space: pre-wrap;">${escapeHtml(problemDescription || 'Nie podano').replace(/\n/g, '<br>')}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      
+                      <!-- Замена принтера -->
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid rgba(58, 46, 36, 0.2);">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="180" style="color: #3a2e24; font-weight: 600; font-size: 14px; vertical-align: top; font-family: 'Times New Roman', serif;">Potrzebuję drukarki zastępczej:</td>
+                              <td style="color: #3a2e24; font-size: 14px; line-height: 1.2; font-family: 'Times New Roman', serif;">${escapeHtml(replacementPrinter) || 'Nie'}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: rgba(58, 46, 36, 0.8); padding: 15px 40px; border-top: 1px solid rgba(191, 167, 106, 0.3);">
+                    <p style="margin: 0; color: #bfa76a; font-size: 11px; text-align: center; line-height: 1.3; font-family: 'Times New Roman', serif;">
+                      Wiadomość wysłana automatycznie z formularza Omobonus Serwis<br>
+                      © ${currentYear} Omobonus Serwis
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `.trim()
+
+    // Текстовую версию для совместимости
     const emailContent = `
-Nowe zgłoszenie serwisowe:
+Nowe zgłoszenie serwisowe
+Numer zgłoszenia: ${ticketNumber}
 
 Imię i nazwisko: ${name}
-Numer telefonu: ${phone}
+Numer telefonu: ${formattedPhone}
 Adres e-mail: ${email}
 Adres: ${address}
 Typ urządzenia: ${deviceType}
@@ -78,22 +318,28 @@ Potrzebuję drukarki zastępczej: ${replacementPrinter}
       })
     }
 
+    console.log('📤 Wysyłanie e-maila przez Resend...')
+    console.log('📧 From:', process.env.RESEND_FROM_EMAIL || DEFAULT_FROM)
+    console.log('📧 To:', (process.env.RESEND_TO_EMAIL || DEFAULT_TO).split(',').map(value => value.trim()))
+    
     const { data, error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || DEFAULT_FROM,
       to: (process.env.RESEND_TO_EMAIL || DEFAULT_TO).split(',').map(value => value.trim()),
-      subject: `Nowe zgłoszenie serwisowe od ${name || 'anonim'}`,
+      subject: `[${ticketNumber}] Nowe zgłoszenie serwisowe od ${escapeHtml(name) || 'anonim'}`,
+      html: emailHtml,
       text: emailContent,
       attachments,
     })
 
     if (error) {
-      console.error('Resend error:', error)
+      console.error('❌ Resend error:', error)
       return NextResponse.json(
         { error: 'Nie udało się wysłać wiadomości' },
         { status: 500 },
       )
     }
 
+    console.log('✅ Resend response:', data)
     return NextResponse.json({ success: true, data })
   } catch (error) {
     console.error('Error sending email:', error)

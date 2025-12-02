@@ -18,7 +18,7 @@ export function CustomPhoneInput({ value, onChange, className = '' }: CustomPhon
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const selectorRowRef = useRef<HTMLDivElement>(null)
+  const selectorRowRef = useRef<HTMLButtonElement>(null)
 
   // Инициализация: извлекаем код страны и номер из value
   useEffect(() => {

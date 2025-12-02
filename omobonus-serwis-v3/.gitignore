@@ -46,3 +46,5 @@ docs/backups/
 backup_*/
 _backups/
 *.log
+
+.vercel

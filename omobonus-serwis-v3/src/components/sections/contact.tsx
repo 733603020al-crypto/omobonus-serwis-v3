@@ -21,7 +21,7 @@ const formSchema = z.object({
   deviceType: z.enum(['printer', 'computer', 'other'], { message: 'Wybierz typ urządzenia' }),
   deviceModel: z.string().optional(),
   problemDescription: z.string().min(10, { message: 'Opis problemu musi mieć min. 10 znaków' }),
-  replacementPrinter: z.boolean().default(false),
+  replacementPrinter: z.boolean().optional(),
   agreements: z.literal(true, { message: 'Musisz zaakceptować regulamin' }),
 })
 
@@ -72,12 +72,13 @@ export function Contact() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormValues>({
+  } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultFormValues,
   })
 
   const onSubmit = async (data: FormValues) => {
+    console.log('🚀 Formularz został przesłany. Dane:', data)
     setIsSubmitting(true)
     try {
       const formData = new FormData()
@@ -88,22 +89,28 @@ export function Contact() {
         formData.append('attachments', preview.file)
       })
 
+      console.log('📡 Wysyłanie żądania do /api/send-email...')
       const response = await fetch('/api/send-email', {
         method: 'POST',
         body: formData,
       })
 
+      console.log('📥 Odpowiedź z serwera:', response.status, response.statusText)
+      const responseData = await response.json()
+      console.log('📦 Dane odpowiedzi:', responseData)
+
       if (!response.ok) {
         throw new Error('Błąd podczas wysyłania formularza')
       }
 
+      console.log('✅ Formularz został wysłany pomyślnie!')
       setShowSuccessModal(true)
       reset(defaultFormValues)
       attachments.forEach(preview => URL.revokeObjectURL(preview.url))
       setAttachments([])
       setAttachmentError(null)
     } catch (error) {
-      console.error('Error submitting form:', error)
+      console.error('❌ Error submitting form:', error)
       alert('Wystąpił błąd podczas wysyłania formularza. Spróbuj ponownie.')
     } finally {
       setIsSubmitting(false)

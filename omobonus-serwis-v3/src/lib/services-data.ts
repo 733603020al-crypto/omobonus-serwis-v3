@@ -2581,9 +2581,19 @@ const createDesktopPricingSections = (): PricingSection[] => {
 }
 
 const createWynajemPricingSections = (): PricingSection[] => {
-  const sections = createPricingSections()
+  // Используем только базовые секции без FAQ (FAQ добавим в конце)
+  const defaultSections = createDefaultPricingSections()
   
-  // Добавляем два пустых аккордеона
+  // Удаляем ненужные секции для wynajem-drukarek
+  const sections = defaultSections.filter(
+    section => 
+      section.id !== 'diagnoza' && 
+      section.id !== 'dojazd' && 
+      section.id !== 'konserwacja' && 
+      section.id !== 'naprawy'
+  )
+  
+  // Добавляем два аккордеона
   sections.push({
     id: 'akordeon-1',
     title: 'Laserowe (format A4)',
@@ -2591,25 +2601,25 @@ const createWynajemPricingSections = (): PricingSection[] => {
     subcategories: [
       {
         id: 'drukarki-mono',
-        title: 'Drukarki mono',
+        title: 'Drukarki A4 (mono)',
         items: [],
         price: '30 / 50 / 100',
       },
       {
         id: 'drukarki-kolor',
-        title: 'Drukarki kolor',
+        title: 'Drukarki A4 (mono+kolor)',
         items: [],
         price: '50 / 100 / 150',
       },
       {
         id: 'mfu-mono',
-        title: 'MFU mono',
+        title: 'MFU A4 (mono)',
         items: [],
         price: '80 / 100 / 150',
       },
       {
         id: 'mfu-kolor',
-        title: 'MFU kolor',
+        title: 'MFU A4 (mono+kolor)',
         items: [],
         price: '100 / 150 / 200',
       },
@@ -2622,12 +2632,34 @@ const createWynajemPricingSections = (): PricingSection[] => {
     items: [],
     subcategories: [
       {
-        id: 'podkategoria-2',
-        title: 'Podmenu 2',
+        id: 'a3-drukarki-mono',
+        title: 'Drukarki A3/A4 (mono)',
         items: [],
+        price: '100 / 150 / 200',
+      },
+      {
+        id: 'a3-drukarki-kolor',
+        title: 'Drukarki A3/A4 (mono+kolor)',
+        items: [],
+        price: '200 / 250 / 300',
+      },
+      {
+        id: 'a3-mfu-mono',
+        title: 'MFU A3/A4 (mono)',
+        items: [],
+        price: '200 / 250 / 300',
+      },
+      {
+        id: 'a3-mfu-kolor',
+        title: 'MFU A3/A4 (mono+kolor)',
+        items: [],
+        price: '300 / 400 / 500',
       },
     ],
   })
+
+  // Добавляем FAQ в конец
+  sections.push(createFaqSection())
 
   return sections
 }

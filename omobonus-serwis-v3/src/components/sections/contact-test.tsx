@@ -271,6 +271,7 @@ export function ContactTest() {
                   render={({ field }) => (
                     <CustomRadio
                       {...field}
+                      id="deviceType-printer"
                       value="printer"
                       checked={field.value === 'printer'}
                       label="Drukarka"
@@ -283,6 +284,7 @@ export function ContactTest() {
                   render={({ field }) => (
                     <CustomRadio
                       {...field}
+                      id="deviceType-computer"
                       value="computer"
                       checked={field.value === 'computer'}
                       label="Komputer / Laptop"
@@ -295,6 +297,7 @@ export function ContactTest() {
                   render={({ field }) => (
                     <CustomRadio
                       {...field}
+                      id="deviceType-other"
                       value="other"
                       checked={field.value === 'other'}
                       label="Inne urządzenie"
@@ -344,9 +347,9 @@ export function ContactTest() {
                 control={control}
                 render={({ field }) => (
                   <CustomCheckbox
+                    id="replacementPrinter"
                     checked={field.value || false}
                     onChange={(e) => field.onChange(e.target.checked)}
-                    onBlur={field.onBlur}
                     name={field.name}
                     label="Potrzebuję drukarki zastępczej na czas naprawy."
                   />
@@ -359,9 +362,9 @@ export function ContactTest() {
                   control={control}
                   render={({ field }) => (
                     <CustomCheckbox
+                      id="agreements"
                       checked={field.value || false}
                       onChange={(e) => field.onChange(e.target.checked)}
-                      onBlur={field.onBlur}
                       name={field.name}
                       label={
                         <span className="text-lg">

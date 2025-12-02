@@ -41,8 +41,35 @@ const getIconForSection = (sectionId: string) => {
       return manifest.P4_Naprawy_i_uslugi_serwisowe
     case 'faq':
       return manifest.P5_FAQ_pytania_i_odpowiedzi
+    case 'akordeon-1':
+      return '/images/A4.png'
+    case 'akordeon-2':
+      return '/images/A3.png'
     default:
       return manifest.P5_FAQ_pytania_i_odpowiedzi
+  }
+}
+
+const getIconForSubcategory = (subcategoryId: string) => {
+  switch (subcategoryId) {
+    case 'drukarki-mono':
+      return '/images/A4_Drukarki_mono.png'
+    case 'drukarki-kolor':
+      return '/images/A4_Drukarki_kolor.png'
+    case 'mfu-mono':
+      return '/images/A4_MFU_mono.png'
+    case 'mfu-kolor':
+      return '/images/A4_MFU_kolor.png'
+    case 'a3-drukarki-mono':
+      return '/images/DrukarkiA3A4 (mono).png'
+    case 'a3-drukarki-kolor':
+      return '/images/Drukarki A3A4 (mono+kolor).png'
+    case 'a3-mfu-mono':
+      return '/images/MFU A3A4 (mono).png'
+    case 'a3-mfu-kolor':
+      return '/images/MFU A3A4 (mono+kolor).png'
+    default:
+      return null
   }
 }
 
@@ -320,7 +347,8 @@ const WynajemTable = ({
   const leftOffset = 12
 
   useEffect(() => {
-    if ((subcategoryId !== 'drukarki-mono' && subcategoryId !== 'drukarki-kolor' && subcategoryId !== 'mfu-mono' && subcategoryId !== 'mfu-kolor') || !headerRefs.prices[0]?.current) return
+    const validSubcategoryIds = ['drukarki-mono', 'drukarki-kolor', 'mfu-mono', 'mfu-kolor', 'a3-drukarki-mono', 'a3-drukarki-kolor', 'a3-mfu-mono', 'a3-mfu-kolor']
+    if (!validSubcategoryIds.includes(subcategoryId) || !headerRefs.prices[0]?.current) return
 
     const measureColumns = () => {
       const iconEl = headerRefs.icon.current
@@ -365,7 +393,8 @@ const WynajemTable = ({
     }
   }, [subcategoryId, headerRefs])
 
-  if (subcategoryId !== 'drukarki-mono' && subcategoryId !== 'drukarki-kolor' && subcategoryId !== 'mfu-mono' && subcategoryId !== 'mfu-kolor') return null
+  const validSubcategoryIds = ['drukarki-mono', 'drukarki-kolor', 'mfu-mono', 'mfu-kolor', 'a3-drukarki-mono', 'a3-drukarki-kolor', 'a3-mfu-mono', 'a3-mfu-kolor']
+  if (!validSubcategoryIds.includes(subcategoryId)) return null
 
   // Данные для таблицы Drukarki mono
   const tableDataMono = [
@@ -403,11 +432,51 @@ const WynajemTable = ({
     { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '30', plan3: '40' },
   ]
 
+  // Данные для таблицы Drukarki A3/A4 mono
+  const tableDataA3Mono = [
+    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '2 500 str./mies.', plan2: '3 750 str./mies.', plan3: '5 000 str./mies.' },
+    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
+  ]
+
+  // Данные для таблицы Drukarki A3/A4 kolor
+  const tableDataA3Kolor = [
+    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '2 000 + 300', plan2: '3 000 + 500', plan3: '5 000 + 800' },
+    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,18 zł' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
+  ]
+
+  // Данные для таблицы MFU A3/A4 mono
+  const tableDataA3MfuMono = [
+    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '5 000 str./mies.', plan2: '7 000 str./mies.', plan3: '10 000 str./mies.' },
+    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
+  ]
+
+  // Данные для таблицы MFU A3/A4 kolor
+  const tableDataA3MfuKolor = [
+    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '5 000 + 500', plan2: '7 500 + 750', plan3: '10 000 + 1 000' },
+    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,16 zł', plan2: '0,16 zł', plan3: '0,15 zł' },
+    { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
+  ]
+
   const tableData = 
     subcategoryId === 'drukarki-mono' ? tableDataMono :
+    subcategoryId === 'a3-drukarki-mono' ? tableDataA3Mono :
     subcategoryId === 'drukarki-kolor' ? tableDataKolor :
+    subcategoryId === 'a3-drukarki-kolor' ? tableDataA3Kolor :
     subcategoryId === 'mfu-mono' ? tableDataMfuMono :
+    subcategoryId === 'a3-mfu-mono' ? tableDataA3MfuMono :
     subcategoryId === 'mfu-kolor' ? tableDataMfuKolor :
+    subcategoryId === 'a3-mfu-kolor' ? tableDataA3MfuKolor :
     []
 
   // Стиль для текста-подсказки (как "do ceny")
@@ -537,7 +606,7 @@ const WynajemTable = ({
     <div 
       className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden"
     >
-      <div className="overflow-x-auto md:overflow-x-visible">
+      <div className="overflow-x-auto md:overflow-x-visible -mx-4 md:mx-0 px-4 md:px-0">
         {/* Десктоп: flex с динамическими размерами из верхнего ряда */}
         <div 
           className="hidden md:block"
@@ -588,42 +657,54 @@ const WynajemTable = ({
           })}
         </div>
         {/* Мобильная версия: обычная таблица */}
-        <div className="md:hidden">
-          <Table className="table-fixed border-collapse w-full">
-            <colgroup>
-              <col style={{ width: '40%' }} />
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '20%' }} />
-            </colgroup>
-            <TableBody>
-              {tableData.map((row, idx) => {
-                const isSmallFontRow = row.label.includes('Skanowanie') || row.label.includes('Duplex') || row.label.includes('Prędkość druku')
-                const labelFontSize = isSmallFontRow ? 'text-[14px]' : 'text-[16px]'
-                const valueFontSize = isSmallFontRow ? 'text-[14px]' : (idx === 3 ? 'text-[14px]' : 'text-[16px]')
-                
-                return (
-                  <TableRow
-                    key={idx}
-                    className={`border-[#8b7a5a] border-b-2 ${idx === 0 ? 'border-t-2 border-[#8b7a5a]' : ''}`}
-                  >
-                    <TableCell className={`px-2 py-1 align-middle text-left leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}>
-                      {row.label}
-                    </TableCell>
-                    <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]">
-                      {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
-                    </TableCell>
-                    <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]">
-                      {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
-                    </TableCell>
-                    <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]">
-                      {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
+        <div className="md:hidden py-3">
+          <div className="overflow-x-auto scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <Table className="border-collapse" style={{ minWidth: '100%', width: '100%' }}>
+              <colgroup>
+                <col style={{ width: '40%', minWidth: '120px' }} />
+                <col style={{ width: '20%', minWidth: '60px' }} />
+                <col style={{ width: '20%', minWidth: '60px' }} />
+                <col style={{ width: '20%', minWidth: '60px' }} />
+              </colgroup>
+              <TableHeader>
+                <TableRow className="border-[#8b7a5a] border-b-2 border-t-2">
+                  <TableHead className="px-2 py-2.5 align-middle text-left"></TableHead>
+                  <TableHead colSpan={3} className="px-1.5 py-2.5 align-middle text-center border-l-2 border-[#8b7a5a]">
+                    <div className="text-xs font-cormorant font-semibold text-[#ffffff] leading-tight">
+                      Czynsz wynajmu [zł/mies.]
+                    </div>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tableData.map((row, idx) => {
+                  const isSmallFontRow = row.label.includes('Skanowanie') || row.label.includes('Duplex') || row.label.includes('Prędkość druku')
+                  const labelFontSize = isSmallFontRow ? 'text-[14px]' : 'text-[16px]'
+                  const valueFontSize = isSmallFontRow ? 'text-[14px]' : (idx === 3 ? 'text-[14px]' : 'text-[16px]')
+                  
+                  return (
+                    <TableRow
+                      key={idx}
+                      className={`border-[#8b7a5a] border-b-2`}
+                    >
+                      <TableCell className={`px-2 py-2.5 align-middle text-left leading-[1.5] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}>
+                        {row.label}
+                      </TableCell>
+                      <TableCell className="px-1.5 py-2.5 align-middle text-center leading-[1.5] border-l-2 border-[#8b7a5a]">
+                        {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
+                      </TableCell>
+                      <TableCell className="px-1.5 py-2.5 align-middle text-center leading-[1.5] border-l-2 border-[#8b7a5a]">
+                        {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
+                      </TableCell>
+                      <TableCell className="px-1.5 py-2.5 align-middle text-center leading-[1.5] border-l-2 border-[#8b7a5a]">
+                        {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </div>
@@ -847,7 +928,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
       if (!sectionHeaderRef.current) return
       
       // Ищем первую подкатегорию в секции
-      const firstSubcategoryKey = sectionId === 'akordeon-1' ? 'akordeon-1-drukarki-mono' : 'akordeon-2-podkategoria-2'
+      const firstSubcategoryKey = sectionId === 'akordeon-1' ? 'akordeon-1-drukarki-mono' : 'akordeon-2-a3-drukarki-mono'
       const headerRefs = wynajemHeaderRefs.current[firstSubcategoryKey]
       
       if (headerRefs && headerRefs.prices[0]?.current && headerRefs.prices[2]?.current) {
@@ -954,11 +1035,11 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                           <span className="hidden md:inline">{section.title}</span>
                         </h3>
                         {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен */}
-                        {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && (
+                        {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-1' && (
                           <>
-                            {section.id === 'akordeon-1' && priceColumnsPosition1 && (
+                            {priceColumnsPosition1 ? (
                               <>
-                                {/* Десктопная версия */}
+                                {/* Десктопная версия с вычисленной позицией */}
                                 <div 
                                   className="hidden md:block absolute top-0"
                                   style={{
@@ -972,38 +1053,48 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     </span>
                                   </div>
                                 </div>
-                                {/* Мобильная версия */}
-                                <div className="md:hidden">
+                              </>
+                            ) : null}
+                            {/* Мобильная версия */}
+                            <div className="md:hidden">
+                              <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                Czynsz [zł/mies.]
+                              </span>
+                            </div>
+                          </>
+                        )}
+                        {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-2' && (
+                          <>
+                            {/* Десктопная версия */}
+                            {priceColumnsPosition2 ? (
+                              <div 
+                                className="hidden md:block absolute top-0"
+                                style={{
+                                  left: `${priceColumnsPosition2.left}px`,
+                                  width: `${priceColumnsPosition2.width}px`,
+                                }}
+                              >
+                                <div className="text-center">
                                   <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                    Czynsz [zł/mies.]
+                                    Czynsz wynajmu [zł/mies.]
                                   </span>
                                 </div>
-                              </>
-                            )}
-                            {section.id === 'akordeon-2' && priceColumnsPosition2 && (
-                              <>
-                                {/* Десктопная версия */}
-                                <div 
-                                  className="hidden md:block absolute top-0"
-                                  style={{
-                                    left: `${priceColumnsPosition2.left}px`,
-                                    width: `${priceColumnsPosition2.width}px`,
-                                  }}
-                                >
-                                  <div className="text-center">
-                                    <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                      Czynsz wynajmu [zł/mies.]
-                                    </span>
-                                  </div>
-                                </div>
-                                {/* Мобильная версия */}
-                                <div className="md:hidden">
+                              </div>
+                            ) : (
+                              <div className="hidden md:block absolute top-0 right-0" style={{ width: '60%' }}>
+                                <div className="text-center">
                                   <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                    Czynsz [zł/mies.]
+                                    Czynsz wynajmu [zł/mies.]
                                   </span>
                                 </div>
-                              </>
+                              </div>
                             )}
+                            {/* Мобильная версия */}
+                            <div className="md:hidden">
+                              <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                Czynsz [zł/mies.]
+                              </span>
+                            </div>
                           </>
                         )}
                         <div className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform group-data-[state=open]:hidden">
@@ -1189,7 +1280,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center mr-2"
                                         >
                                           <Image
-                                            src={getIconForSection(section.id)}
+                                            src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
                                             alt={subcategory.title}
                                             width={40}
                                             height={40}
@@ -1205,18 +1296,33 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
                                             {(() => {
                                               const title = subcategory.title
+                                              // Для wynajem-drukarek подкатегорий части в скобках оформляем в том же стиле
+                                              const isWynajemSubcategory = service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
                                               const match = title.match(/^(.+?)\s*\((.+?)\)$/)
                                               if (match) {
                                                 const mainPart = match[1].trim()
                                                 const bracketPart = match[2].trim()
-                                                return (
-                                                  <>
-                                                    {mainPart}{' '}
-                                                    <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
-                                                      ({bracketPart})
-                                                    </span>
-                                                  </>
-                                                )
+                                                if (isWynajemSubcategory) {
+                                                  // Для wynajem - вся часть в скобках в том же стиле
+                                                  return (
+                                                    <>
+                                                      {mainPart}{' '}
+                                                      <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                                        ({bracketPart})
+                                                      </span>
+                                                    </>
+                                                  )
+                                                } else {
+                                                  // Для других секций - как было
+                                                  return (
+                                                    <>
+                                                      {mainPart}{' '}
+                                                      <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                        ({bracketPart})
+                                                      </span>
+                                                    </>
+                                                  )
+                                                }
                                               }
                                               return title
                                             })()}
@@ -1255,11 +1361,11 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     )
                                   })()}
                                 </div>
-                                <div className="md:hidden flex flex-col w-full gap-2">
+                                <div className="md:hidden flex flex-col w-full gap-3">
                                   <div className="flex items-center gap-3">
                                     <div className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
                                       <Image
-                                        src={getIconForSection(section.id)}
+                                        src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
                                         alt={subcategory.title}
                                         width={40}
                                         height={40}
@@ -1271,42 +1377,38 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
                                         {(() => {
                                           const title = subcategory.title
+                                          // Для wynajem-drukarek подкатегорий части в скобках оформляем в том же стиле
+                                          const isWynajemSubcategory = service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
                                           const match = title.match(/^(.+?)\s*\((.+?)\)$/)
                                           if (match) {
                                             const mainPart = match[1].trim()
                                             const bracketPart = match[2].trim()
-                                            return (
-                                              <>
-                                                {mainPart}{' '}
-                                                <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
-                                                  ({bracketPart})
-                                                </span>
-                                              </>
-                                            )
+                                            if (isWynajemSubcategory) {
+                                              // Для wynajem - вся часть в скобках в том же стиле
+                                              return (
+                                                <>
+                                                  {mainPart}{' '}
+                                                  <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                                    ({bracketPart})
+                                                  </span>
+                                                </>
+                                              )
+                                            } else {
+                                              // Для других секций - как было
+                                              return (
+                                                <>
+                                                  {mainPart}{' '}
+                                                  <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                    ({bracketPart})
+                                                  </span>
+                                                </>
+                                              )
+                                            }
                                           }
                                           return title
                                         })()}
                                       </h4>
                                     </div>
-                                  </div>
-                                  <div className="flex items-center gap-2 pl-[52px]">
-                                    {subcategory.price.split(' / ').map((price, idx) => (
-                                      <div key={idx} className="flex-1 text-center">
-                                        <div className="text-base font-normal text-[#ffffff] font-inter leading-[1.3]">
-                                          <span className="inline-flex items-start">
-                                            <span>{price}</span>
-                                            {isSubcategoryOpen(section.id, subcategory.id) && (
-                                              <span 
-                                                className="font-table-sub text-[16px] text-[#ede0c4] leading-[1.3] ml-0.5 inline-flex" 
-                                                style={{ textShadow: supplementTextShadow, marginTop: '-3px' }}
-                                              >
-                                                zł
-                                              </span>
-                                            )}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    ))}
                                   </div>
                                   <div className="pl-[52px]">
                                     <div
@@ -1324,7 +1426,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && (
                                   <div className="mr-2 w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
                                     <Image
-                                      src={getIconForSection(section.id)}
+                                      src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
                                       alt={subcategory.title}
                                       width={40}
                                       height={40}
@@ -1350,10 +1452,11 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           if (match) {
                                             const mainPart = match[1].trim()
                                             const bracketPart = match[2].trim()
+                                            // Для wynajem - вся часть в скобках в том же стиле, что и основная часть
                                             return (
                                               <>
                                                 {mainPart}{' '}
-                                                <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
                                                   ({bracketPart})
                                                 </span>
                                               </>
@@ -1385,18 +1488,6 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                         </span>
                                         <ArrowRight className="w-3 h-3 flex-shrink-0" />
                                       </div>
-                                      {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && subcategory.price && (
-                                        <div className="md:hidden mt-1">
-                                          <div className="font-inter text-[13px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
-                                            {subcategory.price.split(' / ').map((price, idx, arr) => (
-                                              <span key={idx}>
-                                                {price}
-                                                {idx < arr.length - 1 && ' / '}
-                                              </span>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
                                     </>
                                   )}
                                 </div>

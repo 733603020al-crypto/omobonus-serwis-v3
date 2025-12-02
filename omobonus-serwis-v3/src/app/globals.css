@@ -17,6 +17,10 @@
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   }
 
+  .font-inter {
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  }
+
   /* Винтажные шрифты для таблиц */
   .font-table-main {
     font-family: var(--font-cormorant), serif;

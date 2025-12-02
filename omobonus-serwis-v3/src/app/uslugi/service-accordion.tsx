@@ -320,7 +320,7 @@ const WynajemTable = ({
   const leftOffset = 12
 
   useEffect(() => {
-    if (subcategoryId !== 'drukarki-mono' || !headerRefs.prices[0]?.current) return
+    if ((subcategoryId !== 'drukarki-mono' && subcategoryId !== 'drukarki-kolor' && subcategoryId !== 'mfu-mono' && subcategoryId !== 'mfu-kolor') || !headerRefs.prices[0]?.current) return
 
     const measureColumns = () => {
       const iconEl = headerRefs.icon.current
@@ -365,18 +365,177 @@ const WynajemTable = ({
     }
   }, [subcategoryId, headerRefs])
 
-  if (subcategoryId !== 'drukarki-mono') return null
+  if (subcategoryId !== 'drukarki-mono' && subcategoryId !== 'drukarki-kolor' && subcategoryId !== 'mfu-mono' && subcategoryId !== 'mfu-kolor') return null
 
-  const tableData = [
-    { label: 'A4 wliczonych w czynsz, mono', plan1: '500 str.', plan2: '1 000 str.', plan3: '2 500 str.' },
-    { label: 'Cena wydruku A4 powyżej limitu, mono', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+  // Данные для таблицы Drukarki mono
+  const tableDataMono = [
+    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '500 str./mies.', plan2: '1 000 str./mies.', plan3: '2 500 str./mies.' },
+    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
     { label: 'Duplex', plan1: '-', plan2: '- / +', plan3: '+' },
-    { label: 'Prędkość druku do', plan1: '20 str./min', plan2: '40 str./min', plan3: '60 str./min' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '40', plan3: '60' },
   ]
+
+  // Данные для таблицы Drukarki kolor
+  const tableDataKolor = [
+    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '1 000 + 0', plan2: '1 000 + 200', plan3: '2 000 + 200' },
+    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,20 zł' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '40', plan3: '60' },
+  ]
+
+  // Данные для таблицы MFU mono
+  const tableDataMfuMono = [
+    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '1 500 str./mies.', plan2: '2 000 str./mies.', plan3: '3 000 str./mies.' },
+    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '40', plan3: '60' },
+  ]
+
+  // Данные для таблицы MFU kolor
+  const tableDataMfuKolor = [
+    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '1 000 + 100', plan2: '1 500 + 200', plan3: '2 000 + 300' },
+    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,20 zł' },
+    { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
+    { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
+    { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '30', plan3: '40' },
+  ]
+
+  const tableData = 
+    subcategoryId === 'drukarki-mono' ? tableDataMono :
+    subcategoryId === 'drukarki-kolor' ? tableDataKolor :
+    subcategoryId === 'mfu-mono' ? tableDataMfuMono :
+    subcategoryId === 'mfu-kolor' ? tableDataMfuKolor :
+    []
+
+  // Стиль для текста-подсказки (как "do ceny")
+  const supplementTextShadow = '0 0 8px rgba(237, 224, 196, 0.4), 0 0 4px rgba(237, 224, 196, 0.3)'
+
+  // Функция для рендеринга значения с суффиксом "/mies.", "/min" или "zł"
+  const renderValueWithSuffix = (value: string, fontSize: string = 'text-[16px]', columnIndex: number = 0) => {
+    // Для сложных значений типа "1 000 + 0" (без "str.") - разделяем на две строки
+    if (value.includes(' + ') && !value.includes(' str.')) {
+      const parts = value.split(' + ')
+      const firstPart = parts[0].trim() // "1 000"
+      const secondPart = parts[1].trim() // "0"
+      
+      return (
+        <div className="flex flex-col items-center">
+          {/* Первая строка: "1 000" */}
+          <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{firstPart}</span>
+          {/* Вторая строка: "+ 0" */}
+          <div className="flex items-baseline">
+            <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>+</span>
+            <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)] ml-1`}>{secondPart}</span>
+          </div>
+        </div>
+      )
+    }
+    
+    // Для сложных значений типа "1 000 str. + 0 str." - разделяем на две строки
+    if (value.includes(' + ') && value.includes(' str.')) {
+      const parts = value.split(' + ')
+      const firstPart = parts[0].trim() // "1 000 str."
+      const secondPart = parts[1].trim() // "0 str."
+      
+      const renderStrPart = (strPart: string) => {
+        const strMatch = strPart.match(/^(.+?)\s*str\.$/)
+        if (strMatch) {
+          const number = strMatch[1].trim()
+          return (
+            <div className="flex items-baseline">
+              <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{number}</span>
+              <span 
+                className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ml-1" 
+                style={{ textShadow: supplementTextShadow }}
+              >
+                str.
+              </span>
+            </div>
+          )
+        }
+        return <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{strPart}</span>
+      }
+      
+      // Парсим вторую часть отдельно
+      const secondMatch = secondPart.match(/^(.+?)\s*str\.$/)
+      const secondNumber = secondMatch ? secondMatch[1].trim() : secondPart
+      
+      return (
+        <div className="flex flex-col items-center">
+          {/* Первая строка: "1 000 str." */}
+          {renderStrPart(firstPart)}
+          {/* Вторая строка: "+ 0 str." */}
+          <div className="flex items-baseline">
+            <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>+</span>
+            <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)] ml-1`}>{secondNumber}</span>
+            <span 
+              className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ml-1" 
+              style={{ textShadow: supplementTextShadow }}
+            >
+              str.
+            </span>
+          </div>
+        </div>
+      )
+    }
+    
+    // Для "500 str./mies." - разделить на две строки: число сверху, "str./mies." снизу
+    if (value.includes('str./mies.')) {
+      const parts = value.split('str./mies.')
+      const number = parts[0].trim()
+      return (
+        <div className="flex flex-col items-center">
+          <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{number}</span>
+          <span 
+            className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" 
+            style={{ textShadow: supplementTextShadow }}
+          >
+            str./mies.
+          </span>
+        </div>
+      )
+    }
+    // Для "20 str./min" - не переносим, но "str./min" оформляем в том же стиле
+    if (value.includes('str./min')) {
+      const number = value.replace(/\s*str\.\/min.*$/, '').trim()
+      return (
+        <span className="inline-flex items-baseline">
+          <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{number}</span>
+          <span 
+            className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ml-1" 
+            style={{ textShadow: supplementTextShadow }}
+          >
+            str./min
+          </span>
+        </span>
+      )
+    }
+    // Для "0,05 zł" - "zł" оформляем в том же стиле
+    // Используем вариант A для всех колонок, с поднятием "zł" выше
+    if (value.includes('zł')) {
+      const number = value.replace(/\s*zł.*$/, '').trim()
+      return (
+        <span className="inline-flex items-start">
+          <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{number}</span>
+          <span 
+            className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ml-0.5" 
+            style={{ textShadow: supplementTextShadow, marginTop: '-3px' }}
+          >
+            zł
+          </span>
+        </span>
+      )
+    }
+    // Для остальных значений
+    return <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{value}</span>
+  }
 
   return (
     <div 
-      className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden border-2 border-red-500"
+      className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden"
     >
       <div className="overflow-x-auto md:overflow-x-visible">
         {/* Десктоп: flex с динамическими размерами из верхнего ряда */}
@@ -384,44 +543,49 @@ const WynajemTable = ({
           className="hidden md:block"
           style={{ marginLeft: `${leftOffset}px`, width: `calc(100% - ${leftOffset}px)` }}
         >
-          {tableData.map((row, idx) => (
-            <div
-              key={idx}
-              className={`flex w-full items-center border-[#7b6a4a]/70 ${idx === 0 ? 'border-t' : ''} border-b outline outline-2 outline-purple-500`}
-            >
-              {/* Пустая колонка для иконки */}
-              <div 
-                className="outline outline-1 outline-blue-500"
-                style={columnWidths ? { width: `${columnWidths.icon}px`, marginRight: '8px' } : { width: '40px', marginRight: '8px' }}
-              ></div>
-              {/* Колонка с описанием */}
-              <div 
-                className="px-2 py-1 flex items-center leading-[1.4] font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-1 outline-green-500"
-                style={columnWidths ? { width: `${columnWidths.text}px` } : undefined}
+          {tableData.map((row, idx) => {
+            const isSmallFontRow = row.label.includes('Skanowanie') || row.label.includes('Duplex') || row.label.includes('Prędkość druku')
+            const labelFontSize = isSmallFontRow ? 'text-[14px]' : 'text-[16px]'
+            const valueFontSize = isSmallFontRow ? 'text-[14px]' : (idx === 3 ? 'text-[14px]' : 'text-[16px]')
+            
+            return (
+              <div
+                key={idx}
+                className={`flex w-full items-center border-[#8b7a5a] ${idx === 0 ? 'border-t-2' : ''} border-b-2`}
               >
-                {row.label}
+                {/* Пустая колонка для иконки */}
+                <div 
+                  style={columnWidths ? { width: `${columnWidths.icon}px`, marginRight: '8px' } : { width: '40px', marginRight: '8px' }}
+                ></div>
+                {/* Колонка с описанием */}
+                <div 
+                  className={`px-2 py-1 flex items-center leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}
+                  style={columnWidths ? { width: `${columnWidths.text}px` } : undefined}
+                >
+                  {row.label}
+                </div>
+                {/* Три колонки с данными - используют точные размеры из верхнего ряда */}
+                <div 
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  style={columnWidths ? { width: `${columnWidths.price1}px`, marginLeft: '8px' } : undefined}
+                >
+                  {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
+                </div>
+                <div 
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  style={columnWidths ? { width: `${columnWidths.price2}px` } : undefined}
+                >
+                  {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
+                </div>
+                <div 
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  style={columnWidths ? { width: `${columnWidths.price3}px` } : undefined}
+                >
+                  {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
+                </div>
               </div>
-              {/* Три колонки с данными - используют точные размеры из верхнего ряда */}
-              <div 
-                className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-2 outline-yellow-500 outline-dashed"
-                style={columnWidths ? { width: `${columnWidths.price1}px`, marginLeft: '8px' } : undefined}
-              >
-                {row.plan1}
-              </div>
-              <div 
-                className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-2 outline-yellow-500 outline-dashed"
-                style={columnWidths ? { width: `${columnWidths.price2}px` } : undefined}
-              >
-                {row.plan2}
-              </div>
-              <div 
-                className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-2 outline-yellow-500 outline-dashed"
-                style={columnWidths ? { width: `${columnWidths.price3}px` } : undefined}
-              >
-                {row.plan3}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
         {/* Мобильная версия: обычная таблица */}
         <div className="md:hidden">
@@ -433,25 +597,31 @@ const WynajemTable = ({
               <col style={{ width: '20%' }} />
             </colgroup>
             <TableBody>
-              {tableData.map((row, idx) => (
-                <TableRow
-                  key={idx}
-                  className={`border-[#7b6a4a]/70 border-b ${idx === 0 ? 'border-t border-[#7b6a4a]/70' : ''}`}
-                >
-                  <TableCell className="px-2 py-1 align-middle text-left leading-[1.4] font-table-main text-lg text-[rgba(255,255,245,0.85)]">
-                    {row.label}
-                  </TableCell>
-                  <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)]">
-                    {row.plan1}
-                  </TableCell>
-                  <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)]">
-                    {row.plan2}
-                  </TableCell>
-                  <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)]">
-                    {row.plan3}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {tableData.map((row, idx) => {
+                const isSmallFontRow = row.label.includes('Skanowanie') || row.label.includes('Duplex') || row.label.includes('Prędkość druku')
+                const labelFontSize = isSmallFontRow ? 'text-[14px]' : 'text-[16px]'
+                const valueFontSize = isSmallFontRow ? 'text-[14px]' : (idx === 3 ? 'text-[14px]' : 'text-[16px]')
+                
+                return (
+                  <TableRow
+                    key={idx}
+                    className={`border-[#8b7a5a] border-b-2 ${idx === 0 ? 'border-t-2 border-[#8b7a5a]' : ''}`}
+                  >
+                    <TableCell className={`px-2 py-1 align-middle text-left leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}>
+                      {row.label}
+                    </TableCell>
+                    <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]">
+                      {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
+                    </TableCell>
+                    <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]">
+                      {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
+                    </TableCell>
+                    <TableCell className="px-2 py-1 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]">
+                      {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </div>
@@ -520,6 +690,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const [openSubcategory, setOpenSubcategory] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<string | null>(null)
   const [isCategoryTooltipOpen, setCategoryTooltipOpen] = useState(false)
+  const [openWynajemSubcategories, setOpenWynajemSubcategories] = useState<string[]>([])
   const sectionRefs = useRef<ScrollRefs>({})
   const subcategoryRefs = useRef<ScrollRefs>({})
   // Refs для колонок цен в шапке wynajem подменю
@@ -530,10 +701,18 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
       prices: React.RefObject<HTMLDivElement | null>[]
     } 
   }>({})
+  // Refs для контейнеров заголовков секций (для позиционирования "Czynsz wynajmu [zł/mies.]")
+  const sectionHeaderRef1 = useRef<HTMLDivElement | null>(null)
+  const sectionHeaderRef2 = useRef<HTMLDivElement | null>(null)
+  const [priceColumnsPosition1, setPriceColumnsPosition1] = useState<{ left: number; width: number } | null>(null)
+  const [priceColumnsPosition2, setPriceColumnsPosition2] = useState<{ left: number; width: number } | null>(null)
   const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
   const isLaserService = service.slug === 'serwis-drukarek-laserowych'
   const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
   const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
+  
+  // Стиль для текста-подсказки (как "do ceny")
+  const supplementTextShadow = '0 0 8px rgba(237, 224, 196, 0.4), 0 0 4px rgba(237, 224, 196, 0.3)'
 
 
   const renderPriceTooltipContent = () => {
@@ -599,6 +778,9 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const handleSectionChange = (value: string | null) => {
     setOpenSection(prev => (prev === value ? null : value))
     setOpenSubcategory(null)
+    if (!value || (service.slug === 'wynajem-drukarek' && value !== 'akordeon-1' && value !== 'akordeon-2')) {
+      setOpenWynajemSubcategories([])
+    }
   }
 
   const handleSubcategoryChange = (sectionId: string, value: string | null) => {
@@ -611,6 +793,17 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
   const getSubcategoryValue = (sectionId: string) =>
     sectionId === 'naprawy' ? openSubcategory ?? undefined : undefined
+
+  const isSubcategoryOpen = (sectionId: string, subcategoryId: string) => {
+    if (service.slug === 'wynajem-drukarek' && (sectionId === 'akordeon-1' || sectionId === 'akordeon-2')) {
+      return openWynajemSubcategories.includes(subcategoryId)
+    }
+    return false
+  }
+
+  const handleWynajemSubcategoryChange = (values: string[]) => {
+    setOpenWynajemSubcategories(values)
+  }
 
   useEffect(() => {
     if (!openSection) return
@@ -635,6 +828,72 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
 
     scrollIntoViewIfNeeded(parentRef, SECTION_SCROLL_OFFSET, true)
   }, [openSubcategory, openSection])
+
+  // Измерение позиции столбцов цен для позиционирования "Czynsz wynajmu [zł/mies.]"
+  useEffect(() => {
+    if (service.slug !== 'wynajem-drukarek') {
+      setPriceColumnsPosition1(null)
+      setPriceColumnsPosition2(null)
+      return
+    }
+    
+    const measurePriceColumns = (sectionId: 'akordeon-1' | 'akordeon-2', sectionHeaderRef: React.RefObject<HTMLDivElement | null>, setPosition: (pos: { left: number; width: number } | null) => void) => {
+      if (openSection !== sectionId) {
+        setPosition(null)
+        return
+      }
+      
+      // Проверяем, что контейнер заголовка существует
+      if (!sectionHeaderRef.current) return
+      
+      // Ищем первую подкатегорию в секции
+      const firstSubcategoryKey = sectionId === 'akordeon-1' ? 'akordeon-1-drukarki-mono' : 'akordeon-2-podkategoria-2'
+      const headerRefs = wynajemHeaderRefs.current[firstSubcategoryKey]
+      
+      if (headerRefs && headerRefs.prices[0]?.current && headerRefs.prices[2]?.current) {
+        const firstColumn = headerRefs.prices[0].current
+        const thirdColumn = headerRefs.prices[2].current
+        const firstRect = firstColumn.getBoundingClientRect()
+        const thirdRect = thirdColumn.getBoundingClientRect()
+        const headerRect = sectionHeaderRef.current.getBoundingClientRect()
+        
+        // Вычисляем относительную позицию первого столбца относительно контейнера заголовка
+        const left = firstRect.left - headerRect.left
+        
+        // Ширина = позиция правого края третьего столбца - позиция левого края первого столбца
+        const totalWidth = (thirdRect.right - headerRect.left) - left
+        
+        if (totalWidth > 0 && left > 0) {
+          setPosition({ left, width: totalWidth })
+        }
+      } else {
+        setPosition(null)
+      }
+    }
+    
+    const measureAll = () => {
+      measurePriceColumns('akordeon-1', sectionHeaderRef1, setPriceColumnsPosition1)
+      measurePriceColumns('akordeon-2', sectionHeaderRef2, setPriceColumnsPosition2)
+    }
+    
+    // Задержка для обеспечения рендеринга
+    const timeoutId1 = setTimeout(measureAll, 100)
+    const timeoutId2 = setTimeout(measureAll, 300)
+    const timeoutId3 = setTimeout(measureAll, 500)
+    
+    const handleResize = () => {
+      measureAll()
+    }
+    
+    window.addEventListener('resize', handleResize)
+    
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+      clearTimeout(timeoutId3)
+    }
+  }, [service.slug, openSection, sectionRefs, wynajemHeaderRefs])
 
 
 
@@ -676,7 +935,14 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                         />
                       </div>
 
-                      <div className="flex-1">
+                      <div 
+                        ref={
+                          service.slug === 'wynajem-drukarek' && section.id === 'akordeon-1' ? sectionHeaderRef1 :
+                          service.slug === 'wynajem-drukarek' && section.id === 'akordeon-2' ? sectionHeaderRef2 :
+                          null
+                        }
+                        className="flex-1 relative"
+                      >
                         <h3 className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] group-hover:text-white transition-colors mb-1 leading-tight">
                           <span className="md:hidden">
                             {section.id === 'konserwacja'
@@ -687,6 +953,59 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                           </span>
                           <span className="hidden md:inline">{section.title}</span>
                         </h3>
+                        {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен */}
+                        {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && (
+                          <>
+                            {section.id === 'akordeon-1' && priceColumnsPosition1 && (
+                              <>
+                                {/* Десктопная версия */}
+                                <div 
+                                  className="hidden md:block absolute top-0"
+                                  style={{
+                                    left: `${priceColumnsPosition1.left}px`,
+                                    width: `${priceColumnsPosition1.width}px`,
+                                  }}
+                                >
+                                  <div className="text-center">
+                                    <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                      Czynsz wynajmu [zł/mies.]
+                                    </span>
+                                  </div>
+                                </div>
+                                {/* Мобильная версия */}
+                                <div className="md:hidden">
+                                  <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                    Czynsz [zł/mies.]
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                            {section.id === 'akordeon-2' && priceColumnsPosition2 && (
+                              <>
+                                {/* Десктопная версия */}
+                                <div 
+                                  className="hidden md:block absolute top-0"
+                                  style={{
+                                    left: `${priceColumnsPosition2.left}px`,
+                                    width: `${priceColumnsPosition2.width}px`,
+                                  }}
+                                >
+                                  <div className="text-center">
+                                    <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                      Czynsz wynajmu [zł/mies.]
+                                    </span>
+                                  </div>
+                                </div>
+                                {/* Мобильная версия */}
+                                <div className="md:hidden">
+                                  <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                    Czynsz [zł/mies.]
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </>
+                        )}
                         <div className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform group-data-[state=open]:hidden">
                           <span>{section.id === 'faq' ? 'Zobacz' : 'Zobacz cennik'}</span>
                           <ArrowRight className="w-3 h-3" />
@@ -844,7 +1163,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 {/* Grid контейнер занимает calc(100% - 40px) для учета стрелки справа */}
                                 {/* Пропорции колонок подобраны вручную для точного совпадения центров: */}
                                 {/* Иконка (40px) + Gap (16px) + Текст (2.15fr) + Цены (0.95fr каждая) */}
-                                <div className="hidden md:flex items-center outline outline-2 outline-red-500" style={{ 
+                                <div className="hidden md:flex items-center" style={{ 
                                   width: 'calc(100% - 40px)' // Вычитаем место для стрелки справа (40px)
                                 }}>
                                   {(() => {
@@ -867,7 +1186,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       <>
                                         <div 
                                           ref={headerRefs.icon}
-                                          className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center mr-2 outline outline-1 outline-blue-500"
+                                          className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center mr-2"
                                         >
                                           <Image
                                             src={getIconForSection(section.id)}
@@ -880,11 +1199,27 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                         </div>
                                         <div 
                                           ref={headerRefs.text}
-                                          className="min-w-0 outline outline-1 outline-green-500" 
+                                          className="min-w-0" 
                                           style={{ width: 'calc((100% - 40px - 8px) * 0.4)' }}
                                         >
                                           <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                            {subcategory.title}
+                                            {(() => {
+                                              const title = subcategory.title
+                                              const match = title.match(/^(.+?)\s*\((.+?)\)$/)
+                                              if (match) {
+                                                const mainPart = match[1].trim()
+                                                const bracketPart = match[2].trim()
+                                                return (
+                                                  <>
+                                                    {mainPart}{' '}
+                                                    <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                      ({bracketPart})
+                                                    </span>
+                                                  </>
+                                                )
+                                              }
+                                              return title
+                                            })()}
                                           </h4>
                                           <div
                                             data-subcategory-link
@@ -898,11 +1233,21 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           <div 
                                             key={idx}
                                             ref={headerRefs.prices[idx]}
-                                            className="flex items-center justify-center text-center px-2 border-l border-[#7b6a4a]/70 outline outline-2 outline-yellow-500 outline-dashed"
+                                            className="flex items-center justify-center text-center px-2 border-l-2 border-[#8b7a5a]"
                                             style={{ width: `calc((100% - 40px - 8px) * 0.2)`, marginLeft: idx === 0 ? '8px' : '0' }}
                                           >
-                                            <div className="text-2xl font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                              {price} zł
+                                            <div className="text-lg font-normal text-[#ffffff] font-inter leading-[1.3]">
+                                              <span className="inline-flex items-start">
+                                                <span>{price}</span>
+                                                {isSubcategoryOpen(section.id, subcategory.id) && (
+                                                  <span 
+                                                    className="font-table-sub text-[16px] text-[#ede0c4] leading-[1.3] ml-0.5 inline-flex" 
+                                                    style={{ textShadow: supplementTextShadow, marginTop: '-3px' }}
+                                                  >
+                                                    zł
+                                                  </span>
+                                                )}
+                                              </span>
                                             </div>
                                           </div>
                                         ))}
@@ -924,15 +1269,41 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                        {subcategory.title}
+                                        {(() => {
+                                          const title = subcategory.title
+                                          const match = title.match(/^(.+?)\s*\((.+?)\)$/)
+                                          if (match) {
+                                            const mainPart = match[1].trim()
+                                            const bracketPart = match[2].trim()
+                                            return (
+                                              <>
+                                                {mainPart}{' '}
+                                                <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                  ({bracketPart})
+                                                </span>
+                                              </>
+                                            )
+                                          }
+                                          return title
+                                        })()}
                                       </h4>
                                     </div>
                                   </div>
                                   <div className="flex items-center gap-2 pl-[52px]">
                                     {subcategory.price.split(' / ').map((price, idx) => (
                                       <div key={idx} className="flex-1 text-center">
-                                        <div className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                          {price} zł
+                                        <div className="text-base font-normal text-[#ffffff] font-inter leading-[1.3]">
+                                          <span className="inline-flex items-start">
+                                            <span>{price}</span>
+                                            {isSubcategoryOpen(section.id, subcategory.id) && (
+                                              <span 
+                                                className="font-table-sub text-[16px] text-[#ede0c4] leading-[1.3] ml-0.5 inline-flex" 
+                                                style={{ textShadow: supplementTextShadow, marginTop: '-3px' }}
+                                              >
+                                                zł
+                                              </span>
+                                            )}
+                                          </span>
                                         </div>
                                       </div>
                                     ))}
@@ -971,7 +1342,26 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           : 'text-lg font-semibold text-[#ffffff]'
                                       }`}
                                     >
-                                      {subcategory.title}
+                                      {(() => {
+                                        const title = subcategory.title
+                                        // Применяем стиль только для wynajem-drukarek
+                                        if (service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')) {
+                                          const match = title.match(/^(.+?)\s*\((.+?)\)$/)
+                                          if (match) {
+                                            const mainPart = match[1].trim()
+                                            const bracketPart = match[2].trim()
+                                            return (
+                                              <>
+                                                {mainPart}{' '}
+                                                <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                  ({bracketPart})
+                                                </span>
+                                              </>
+                                            )
+                                          }
+                                        }
+                                        return title
+                                      })()}
                                     </h4>
                                     {subcategory.subtitle && section.id !== 'faq' && (
                                       <div
@@ -1000,7 +1390,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           <div className="font-inter text-[13px] text-[rgba(255,255,255,0.9)] leading-[1.3]">
                                             {subcategory.price.split(' / ').map((price, idx, arr) => (
                                               <span key={idx}>
-                                                {price} zł
+                                                {price}
                                                 {idx < arr.length - 1 && ' / '}
                                               </span>
                                             ))}
@@ -1015,7 +1405,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     <div className="font-inter text-[14px] text-[rgba(255,255,255,0.9)] leading-[1.3] text-right whitespace-nowrap">
                                       {subcategory.price.split(' / ').map((price, idx, arr) => (
                                         <span key={idx}>
-                                          {price} zł
+                                          {price}
                                           {idx < arr.length - 1 && ' / '}
                                         </span>
                                       ))}
@@ -1167,8 +1557,15 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                         )
                       }
 
+                      const isWynajemSection = service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
+                      
                       return (
-                        <Accordion type="multiple" className="w-full">
+                        <Accordion 
+                          type="multiple" 
+                          className="w-full"
+                          value={isWynajemSection ? openWynajemSubcategories : undefined}
+                          onValueChange={isWynajemSection ? handleWynajemSubcategoryChange : undefined}
+                        >
                           {subcategoryItems}
                         </Accordion>
                       )

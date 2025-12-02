@@ -2586,7 +2586,7 @@ const createWynajemPricingSections = (): PricingSection[] => {
   // Добавляем два пустых аккордеона
   sections.push({
     id: 'akordeon-1',
-    title: 'Laserowe (format A4) czynsz wynajmu miesięcznie',
+    title: 'Laserowe (format A4)',
     items: [],
     subcategories: [
       {
@@ -2618,7 +2618,7 @@ const createWynajemPricingSections = (): PricingSection[] => {
 
   sections.push({
     id: 'akordeon-2',
-    title: 'Laserowe (format A3/A4) czynsz wynajmu miesięcznie',
+    title: 'Laserowe (format A3/A4)',
     items: [],
     subcategories: [
       {

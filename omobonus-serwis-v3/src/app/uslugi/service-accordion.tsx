@@ -300,8 +300,89 @@ type ScrollRefs = Record<string, HTMLDivElement | null>
 
 const SECTION_SCROLL_OFFSET = 120
 
-// Функция для рендеринга таблицы wynajem (Drukarki mono)
-const renderWynajemTable = (subcategoryId: string) => {
+// Компонент для таблицы wynajem с динамическим выравниванием
+const WynajemTable = ({ 
+  subcategoryId, 
+  headerRefs 
+}: { 
+  subcategoryId: string
+  headerRefs: {
+    icon: React.RefObject<HTMLDivElement | null>
+    text: React.RefObject<HTMLDivElement | null>
+    prices: React.RefObject<HTMLDivElement | null>[]
+  }
+}) => {
+  const [columnWidths, setColumnWidths] = useState<{ icon: number; text: number; price1: number; price2: number; price3: number } | null>(null)
+  const [leftOffset, setLeftOffset] = useState<number>(0)
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (subcategoryId !== 'drukarki-mono' || !headerRefs.prices[0]?.current) return
+
+    const measureColumns = () => {
+      const iconEl = headerRefs.icon.current
+      const textEl = headerRefs.text.current
+      const price1El = headerRefs.prices[0]?.current
+      const price2El = headerRefs.prices[1]?.current
+      const price3El = headerRefs.prices[2]?.current
+      const tableContainer = tableContainerRef.current
+
+      if (iconEl && textEl && price1El && price2El && price3El && tableContainer) {
+        const iconRect = iconEl.getBoundingClientRect()
+        const textRect = textEl.getBoundingClientRect()
+        const price1Rect = price1El.getBoundingClientRect()
+        const price2Rect = price2El.getBoundingClientRect()
+        const price3Rect = price3El.getBoundingClientRect()
+        const tableContainerRect = tableContainer.getBoundingClientRect()
+
+        // Измеряем реальное расстояние от начала контейнера таблицы до начала текста "Drukarki mono"
+        const textLeft = textRect.left
+        const tableLeft = tableContainerRect.left
+        const iconWidth = iconRect.width
+        const iconLeft = iconRect.left
+        
+        // Реальное смещение от начала контейнера до начала текста "Drukarki mono"
+        const textOffsetFromContainer = textLeft - tableLeft
+        
+        // Реальное смещение от начала контейнера до начала иконки
+        const iconOffsetFromContainer = iconLeft - tableLeft
+        
+        // Для выравнивания текста в нижней таблице под "Drukarki mono"
+        // Применяем отступ к первой колонке (иконке), равный позиции иконки в верхнем ряду
+        // Но с учетом того, что визуально нужно выровнять текст, вычитаем половину ширины иконки
+        const firstColumnOffset = iconOffsetFromContainer - (iconWidth * 0.5)
+        
+        setLeftOffset(Math.max(0, firstColumnOffset))
+
+        setColumnWidths({
+          icon: iconRect.width,
+          text: textRect.width,
+          price1: price1Rect.width,
+          price2: price2Rect.width,
+          price3: price3Rect.width,
+        })
+      }
+    }
+
+    // Задержка для обеспечения рендеринга элементов
+    const timeoutId1 = setTimeout(measureColumns, 50)
+    const timeoutId2 = setTimeout(measureColumns, 200)
+    const timeoutId3 = setTimeout(measureColumns, 500)
+
+    const handleResize = () => {
+      measureColumns()
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+      clearTimeout(timeoutId3)
+    }
+  }, [subcategoryId, headerRefs])
+
   if (subcategoryId !== 'drukarki-mono') return null
 
   const tableData = [
@@ -312,31 +393,50 @@ const renderWynajemTable = (subcategoryId: string) => {
   ]
 
   return (
-    <div className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden">
+    <div 
+      ref={tableContainerRef}
+      className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden border-2 border-red-500"
+    >
       <div className="overflow-x-auto md:overflow-x-visible">
-        {/* Десктоп: grid для идеального выравнивания с шапкой */}
-        {/* Структура: иконка (auto) + текст (auto) + 3 равные колонки (1fr каждая) */}
-        <div className="hidden md:block">
+        {/* Десктоп: flex с динамическими размерами из верхнего ряда */}
+        <div 
+          className="hidden md:block"
+          style={leftOffset > 0 ? { marginLeft: `${leftOffset}px`, width: `calc(100% - ${leftOffset}px)` } : undefined}
+        >
           {tableData.map((row, idx) => (
             <div
               key={idx}
-              className={`grid w-full gap-3 items-center border-[#7b6a4a]/70 ${idx === 0 ? 'border-t' : ''} border-b`}
-              style={{ gridTemplateColumns: 'auto auto repeat(3, 1fr)' }}
+              className={`flex w-full items-center border-[#7b6a4a]/70 ${idx === 0 ? 'border-t' : ''} border-b outline outline-2 outline-purple-500`}
             >
               {/* Пустая колонка для иконки */}
-              <div className="w-[40px]"></div>
+              <div 
+                className="outline outline-1 outline-blue-500"
+                style={columnWidths ? { width: `${columnWidths.icon}px`, marginRight: '8px' } : { width: '40px', marginRight: '8px' }}
+              ></div>
               {/* Колонка с описанием */}
-              <div className="px-2 py-1 flex items-center leading-[1.4] font-table-main text-lg text-[rgba(255,255,245,0.85)]">
+              <div 
+                className="px-2 py-1 flex items-center leading-[1.4] font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-1 outline-green-500"
+                style={columnWidths ? { width: `${columnWidths.text}px` } : undefined}
+              >
                 {row.label}
               </div>
-              {/* Три колонки с данными */}
-              <div className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)]">
+              {/* Три колонки с данными - используют точные размеры из верхнего ряда */}
+              <div 
+                className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-2 outline-yellow-500 outline-dashed"
+                style={columnWidths ? { width: `${columnWidths.price1}px`, marginLeft: '8px' } : undefined}
+              >
                 {row.plan1}
               </div>
-              <div className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)]">
+              <div 
+                className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-2 outline-yellow-500 outline-dashed"
+                style={columnWidths ? { width: `${columnWidths.price2}px` } : undefined}
+              >
                 {row.plan2}
               </div>
-              <div className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)]">
+              <div 
+                className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l border-[#7b6a4a]/70 font-table-main text-lg text-[rgba(255,255,245,0.85)] outline outline-2 outline-yellow-500 outline-dashed"
+                style={columnWidths ? { width: `${columnWidths.price3}px` } : undefined}
+              >
                 {row.plan3}
               </div>
             </div>
@@ -441,6 +541,14 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const [isCategoryTooltipOpen, setCategoryTooltipOpen] = useState(false)
   const sectionRefs = useRef<ScrollRefs>({})
   const subcategoryRefs = useRef<ScrollRefs>({})
+  // Refs для колонок цен в шапке wynajem подменю
+  const wynajemHeaderRefs = useRef<{ 
+    [key: string]: { 
+      icon: React.RefObject<HTMLDivElement | null>
+      text: React.RefObject<HTMLDivElement | null>
+      prices: React.RefObject<HTMLDivElement | null>[]
+    } 
+  }>({})
   const priceTooltip = service.priceTooltip ?? DEFAULT_PRICE_TOOLTIP
   const isLaserService = service.slug === 'serwis-drukarek-laserowych'
   const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
@@ -747,69 +855,114 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                             {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && subcategory.price ? (
                               <>
                                 {/* Десктоп: grid с иконкой, текстом и тремя колонками цен */}
-                                {/* Иконка: w-[40px] + mr-2 (8px) = 48px фиксированной ширины */}
-                                <div className="hidden md:grid items-center w-full gap-3" style={{ gridTemplateColumns: 'auto auto repeat(3, 1fr)' }}>
-                                  <div className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
-                                    <Image
-                                      src={getIconForSection(section.id)}
-                                      alt={subcategory.title}
-                                      width={40}
-                                      height={40}
-                                      className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
-                                      unoptimized
-                                    />
-                                  </div>
-                                  <div className="min-w-0">
-                                    <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                      {subcategory.title}
-                                    </h4>
-                                    <div
-                                      data-subcategory-link
-                                      className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
-                                    >
-                                      <span>Zobacz szczegóły</span>
-                                      <ArrowRight className="w-3 h-3 flex-shrink-0" />
-                                    </div>
-                                  </div>
-                                  {subcategory.price.split(' / ').map((price, idx) => (
-                                    <div key={idx} className="flex items-center justify-center text-center">
-                                      <div className="text-xl font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                        {price} zł
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                                <div className="md:hidden flex items-center w-full gap-3">
-                                  <div className="mr-2 w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
-                                    <Image
-                                      src={getIconForSection(section.id)}
-                                      alt={subcategory.title}
-                                      width={40}
-                                      height={40}
-                                      className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
-                                      unoptimized
-                                    />
-                                  </div>
-                                  <div className="flex-1 w-full min-w-0">
-                                    <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
-                                      {subcategory.title}
-                                    </h4>
-                                    <div
-                                      data-subcategory-link
-                                      className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
-                                    >
-                                      <span>Zobacz szczegóły</span>
-                                      <ArrowRight className="w-3 h-3 flex-shrink-0" />
-                                    </div>
-                                    <div className="mt-1">
-                                      <div className="font-table-main text-[13px] text-[rgba(255,255,245,0.85)] leading-[1.3]">
-                                        {subcategory.price.split(' / ').map((price, idx, arr) => (
-                                          <span key={idx}>
-                                            {price} zł
-                                            {idx < arr.length - 1 && ' / '}
-                                          </span>
+                                {/* Фиксированные элементы (всего 108px): */}
+                                {/* - Padding слева: 12px (md:px-3) - уже учтен в AccordionTrigger */}
+                                {/* - Иконка: 40px */}
+                                {/* - Расстояние между иконкой и текстом: 16px (gap-4) */}
+                                {/* - Стрелка справа: 40px (gap + padding + стрелка) */}
+                                {/* Grid контейнер занимает calc(100% - 40px) для учета стрелки справа */}
+                                {/* Пропорции колонок подобраны вручную для точного совпадения центров: */}
+                                {/* Иконка (40px) + Gap (16px) + Текст (2.15fr) + Цены (0.95fr каждая) */}
+                                <div className="hidden md:flex items-center outline outline-2 outline-red-500" style={{ 
+                                  width: 'calc(100% - 40px)' // Вычитаем место для стрелки справа (40px)
+                                }}>
+                                  {(() => {
+                                    // Создаем или получаем refs для этого подменю
+                                    const subcategoryKey = `${section.id}-${subcategory.id}`
+                                    if (!wynajemHeaderRefs.current[subcategoryKey]) {
+                                      wynajemHeaderRefs.current[subcategoryKey] = {
+                                        icon: React.createRef<HTMLDivElement | null>(),
+                                        text: React.createRef<HTMLDivElement | null>(),
+                                        prices: [
+                                          React.createRef<HTMLDivElement | null>(),
+                                          React.createRef<HTMLDivElement | null>(),
+                                          React.createRef<HTMLDivElement | null>(),
+                                        ],
+                                      }
+                                    }
+                                    const headerRefs = wynajemHeaderRefs.current[subcategoryKey]
+                                    
+                                    return (
+                                      <>
+                                        <div 
+                                          ref={headerRefs.icon}
+                                          className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center mr-2 outline outline-1 outline-blue-500"
+                                        >
+                                          <Image
+                                            src={getIconForSection(section.id)}
+                                            alt={subcategory.title}
+                                            width={40}
+                                            height={40}
+                                            className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
+                                            unoptimized
+                                          />
+                                        </div>
+                                        <div 
+                                          ref={headerRefs.text}
+                                          className="min-w-0 outline outline-1 outline-green-500" 
+                                          style={{ width: 'calc((100% - 40px - 8px) * 0.4)' }}
+                                        >
+                                          <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                            {subcategory.title}
+                                          </h4>
+                                          <div
+                                            data-subcategory-link
+                                            className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
+                                          >
+                                            <span>Zobacz szczegóły</span>
+                                            <ArrowRight className="w-3 h-3 flex-shrink-0" />
+                                          </div>
+                                        </div>
+                                        {subcategory.price.split(' / ').map((price, idx) => (
+                                          <div 
+                                            key={idx}
+                                            ref={headerRefs.prices[idx]}
+                                            className="flex items-center justify-center text-center px-2 border-l border-[#7b6a4a]/70 outline outline-2 outline-yellow-500 outline-dashed"
+                                            style={{ width: `calc((100% - 40px - 8px) * 0.2)`, marginLeft: idx === 0 ? '8px' : '0' }}
+                                          >
+                                            <div className="text-2xl font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                              {price} zł
+                                            </div>
+                                          </div>
                                         ))}
+                                      </>
+                                    )
+                                  })()}
+                                </div>
+                                <div className="md:hidden flex flex-col w-full gap-2">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
+                                      <Image
+                                        src={getIconForSection(section.id)}
+                                        alt={subcategory.title}
+                                        width={40}
+                                        height={40}
+                                        className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
+                                        unoptimized
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                        {subcategory.title}
+                                      </h4>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2 pl-[52px]">
+                                    {subcategory.price.split(' / ').map((price, idx) => (
+                                      <div key={idx} className="flex-1 text-center">
+                                        <div className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                          {price} zł
+                                        </div>
                                       </div>
+                                    ))}
+                                  </div>
+                                  <div className="pl-[52px]">
+                                    <div
+                                      data-subcategory-link
+                                      className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
+                                    >
+                                      <span>Zobacz szczegóły</span>
+                                      <ArrowRight className="w-3 h-3 flex-shrink-0" />
                                     </div>
                                   </div>
                                 </div>
@@ -901,8 +1054,15 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 {subcategory.answer}
                               </div>
                             ) : subcategory.items.length === 0 ? (
-                              service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && renderWynajemTable(subcategory.id) ? (
-                                renderWynajemTable(subcategory.id)
+                              service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') ? (
+                                (() => {
+                                  const subcategoryKey = `${section.id}-${subcategory.id}`
+                                  const headerRefs = wynajemHeaderRefs.current[subcategoryKey]
+                                  if (headerRefs) {
+                                    return <WynajemTable subcategoryId={subcategory.id} headerRefs={headerRefs} />
+                                  }
+                                  return null
+                                })()
                               ) : (
                                 <div className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden min-h-[100px] p-4">
                                   {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') ? (

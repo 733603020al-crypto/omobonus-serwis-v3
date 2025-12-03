@@ -188,8 +188,19 @@ const parseServiceText = (text: string) => {
   }
 }
 
-const supplementTextShadow =
-  '0 0 2px rgba(0, 0, 0, 0.4), -0.5px -0.5px 0 rgba(0, 0, 0, 0.5), 0.5px -0.5px 0 rgba(0, 0, 0, 0.5), -0.5px 0.5px 0 rgba(0, 0, 0, 0.5), 0.5px 0.5px 0 rgba(0, 0, 0, 0.5)'
+const supplementTextShadow = '0 0 8px rgba(237, 224, 196, 0.4), 0 0 4px rgba(237, 224, 196, 0.3)'
+
+// Общая функция для рендеринга второстепенного текста (стиль как у "do ceny")
+// Единый стиль для всех второстепенных описаний на страницах услуг
+const renderSecondaryText = (text: string, italic: boolean = false, key?: string | number) => (
+  <div
+    key={key ? `${text}-${key}` : undefined}
+    className={`font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ${italic ? 'italic' : ''}`}
+    style={{ textShadow: supplementTextShadow }}
+  >
+    {text}
+  </div>
+)
 
 const renderPriceLines = (price: string, link?: string) => {
   const trimmedPrice = price?.trim()
@@ -204,15 +215,7 @@ const renderPriceLines = (price: string, link?: string) => {
     )
   }
 
-  const renderSuffixLine = (text: string, key?: string | number) => (
-    <div
-      key={key ? `${text}-${key}` : undefined}
-      className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
-      style={{ textShadow: supplementTextShadow }}
-    >
-      {text}
-    </div>
-  )
+  const renderSuffixLine = (text: string, key?: string | number) => renderSecondaryText(text, false, key)
 
   const renderValueLine = (text: string, key?: string | number) => {
     if (!text) return null
@@ -285,10 +288,10 @@ export const renderDurationValue = (value: string) => (
   </div>
 )
 
-// Функция для рендеринга текста в скобках - использует тот же стиль, что и "do ceny"
+// Функция для рендеринга текста в скобках - использует тот же стиль, что и "do ceny", но с курсивом
 const renderParenthesesText = (text: string) => (
   <div
-    className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
+    className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] italic"
     style={{ textShadow: supplementTextShadow }}
   >
     ({text})
@@ -489,9 +492,6 @@ const WynajemTable = ({
     subcategoryId === 'mfu-kolor' ? tableDataMfuKolor :
     subcategoryId === 'a3-mfu-kolor' ? tableDataA3MfuKolor :
     []
-
-  // Стиль для текста-подсказки (как "do ceny")
-  const supplementTextShadow = '0 0 8px rgba(237, 224, 196, 0.4), 0 0 4px rgba(237, 224, 196, 0.3)'
 
   // Функция для рендеринга значения с суффиксом "/mies.", "/min" или "zł"
   const renderValueWithSuffix = (value: string, fontSize: string = 'text-[16px]', columnIndex: number = 0) => {
@@ -803,10 +803,6 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   const isSpecialTooltipService = SPECIAL_TOOLTIP_SERVICES.has(service.slug)
   const shouldHighlightPrices = isLaserService && isCategoryTooltipOpen
   
-  // Стиль для текста-подсказки (как "do ceny")
-  const supplementTextShadow = '0 0 8px rgba(237, 224, 196, 0.4), 0 0 4px rgba(237, 224, 196, 0.3)'
-
-
   const renderPriceTooltipContent = () => {
     if (!isSpecialTooltipService) {
       return (
@@ -1198,7 +1194,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               </div>
                               {service.slug !== 'serwis-laptopow' && service.slug !== 'serwis-komputerow-stacjonarnych' && (
                                 <span
-                                  className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 leading-[1.1] hidden sm:block"
+                                  className="font-table-sub text-[14px] text-[#ede0c4] mt-0.5 leading-[1.3] hidden sm:block"
                                   style={{ textShadow: supplementTextShadow }}
                                 >
                                   (kategorie urządzeń)

@@ -785,6 +785,20 @@ const DEVICE_CATEGORIES = [
   },
 ]
 
+// Функция для получения пути к картинке принтера по названию категории
+const getPrinterImageForCategory = (categoryTitle: string): string => {
+  switch (categoryTitle) {
+    case 'Drukarka domowa':
+      return '/images/Drukarka_domowa.png'
+    case 'Drukarka biurowa':
+      return '/images/A4_MFU_kolor.png'
+    case 'Drukarka biznesowa':
+      return '/images/MFU A3A4 (mono).png'
+    default:
+      return ''
+  }
+}
+
 const SPECIAL_TOOLTIP_SERVICES = new Set([
   'serwis-drukarek-laserowych',
   'serwis-drukarek-atramentowych',
@@ -862,9 +876,20 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
               >
                 <div>
                   <div className="text-xl font-cormorant font-semibold text-white">{category.title}</div>
-                  <p className="text-xs md:text-sm text-[#f0dfbd] leading-snug mt-1 whitespace-pre-line">
+                  <p className="text-xs md:text-sm text-[rgba(255,255,245,0.85)] leading-snug mt-1 whitespace-pre-line">
                     {category.description}
                   </p>
+                </div>
+                {/* Добавление картинки принтера */}
+                <div className="flex justify-center items-center my-3">
+                  <Image
+                    src={getPrinterImageForCategory(category.title)}
+                    alt={category.title}
+                    width={200}
+                    height={150}
+                    className="w-[150px] md:w-[200px] h-auto object-contain"
+                    unoptimized
+                  />
                 </div>
                 <p className="text-[13px] text-[rgba(255,255,245,0.85)] leading-snug font-table-sub text-center mt-auto pt-2">
                   {category.features.join(', ')}

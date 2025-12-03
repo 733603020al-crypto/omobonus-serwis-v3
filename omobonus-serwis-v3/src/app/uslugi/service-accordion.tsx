@@ -192,11 +192,18 @@ const supplementTextShadow = '0 0 8px rgba(237, 224, 196, 0.4), 0 0 4px rgba(237
 
 // Общая функция для рендеринга второстепенного текста (стиль как у "do ceny")
 // Единый стиль для всех второстепенных описаний на страницах услуг
+// Явно переопределяем все визуальные параметры, чтобы избежать наследования от родительских элементов
 const renderSecondaryText = (text: string, italic: boolean = false, key?: string | number) => (
   <div
     key={key ? `${text}-${key}` : undefined}
-    className={`font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ${italic ? 'italic' : ''}`}
-    style={{ textShadow: supplementTextShadow }}
+    className={`font-table-sub text-[14px] leading-[1.3] ${italic ? 'italic' : ''}`}
+    style={{ 
+      color: '#ede0c4',
+      opacity: 1,
+      textShadow: supplementTextShadow,
+      fontWeight: 'normal',
+      fontStyle: italic ? 'italic' : 'normal'
+    }}
   >
     {text}
   </div>
@@ -288,11 +295,18 @@ export const renderDurationValue = (value: string) => (
   </div>
 )
 
-// Функция для рендеринга текста в скобках - использует тот же стиль, что и "do ceny", но с курсивом
+// Функция для рендеринга текста в скобках - использует тот же стиль, что и "do ceny"
+// Явно переопределяем все визуальные параметры, чтобы избежать наследования от родительских элементов
 const renderParenthesesText = (text: string) => (
   <div
-    className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] italic"
-    style={{ textShadow: supplementTextShadow }}
+    className="font-table-sub text-[14px] leading-[1.3]"
+    style={{ 
+      color: '#ede0c4',
+      opacity: 1,
+      textShadow: supplementTextShadow,
+      fontWeight: 'normal',
+      fontStyle: 'normal'
+    }}
   >
     ({text})
   </div>

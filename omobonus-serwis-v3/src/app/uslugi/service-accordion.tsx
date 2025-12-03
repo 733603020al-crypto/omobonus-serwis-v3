@@ -285,6 +285,16 @@ export const renderDurationValue = (value: string) => (
   </div>
 )
 
+// Функция для рендеринга текста в скобках - использует тот же стиль, что и "do ceny"
+const renderParenthesesText = (text: string) => (
+  <div
+    className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]"
+    style={{ textShadow: supplementTextShadow }}
+  >
+    ({text})
+  </div>
+)
+
 // Мобильная версия строки услуги (flex layout)
 const renderMobileServiceRow = (
   item: { service: string; price: string; duration: string; link?: string },
@@ -307,6 +317,7 @@ const renderMobileServiceRow = (
         <div className="font-table-main text-[rgba(255,255,245,0.85)] text-[15px] text-white leading-[1.3] tracking-tight">
           {parsed.main}
         </div>
+        {parsed.parentheses && renderParenthesesText(parsed.parentheses)}
       </div>
       {/* Правая колонка - цена */}
       <div
@@ -1578,14 +1589,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                                   <div className="text-[16px] text-white service-description-text leading-[1.3]">
                                                     {parsed.main}
                                                   </div>
-                                                  {parsed.parentheses && (
-                                                    <div
-                                                      className="font-table-sub text-[14px] text-[#ede0c4] mt-0 line-clamp-2 service-description-text leading-[1.4]"
-                                                      style={{ textShadow: supplementTextShadow }}
-                                                    >
-                                                      ({parsed.parentheses})
-                                                    </div>
-                                                  )}
+                                                  {parsed.parentheses && renderParenthesesText(parsed.parentheses)}
                                                 </div>
                                               )
                                             })()}
@@ -1698,14 +1702,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                         <div className="text-[16px] text-white service-description-text leading-[1.3]">
                                           {parsed.main}
                                         </div>
-                                        {parsed.parentheses && (
-                                          <div
-                                            className="font-table-sub text-[14px] text-[#ede0c4] mt-0 line-clamp-2 service-description-text leading-[1.4]"
-                                            style={{ textShadow: supplementTextShadow }}
-                                          >
-                                            ({parsed.parentheses})
-                                          </div>
-                                        )}
+                                        {parsed.parentheses && renderParenthesesText(parsed.parentheses)}
                                       </div>
                                     )
                                   })()}

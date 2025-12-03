@@ -777,9 +777,9 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
   // Refs для колонок цен в шапке wynajem подменю
   const wynajemHeaderRefs = useRef<{ 
     [key: string]: { 
-      icon: React.RefObject<HTMLDivElement | null>
-      text: React.RefObject<HTMLDivElement | null>
-      prices: React.RefObject<HTMLDivElement | null>[]
+      icon: React.RefObject<HTMLDivElement>
+      text: React.RefObject<HTMLDivElement>
+      prices: React.RefObject<HTMLDivElement>[]
     } 
   }>({})
   // Refs для контейнеров заголовков секций (для позиционирования "Czynsz wynajmu [zł/mies.]")
@@ -1262,12 +1262,12 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     const subcategoryKey = `${section.id}-${subcategory.id}`
                                     if (!wynajemHeaderRefs.current[subcategoryKey]) {
                                       wynajemHeaderRefs.current[subcategoryKey] = {
-                                        icon: React.createRef<HTMLDivElement | null>(),
-                                        text: React.createRef<HTMLDivElement | null>(),
+                                        icon: React.createRef<HTMLDivElement>(),
+                                        text: React.createRef<HTMLDivElement>(),
                                         prices: [
-                                          React.createRef<HTMLDivElement | null>(),
-                                          React.createRef<HTMLDivElement | null>(),
-                                          React.createRef<HTMLDivElement | null>(),
+                                          React.createRef<HTMLDivElement>(),
+                                          React.createRef<HTMLDivElement>(),
+                                          React.createRef<HTMLDivElement>(),
                                         ],
                                       }
                                     }

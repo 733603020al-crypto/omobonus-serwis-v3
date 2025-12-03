@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import fs from 'fs'
+import path from 'path'
 
 // Upewnij się, że w pliku .env.local ustawisz:
 // RESEND_API_KEY=your_resend_api_key
@@ -115,8 +117,52 @@ export async function POST(request: NextRequest) {
     const ticketNumber = generateTicketNumber()
     const formattedPhone = formatPhone(phone)
     
-    // URL изображения фона
-    const backgroundImageUrl = 'https://www.omobonus.com.pl/images/zmiety%20arkusz%20papieru%202.png'
+    // Чтение и конвертация изображений в base64
+    let backgroundDataUrl = ''
+    let logoDataUrl = ''
+    
+    try {
+      // Путь к фоновому изображению
+      const backgroundImagePath = path.join(process.cwd(), 'public', 'images', 'zmiety arkusz papieru 2.png')
+      // Путь к логотипу
+      const logoImagePath = path.join(process.cwd(), 'public', 'images', 'Logo_Omobonus.png')
+      
+      // Чтение файлов и конвертация в base64
+      if (fs.existsSync(backgroundImagePath)) {
+        const backgroundBuffer = fs.readFileSync(backgroundImagePath)
+        const backgroundBase64 = backgroundBuffer.toString('base64')
+        backgroundDataUrl = `data:image/png;base64,${backgroundBase64}`
+      } else {
+        console.warn('⚠️ Фоновое изображение не найдено:', backgroundImagePath)
+        // Fallback на внешний URL
+        backgroundDataUrl = 'https://www.omobonus.com.pl/images/zmiety%20arkusz%20papieru%202.png'
+      }
+      
+      if (fs.existsSync(logoImagePath)) {
+        const logoBuffer = fs.readFileSync(logoImagePath)
+        const logoBase64 = logoBuffer.toString('base64')
+        logoDataUrl = `data:image/png;base64,${logoBase64}`
+      } else {
+        console.warn('⚠️ Логотип не найден:', logoImagePath)
+        // Fallback на внешний URL
+        logoDataUrl = 'https://www.omobonus.com.pl/images/Logo_Omobonus.png'
+      }
+      
+      // Проверяем формат base64 и логируем
+      if (backgroundDataUrl.startsWith('data:image/png;base64,')) {
+        console.log('✅ Фон успешно конвертирован в base64 формат')
+        console.log(backgroundDataUrl.substring(0, 200))
+      }
+      if (logoDataUrl.startsWith('data:image/png;base64,')) {
+        console.log('✅ Логотип успешно конвертирован в base64 формат')
+        console.log(logoDataUrl.substring(0, 200))
+      }
+    } catch (error) {
+      console.error('❌ Ошибка при чтении изображений:', error)
+      // Fallback на внешние URL в случае ошибки
+      backgroundDataUrl = 'https://www.omobonus.com.pl/images/zmiety%20arkusz%20papieru%202.png'
+      logoDataUrl = 'https://www.omobonus.com.pl/images/Logo_Omobonus.png'
+    }
     
     // HTML-шаблон письма
     const emailHtml = `
@@ -129,17 +175,15 @@ export async function POST(request: NextRequest) {
   <title>Nowe zgłoszenie serwisowe ${ticketNumber}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Times New Roman', serif;">
-  <!-- Wrapper таблица с фоном для Outlook и других клиентов -->
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-image: url('${backgroundImageUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 30px 20px;">
-    <!--[if mso]>
+  <!--[if mso]>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding: 30px 20px;">
     <tr>
       <td>
-        <v:rect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" fill="t" stroke="f" style="position:absolute;left:0;top:0;width:100%;height:100%;">
-          <v:fill type="frame" src="${backgroundImageUrl}" color="transparent"/>
-        </v:rect>
-      </td>
-    </tr>
-    <![endif]-->
+        <v:rect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" stroked="false" style="width:100%;">
+          <v:fill type="frame" src="${backgroundDataUrl}" color="transparent"/>
+          <v:textbox inset="0,0,0,0">
+  <![endif]-->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-image: url('${backgroundDataUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 30px 20px;">
     <tr>
       <td style="background-color: rgba(0, 0, 0, 0.5); padding: 0;">
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
@@ -150,7 +194,7 @@ export async function POST(request: NextRequest) {
                 <!-- Header z логотипом -->
                 <tr>
                   <td style="background-color: rgba(58, 46, 36, 0.9); padding: 30px 40px 25px; text-align: center; border-bottom: 2px solid #bfa76a;">
-                    <img src="https://www.omobonus.com.pl/images/Logo_Omobonus.png" alt="Omobonus Serwis" width="200" height="auto" style="max-width: 200px; height: auto; display: block; margin: 0 auto; border: 0; outline: none; text-decoration: none;" />
+                    <img src="${logoDataUrl}" alt="Omobonus Serwis" width="200" height="auto" style="max-width: 200px; height: auto; display: block; margin: 0 auto; border: 0; outline: none; text-decoration: none;" />
                   </td>
                 </tr>
                 
@@ -281,6 +325,13 @@ export async function POST(request: NextRequest) {
       </td>
     </tr>
   </table>
+  <!--[if mso]>
+          </v:textbox>
+        </v:rect>
+      </td>
+    </tr>
+  </table>
+  <![endif]-->
 </body>
 </html>
     `.trim()
@@ -340,6 +391,21 @@ Potrzebuję drukarki zastępczej: ${replacementPrinter}
     }
 
     console.log('✅ Resend response:', data)
+    
+    // Логируем пример HTML-фрагмента с base64 изображениями
+    console.log('\n📄 Пример HTML-фрагмента с встроенными изображениями:')
+    console.log('---')
+    console.log('Фон (первые 150 символов):')
+    const backgroundSnippet = emailHtml.match(/background-image:\s*url\('([^']+)'\)/)?.[1] || ''
+    console.log(`background-image: url('${backgroundSnippet.substring(0, 150)}...')`)
+    console.log('\nЛоготип (первые 150 символов):')
+    const logoSnippet = emailHtml.match(/<img[^>]+src="([^"]+)"[^>]*>/)?.[1] || ''
+    console.log(`<img src="${logoSnippet.substring(0, 150)}..." />`)
+    console.log('\nVML для Outlook (первые 150 символов):')
+    const vmlSnippet = emailHtml.match(/<v:fill[^>]+src="([^"]+)"[^>]*>/)?.[1] || ''
+    console.log(`<v:fill type="frame" src="${vmlSnippet.substring(0, 150)}..." color="transparent"/>`)
+    console.log('---\n')
+
     return NextResponse.json({ success: true, data })
   } catch (error) {
     console.error('Error sending email:', error)

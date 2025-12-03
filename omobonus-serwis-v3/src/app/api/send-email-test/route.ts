@@ -1,35 +1,41 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
-
-const resendFrom = process.env.RESEND_FROM_EMAIL || 'Omobonus Formularz <no-reply@resend.dev>'
-const resendTo = process.env.RESEND_TO_EMAIL || 'omobonus.pl@gmail.com'
+import fs from 'fs'
+import path from 'path'
 
 export async function GET() {
-  const apiKey = process.env.RESEND_API_KEY
-
-  if (!apiKey) {
-    return NextResponse.json({ error: 'Brak RESEND_API_KEY' }, { status: 500 })
-  }
-
-  const resend = new Resend(apiKey)
-
   try {
-    const { error } = await resend.emails.send({
-      from: resendFrom,
-      to: resendTo,
-      subject: 'Test z /api/send-email-test',
-      text: 'To tylko test wysyłki Resend.',
-    })
-
-    if (error) {
-      return NextResponse.json({ error }, { status: 500 })
+    // Путь к фоновому изображению
+    const backgroundImagePath = path.join(process.cwd(), 'public', 'images', 'zmiety arkusz papieru 2.png')
+    // Путь к логотипу
+    const logoImagePath = path.join(process.cwd(), 'public', 'images', 'Logo_Omobonus.png')
+    
+    // Чтение и конвертация фонового изображения в base64
+    if (fs.existsSync(backgroundImagePath)) {
+      const backgroundBuffer = fs.readFileSync(backgroundImagePath)
+      const backgroundBase64 = backgroundBuffer.toString('base64')
+      const backgroundDataUrl = `data:image/png;base64,${backgroundBase64}`
+      
+      console.log('✅ Фон успешно конвертирован в base64 формат')
+      console.log('📸 Background base64 (первые 100 символов):', backgroundDataUrl.substring(0, 100))
+    } else {
+      console.warn('⚠️ Фоновое изображение не найдено:', backgroundImagePath)
     }
-
+    
+    // Чтение и конвертация логотипа в base64
+    if (fs.existsSync(logoImagePath)) {
+      const logoBuffer = fs.readFileSync(logoImagePath)
+      const logoBase64 = logoBuffer.toString('base64')
+      const logoDataUrl = `data:image/png;base64,${logoBase64}`
+      
+      console.log('✅ Логотип успешно конвертирован в base64 формат')
+      console.log('📸 Logo base64 (первые 100 символов):', logoDataUrl.substring(0, 100))
+    } else {
+      console.warn('⚠️ Логотип не найден:', logoImagePath)
+    }
+    
     return NextResponse.json({ success: true })
   } catch (error) {
-    return NextResponse.json({ error: 'Nie udało się wysłać testowego e-maila' }, { status: 500 })
+    console.error('❌ Ошибка при чтении изображений:', error)
+    return NextResponse.json({ error: 'Ошибка при чтении изображений', details: error }, { status: 500 })
   }
 }
-
-
-

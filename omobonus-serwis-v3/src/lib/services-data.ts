@@ -520,7 +520,7 @@ const faqSection: PricingSection = {
       id: 'faq-10',
       title: 'Czy utracę dane?',
       items: [],
-      answer: 'Nie — w naprawach systemowych i mechanicznych chronimy dane. Przy operacjach ryzykownych (np. wymiana dysku, reinstalacja po awarii) proponujemy backup lub odzysk danych przed pracami.',
+      answer: 'Nie. W naprawach systemowych i mechanicznych chronimy dane. Przy operacjach ryzykownych (np. wymiana dysku, reinstalacja po awarii) proponujemy backup lub odzysk danych przed pracami.',
     },
     {
       id: 'faq-11',

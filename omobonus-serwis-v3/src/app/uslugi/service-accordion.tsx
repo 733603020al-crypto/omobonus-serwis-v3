@@ -508,7 +508,7 @@ const WynajemTable = ({
     []
 
   // Функция для рендеринга label с переносами строк (для мобильной и десктопной версий)
-  const renderLabel = (label: string, fontSize: string) => {
+  const renderLabel = (label: string, fontSize: string): React.ReactNode => {
     // "Liczba stron A4 wliczonych w czynsz" → "Liczba stron A4" / "wliczonych w czynsz"
     if (label === 'Liczba stron A4 wliczonych w czynsz') {
       return (
@@ -537,7 +537,7 @@ const WynajemTable = ({
       )
     }
     // Для остальных текстов - без изменений
-    return label
+    return <>{label}</>
   }
 
   // Функция для рендеринга значения с суффиксом "/mies.", "/min" или "zł"

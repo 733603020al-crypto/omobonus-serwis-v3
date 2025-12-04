@@ -426,25 +426,25 @@ const WynajemTable = ({
 
   // Данные для таблицы Drukarki mono
   const tableDataMono = [
-    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '500 str./mies.', plan2: '1 000 str./mies.', plan3: '2 500 str./mies.' },
-    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '500 str./mies.', plan2: '1 000 str./mies.', plan3: '2 500 str./mies.' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
     { label: 'Duplex', plan1: '-', plan2: '- / +', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '40', plan3: '60' },
   ]
 
   // Данные для таблицы Drukarki kolor
   const tableDataKolor = [
-    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '1 000 + 0', plan2: '1 000 + 200', plan3: '2 000 + 200' },
-    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
-    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,20 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '1 000 + 0', plan2: '1 000 + 200', plan3: '2 000 + 200' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Cena wydruku A4 kolor (powyżej limitu)', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,20 zł' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '40', plan3: '60' },
   ]
 
   // Данные для таблицы MFU mono
   const tableDataMfuMono = [
-    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '1 500 str./mies.', plan2: '2 000 str./mies.', plan3: '3 000 str./mies.' },
-    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '1 500 str./mies.', plan2: '2 000 str./mies.', plan3: '3 000 str./mies.' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
     { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '40', plan3: '60' },
@@ -452,9 +452,9 @@ const WynajemTable = ({
 
   // Данные для таблицы MFU kolor
   const tableDataMfuKolor = [
-    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '1 000 + 100', plan2: '1 500 + 200', plan3: '2 000 + 300' },
-    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
-    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,20 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '1 000 + 100', plan2: '1 500 + 200', plan3: '2 000 + 300' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,05 zł', plan2: '0,05 zł', plan3: '0,04 zł' },
+    { label: 'Cena wydruku A4 kolor (powyżej limitu)', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,20 zł' },
     { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '20', plan2: '30', plan3: '40' },
@@ -462,25 +462,25 @@ const WynajemTable = ({
 
   // Данные для таблицы Drukarki A3/A4 mono
   const tableDataA3Mono = [
-    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '2 500 str./mies.', plan2: '3 750 str./mies.', plan3: '5 000 str./mies.' },
-    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '2 500 str./mies.', plan2: '3 750 str./mies.', plan3: '5 000 str./mies.' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
   ]
 
   // Данные для таблицы Drukarki A3/A4 kolor
   const tableDataA3Kolor = [
-    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '2 000 + 300', plan2: '3 000 + 500', plan3: '5 000 + 800' },
-    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
-    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,18 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '2 000 + 300', plan2: '3 000 + 500', plan3: '5 000 + 800' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Cena wydruku A4 kolor (powyżej limitu)', plan1: '0,25 zł', plan2: '0,20 zł', plan3: '0,18 zł' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
   ]
 
   // Данные для таблицы MFU A3/A4 mono
   const tableDataA3MfuMono = [
-    { label: 'A4 wliczonych w czynsz (str./mies.)', plan1: '5 000 str./mies.', plan2: '7 000 str./mies.', plan3: '10 000 str./mies.' },
-    { label: 'Cena wydruku powyżej limitu (zł)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '5 000 str./mies.', plan2: '7 000 str./mies.', plan3: '10 000 str./mies.' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
     { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
@@ -488,9 +488,9 @@ const WynajemTable = ({
 
   // Данные для таблицы MFU A3/A4 kolor
   const tableDataA3MfuKolor = [
-    { label: 'A4 wliczonych w czynsz (str./mies.), mono + kolor', plan1: '5 000 + 500', plan2: '7 500 + 750', plan3: '10 000 + 1 000' },
-    { label: 'Cena wydruku powyżej limitu (zł), mono', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
-    { label: 'Cena wydruku powyżej limitu (zł), kolor', plan1: '0,16 zł', plan2: '0,16 zł', plan3: '0,15 zł' },
+    { label: 'Liczba stron A4 wliczonych w czynsz', plan1: '5 000 + 500', plan2: '7 500 + 750', plan3: '10 000 + 1 000' },
+    { label: 'Cena wydruku A4 mono (powyżej limitu)', plan1: '0,04 zł', plan2: '0,04 zł', plan3: '0,03 zł' },
+    { label: 'Cena wydruku A4 kolor (powyżej limitu)', plan1: '0,16 zł', plan2: '0,16 zł', plan3: '0,15 zł' },
     { label: 'Skanowanie', plan1: 'gratis', plan2: 'gratis', plan3: 'gratis' },
     { label: 'Duplex', plan1: '+', plan2: '+', plan3: '+' },
     { label: 'Prędkość druku do: (str./min)', plan1: '50', plan2: '60', plan3: '90' },
@@ -506,6 +506,53 @@ const WynajemTable = ({
     subcategoryId === 'mfu-kolor' ? tableDataMfuKolor :
     subcategoryId === 'a3-mfu-kolor' ? tableDataA3MfuKolor :
     []
+
+  // Функция для рендеринга label с переносами на мобильных
+  const renderLabel = (label: string, fontSize: string) => {
+    // На десктопе - одна строка
+    const desktopLabel = <span className="hidden md:inline">{label}</span>
+    
+    // На мобильных - разбиваем на две строки для определенных текстов
+    let mobileLabel: React.ReactNode = label
+    
+    // "Liczba stron A4 wliczonych w czynsz" → "Liczba stron A4" / "wliczonych w czynsz"
+    if (label === 'Liczba stron A4 wliczonych w czynsz') {
+      mobileLabel = (
+        <span className="md:hidden">
+          Liczba stron A4<br />
+          wliczonych w czynsz
+        </span>
+      )
+    }
+    // "Cena wydruku A4 mono (powyżej limitu)" → "Cena wydruku A4" / "mono (powyżej limitu)"
+    else if (label === 'Cena wydruku A4 mono (powyżej limitu)') {
+      mobileLabel = (
+        <span className="md:hidden">
+          Cena wydruku A4<br />
+          mono (powyżej limitu)
+        </span>
+      )
+    }
+    // "Cena wydruku A4 kolor (powyżej limitu)" → "Cena wydruku A4 kolor" / "(powyżej limitu)"
+    else if (label === 'Cena wydruku A4 kolor (powyżej limitu)') {
+      mobileLabel = (
+        <span className="md:hidden">
+          Cena wydruku A4 kolor<br />
+          (powyżej limitu)
+        </span>
+      )
+    }
+    else {
+      mobileLabel = <span className="md:hidden">{label}</span>
+    }
+    
+    return (
+      <>
+        {desktopLabel}
+        {mobileLabel}
+      </>
+    )
+  }
 
   // Функция для рендеринга значения с суффиксом "/mies.", "/min" или "zł"
   const renderValueWithSuffix = (value: string, fontSize: string = 'text-[16px]', columnIndex: number = 0) => {
@@ -656,7 +703,7 @@ const WynajemTable = ({
                   className={`px-2 py-1 flex items-center leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}
                   style={columnWidths ? { width: `${columnWidths.text}px` } : undefined}
                 >
-                  {row.label}
+                  {renderLabel(row.label, labelFontSize)}
                 </div>
                 {/* Три колонки с данными - используют точные размеры из верхнего ряда */}
                 <div 
@@ -684,18 +731,25 @@ const WynajemTable = ({
         {/* Мобильная версия: обычная таблица */}
         <div className="md:hidden py-3">
           <div className="overflow-x-auto scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <Table className="border-collapse" style={{ minWidth: '100%', width: '100%' }}>
+            <Table className="border-separate" style={{ minWidth: '100%', width: '100%', borderSpacing: '2px 0', tableLayout: 'fixed' }}>
               <colgroup>
-                <col style={{ width: '40%', minWidth: '120px' }} />
-                <col style={{ width: '20%', minWidth: '60px' }} />
-                <col style={{ width: '20%', minWidth: '60px' }} />
-                <col style={{ width: '20%', minWidth: '60px' }} />
+                <col style={{ width: '48%', minWidth: '120px' }} />
+                <col style={{ width: '17.33%', minWidth: '45px' }} />
+                <col style={{ width: '17.33%', minWidth: '45px' }} />
+                <col style={{ width: '17.33%', minWidth: '45px' }} />
               </colgroup>
               <TableHeader>
                 <TableRow className="border-[#8b7a5a] border-b-2 border-t-2">
-                  <TableHead className="px-2 py-2.5 align-middle text-left"></TableHead>
-                  <TableHead colSpan={3} className="px-1.5 py-2.5 align-middle text-center border-l-2 border-[#8b7a5a]">
-                    <div className="text-xs font-cormorant font-semibold text-[#ffffff] leading-tight">
+                  <TableHead 
+                    className="px-2 pr-3 py-2.5 align-middle text-left" 
+                    style={{ width: '48%', minWidth: '120px', maxWidth: '48%', boxSizing: 'border-box', whiteSpace: 'normal' }}
+                  ></TableHead>
+                  <TableHead 
+                    colSpan={3} 
+                    className="pl-2 pr-2 py-2.5 align-middle text-center border-l-2 border-[#8b7a5a]" 
+                    style={{ width: '52%', maxWidth: '52%', boxSizing: 'border-box', overflow: 'hidden' }}
+                  >
+                    <div className="text-lg font-cormorant font-semibold text-[#ffffff] leading-tight">
                       Czynsz wynajmu [zł/mies.]
                     </div>
                   </TableHead>
@@ -705,23 +759,72 @@ const WynajemTable = ({
                 {tableData.map((row, idx) => {
                   const isSmallFontRow = row.label.includes('Skanowanie') || row.label.includes('Duplex') || row.label.includes('Prędkość druku')
                   const labelFontSize = isSmallFontRow ? 'text-[14px]' : 'text-[16px]'
-                  const valueFontSize = isSmallFontRow ? 'text-[14px]' : (idx === 3 ? 'text-[14px]' : 'text-[16px]')
+                  const valueFontSize = isSmallFontRow ? 'text-[13px]' : (idx === 3 ? 'text-[13px]' : 'text-[15px]')
+                  const isLastRow = idx === tableData.length - 1
+                  const borderBottomStyle = isLastRow ? 'none' : 'solid'
+                  const borderBottomColor = isLastRow ? 'transparent' : 'rgba(139, 122, 90, 0.75)'
                   
                   return (
                     <TableRow
                       key={idx}
-                      className={`border-[#8b7a5a] border-b-2`}
+                      style={{ 
+                        borderBottomColor,
+                        borderBottomWidth: '1.5px',
+                        borderBottomStyle
+                      }}
                     >
-                      <TableCell className={`px-2 py-2.5 align-middle text-left leading-[1.5] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}>
-                        {row.label}
+                      <TableCell 
+                        className={`px-2 pr-3 py-2.5 align-middle text-left leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)] break-words`} 
+                        style={{ 
+                          wordBreak: 'break-word', 
+                          overflowWrap: 'break-word', 
+                          width: '48%', 
+                          minWidth: '120px',
+                          maxWidth: '48%',
+                          boxSizing: 'border-box',
+                          whiteSpace: 'normal',
+                          borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
+                        }}
+                      >
+                        {renderLabel(row.label, labelFontSize)}
                       </TableCell>
-                      <TableCell className="px-1.5 py-2.5 align-middle text-center leading-[1.5] border-l-2 border-[#8b7a5a]">
+                      <TableCell 
+                        className="pl-2 pr-1 py-2.5 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]" 
+                        style={{ 
+                          width: '17.33%', 
+                          minWidth: '45px', 
+                          maxWidth: '17.33%', 
+                          boxSizing: 'border-box', 
+                          overflow: 'hidden',
+                          borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
+                        }}
+                      >
                         {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
                       </TableCell>
-                      <TableCell className="px-1.5 py-2.5 align-middle text-center leading-[1.5] border-l-2 border-[#8b7a5a]">
+                      <TableCell 
+                        className="pl-1.5 pr-1 py-2.5 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]" 
+                        style={{ 
+                          width: '17.33%', 
+                          minWidth: '45px', 
+                          maxWidth: '17.33%', 
+                          boxSizing: 'border-box', 
+                          overflow: 'hidden',
+                          borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
+                        }}
+                      >
                         {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
                       </TableCell>
-                      <TableCell className="px-1.5 py-2.5 align-middle text-center leading-[1.5] border-l-2 border-[#8b7a5a]">
+                      <TableCell 
+                        className="pl-1.5 pr-2 py-2.5 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]" 
+                        style={{ 
+                          width: '17.33%', 
+                          minWidth: '45px', 
+                          maxWidth: '17.33%', 
+                          boxSizing: 'border-box', 
+                          overflow: 'hidden',
+                          borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
+                        }}
+                      >
                         {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
                       </TableCell>
                     </TableRow>
@@ -1101,12 +1204,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 </div>
                               </>
                             ) : null}
-                            {/* Мобильная версия */}
-                            <div className="md:hidden">
-                              <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                Czynsz [zł/mies.]
-                              </span>
-                            </div>
+                            {/* Мобильная версия - скрыта полностью (надпись есть в таблице) */}
                           </>
                         )}
                         {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-2' && (
@@ -1135,12 +1233,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 </div>
                               </div>
                             )}
-                            {/* Мобильная версия */}
-                            <div className="md:hidden">
-                              <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                Czynsz [zł/mies.]
-                              </span>
-                            </div>
+                            {/* Мобильная версия - скрыта полностью (надпись есть в таблице) */}
                           </>
                         )}
                         <div className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform group-data-[state=open]:hidden">
@@ -1276,6 +1369,8 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                           className={`border-0 last:border-b-0 last:mb-0 group scroll-mt-[100px] ${
                             section.id === 'faq'
                               ? `border-b border-[#bfa76a]/30 mb-0.5 pb-0.5 ${index === 0 ? 'border-t border-[#bfa76a]/30 pt-0.5' : ''}`
+                              : service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
+                              ? `border-b border-white/20 mb-1 pb-1 md:mb-1.5 md:pb-1.5 ${index === 0 ? 'border-t border-white/20 pt-1 md:pt-1.5' : ''}`
                               : `border-b border-white/20 mb-1.5 pb-1.5 ${index === 0 ? 'border-t border-white/20 pt-1.5' : ''}`
                           }`}
                           ref={node => {
@@ -1286,6 +1381,8 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                             className={`hover:no-underline text-left w-full !focus-visible:ring-0 !focus-visible:outline-none focus-visible:ring-transparent transition-all duration-200 ${
                               section.id === 'faq'
                                 ? 'py-1 px-2 rounded-lg hover:border-[#ffecb3]/20'
+                                : service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
+                                ? 'py-1 px-1.5 md:py-2 md:px-3'
                                 : 'py-1.5 px-1.5 md:py-2 md:px-3'
                             }`}
                           >
@@ -1407,8 +1504,8 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     )
                                   })()}
                                 </div>
-                                <div className="md:hidden flex flex-col w-full gap-3">
-                                  <div className="flex items-center gap-3">
+                                <div className="md:hidden flex flex-col w-full gap-2">
+                                  <div className="flex items-center gap-2.5">
                                     <div className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
                                       <Image
                                         src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
@@ -1420,7 +1517,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                      <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
                                         {(() => {
                                           const title = subcategory.title
                                           // Для wynajem-drukarek подкатегорий части в скобках оформляем в том же стиле
@@ -1434,7 +1531,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                               return (
                                                 <>
                                                   {mainPart}{' '}
-                                                  <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                                  <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
                                                     ({bracketPart})
                                                   </span>
                                                 </>
@@ -1456,7 +1553,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       </h4>
                                     </div>
                                   </div>
-                                  <div className="pl-[52px]">
+                                  <div className="pl-[52px] -mt-0.5">
                                     <div
                                       data-subcategory-link
                                       className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
@@ -1468,7 +1565,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 </div>
                               </>
                             ) : (
-                              <div className="flex items-center w-full gap-3">
+                              <div className={`flex items-center w-full ${service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') ? 'gap-2.5 md:gap-3' : 'gap-3'}`}>
                                 {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && (
                                   <div className="mr-2 w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
                                     <Image
@@ -1484,7 +1581,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                 <div className="flex-1 w-full min-w-0">
                                   <div>
                                     <h4
-                                      className={`font-table-main leading-[1.3] ${
+                                      className={`font-table-main ${service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') ? 'leading-[1.2] md:leading-[1.3]' : 'leading-[1.3]'} ${
                                         section.id === 'faq'
                                           ? 'text-[15px] md:text-[16px] font-semibold text-[#ffffff] mb-0'
                                           : 'text-lg font-semibold text-[#ffffff]'
@@ -1502,7 +1599,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                             return (
                                               <>
                                                 {mainPart}{' '}
-                                                <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.3]">
+                                                <span className={`text-lg font-semibold text-[#ffffff] font-table-main ${service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') ? 'leading-[1.2] md:leading-[1.3]' : 'leading-[1.3]'}`}>
                                                   ({bracketPart})
                                                 </span>
                                               </>

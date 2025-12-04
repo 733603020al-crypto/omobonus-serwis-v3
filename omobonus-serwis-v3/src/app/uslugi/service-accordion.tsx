@@ -1672,11 +1672,20 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') ? (
                                 (() => {
                                   const subcategoryKey = `${section.id}-${subcategory.id}`
-                                  const headerRefs = wynajemHeaderRefs.current[subcategoryKey]
-                                  if (headerRefs) {
-                                    return <WynajemTable subcategoryId={subcategory.id} headerRefs={headerRefs} />
+                                  // Создаем headerRefs, если их еще нет
+                                  if (!wynajemHeaderRefs.current[subcategoryKey]) {
+                                    wynajemHeaderRefs.current[subcategoryKey] = {
+                                      icon: React.createRef<HTMLDivElement>(),
+                                      text: React.createRef<HTMLDivElement>(),
+                                      prices: [
+                                        React.createRef<HTMLDivElement>(),
+                                        React.createRef<HTMLDivElement>(),
+                                        React.createRef<HTMLDivElement>(),
+                                      ],
+                                    }
                                   }
-                                  return null
+                                  const headerRefs = wynajemHeaderRefs.current[subcategoryKey]
+                                  return <WynajemTable subcategoryId={subcategory.id} headerRefs={headerRefs} />
                                 })()
                               ) : (
                                 <div className="rounded-lg outline outline-1 outline-[#bfa76a]/10 md:outline-none md:border md:border-[#bfa76a]/10 overflow-hidden min-h-[100px] p-4">

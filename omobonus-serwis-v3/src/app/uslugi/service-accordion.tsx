@@ -507,51 +507,37 @@ const WynajemTable = ({
     subcategoryId === 'a3-mfu-kolor' ? tableDataA3MfuKolor :
     []
 
-  // Функция для рендеринга label с переносами на мобильных
+  // Функция для рендеринга label с переносами строк (для мобильной и десктопной версий)
   const renderLabel = (label: string, fontSize: string) => {
-    // На десктопе - одна строка
-    const desktopLabel = <span className="hidden md:inline">{label}</span>
-    
-    // На мобильных - разбиваем на две строки для определенных текстов
-    let mobileLabel: React.ReactNode = label
-    
     // "Liczba stron A4 wliczonych w czynsz" → "Liczba stron A4" / "wliczonych w czynsz"
     if (label === 'Liczba stron A4 wliczonych w czynsz') {
-      mobileLabel = (
-        <span className="md:hidden">
+      return (
+        <>
           Liczba stron A4<br />
           wliczonych w czynsz
-        </span>
+        </>
       )
     }
-    // "Cena wydruku A4 mono (powyżej limitu)" → "Cena wydruku A4" / "mono (powyżej limitu)"
+    // "Cena wydruku A4 mono (powyżej limitu)" → "Cena wydruku A4 mono" / "(powyżej limitu)"
     else if (label === 'Cena wydruku A4 mono (powyżej limitu)') {
-      mobileLabel = (
-        <span className="md:hidden">
-          Cena wydruku A4<br />
-          mono (powyżej limitu)
-        </span>
+      return (
+        <>
+          Cena wydruku A4 mono<br />
+          (powyżej limitu)
+        </>
       )
     }
     // "Cena wydruku A4 kolor (powyżej limitu)" → "Cena wydruku A4 kolor" / "(powyżej limitu)"
     else if (label === 'Cena wydruku A4 kolor (powyżej limitu)') {
-      mobileLabel = (
-        <span className="md:hidden">
+      return (
+        <>
           Cena wydruku A4 kolor<br />
           (powyżej limitu)
-        </span>
+        </>
       )
     }
-    else {
-      mobileLabel = <span className="md:hidden">{label}</span>
-    }
-    
-    return (
-      <>
-        {desktopLabel}
-        {mobileLabel}
-      </>
-    )
+    // Для остальных текстов - без изменений
+    return label
   }
 
   // Функция для рендеринга значения с суффиксом "/mies.", "/min" или "zł"

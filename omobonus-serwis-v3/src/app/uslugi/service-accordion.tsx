@@ -673,12 +673,7 @@ const WynajemTable = ({
         {/* Десктоп: flex с динамическими размерами из верхнего ряда */}
         <div 
           className="hidden md:block"
-          style={{ 
-            marginLeft: `${leftOffset}px`, 
-            width: `calc(100% - ${leftOffset}px)`,
-            maxWidth: `calc(100% - ${leftOffset}px)`,
-            boxSizing: 'border-box'
-          }}
+          style={{ marginLeft: `${leftOffset}px`, width: `calc(100% - ${leftOffset}px)` }}
         >
           {tableData.map((row, idx) => {
             const isSmallFontRow = row.label.includes('Skanowanie') || row.label.includes('Duplex') || row.label.includes('Prędkość druku')
@@ -689,90 +684,35 @@ const WynajemTable = ({
               <div
                 key={idx}
                 className={`flex w-full items-center border-[#8b7a5a] ${idx === 0 ? 'border-t-2' : ''} border-b-2`}
-                style={{ width: '100%', minWidth: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
               >
                 {/* Пустая колонка для иконки */}
                 <div 
-                  className="flex-shrink-0 flex-grow-0"
-                  style={columnWidths ? { 
-                    width: `${columnWidths.icon}px`, 
-                    minWidth: `${columnWidths.icon}px`, 
-                    maxWidth: `${columnWidths.icon}px`, 
-                    marginRight: '8px',
-                    flexShrink: 0,
-                    flexGrow: 0
-                  } : { 
-                    width: '40px', 
-                    minWidth: '40px', 
-                    maxWidth: '40px', 
-                    marginRight: '8px',
-                    flexShrink: 0,
-                    flexGrow: 0
-                  }}
+                  className="flex-shrink-0"
+                  style={columnWidths ? { width: `${columnWidths.icon}px`, marginRight: '8px' } : { width: '40px', marginRight: '8px' }}
                 ></div>
                 {/* Колонка с описанием */}
                 <div 
-                  className={`px-2 py-1 flex items-center leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)] flex-shrink-0 flex-grow-0`}
-                  style={columnWidths ? { 
-                    width: `${columnWidths.text}px`, 
-                    minWidth: `${columnWidths.text}px`, 
-                    maxWidth: `${columnWidths.text}px`,
-                    boxSizing: 'border-box',
-                    flexShrink: 0,
-                    flexGrow: 0,
-                    wordWrap: 'break-word',
-                    overflowWrap: 'break-word'
-                  } : {
-                    flexShrink: 0,
-                    flexGrow: 0
-                  }}
+                  className={`px-2 py-1 flex items-center leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}
+                  style={columnWidths ? { width: `${columnWidths.text}px` } : undefined}
                 >
                   {renderLabel(row.label, labelFontSize)}
                 </div>
                 {/* Три колонки с данными - используют точные размеры из верхнего ряда */}
                 <div 
-                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a] flex-shrink-0 flex-grow-0"
-                  style={columnWidths ? { 
-                    width: `${columnWidths.price1}px`, 
-                    minWidth: `${columnWidths.price1}px`, 
-                    maxWidth: `${columnWidths.price1}px`, 
-                    marginLeft: '8px',
-                    flexShrink: 0,
-                    flexGrow: 0
-                  } : {
-                    flexShrink: 0,
-                    flexGrow: 0
-                  }}
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  style={columnWidths ? { width: `${columnWidths.price1}px`, marginLeft: '8px' } : undefined}
                 >
                   {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
                 </div>
                 <div 
-                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a] flex-shrink-0 flex-grow-0"
-                  style={columnWidths ? { 
-                    width: `${columnWidths.price2}px`, 
-                    minWidth: `${columnWidths.price2}px`, 
-                    maxWidth: `${columnWidths.price2}px`,
-                    flexShrink: 0,
-                    flexGrow: 0
-                  } : {
-                    flexShrink: 0,
-                    flexGrow: 0
-                  }}
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  style={columnWidths ? { width: `${columnWidths.price2}px` } : undefined}
                 >
                   {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
                 </div>
                 <div 
-                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a] flex-shrink-0 flex-grow-0"
-                  style={columnWidths ? { 
-                    width: `${columnWidths.price3}px`, 
-                    minWidth: `${columnWidths.price3}px`, 
-                    maxWidth: `${columnWidths.price3}px`,
-                    flexShrink: 0,
-                    flexGrow: 0
-                  } : {
-                    flexShrink: 0,
-                    flexGrow: 0
-                  }}
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  style={columnWidths ? { width: `${columnWidths.price3}px` } : undefined}
                 >
                   {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
                 </div>

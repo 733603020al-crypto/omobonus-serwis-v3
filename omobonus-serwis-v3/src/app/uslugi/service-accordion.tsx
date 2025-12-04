@@ -541,13 +541,72 @@ const WynajemTable = ({
   }
 
   // Функция для рендеринга значения с суффиксом "/mies.", "/min" или "zł"
-  const renderValueWithSuffix = (value: string, fontSize: string = 'text-[16px]', columnIndex: number = 0) => {
+  const renderValueWithSuffix = (value: string, fontSize: string = 'text-[16px]', columnIndex: number = 0, rowLabel?: string) => {
+    const isLimitRow = rowLabel === 'Liczba stron A4 wliczonych w czynsz'
+    
     // Для сложных значений типа "1 000 + 0" (без "str.") - разделяем на две строки
     if (value.includes(' + ') && !value.includes(' str.')) {
       const parts = value.split(' + ')
       const firstPart = parts[0].trim() // "1 000"
       const secondPart = parts[1].trim() // "0"
       
+      // Если это строка с лимитом, добавляем подписи "mono" и "kolor"
+      if (isLimitRow) {
+        return (
+          <div className="flex flex-col items-center">
+            {/* Десктоп: числа и подписи на одной строке */}
+            <div className="hidden md:flex flex-col items-center">
+              {/* Первая строка: "1 000 mono" */}
+              <div className="flex items-baseline">
+                <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{firstPart}</span>
+                <span 
+                  className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ml-1" 
+                  style={{ textShadow: supplementTextShadow }}
+                >
+                  mono
+                </span>
+              </div>
+              {/* Вторая строка: "+ 0 kolor" */}
+              <div className="flex items-baseline">
+                <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>+</span>
+                <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)] ml-1`}>{secondPart}</span>
+                <span 
+                  className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3] ml-1" 
+                  style={{ textShadow: supplementTextShadow }}
+                >
+                  kolor
+                </span>
+              </div>
+            </div>
+            {/* Мобильная версия: каждое число и подпись на отдельной строке */}
+            <div className="md:hidden flex flex-col items-center">
+              {/* "1 000" */}
+              <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>{firstPart}</span>
+              {/* "mono" */}
+              <span 
+                className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" 
+                style={{ textShadow: supplementTextShadow }}
+              >
+                mono
+              </span>
+              {/* "+ 0" */}
+              <div className="flex items-baseline">
+                <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)]`}>+</span>
+                <span className={`font-inter ${fontSize} text-[rgba(255,255,245,0.85)] ml-1`}>{secondPart}</span>
+              </div>
+              {/* "kolor" */}
+              <span 
+                className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" 
+                style={{ textShadow: supplementTextShadow }}
+              >
+                kolor
+              </span>
+            </div>
+          </div>
+        )
+      }
+      
+      // Обычная обработка (без подписей mono/kolor)
       return (
         <div className="flex flex-col items-center">
           {/* Первая строка: "1 000" */}
@@ -696,19 +755,19 @@ const WynajemTable = ({
                   className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
                   style={columnWidths ? { width: `${columnWidths.price1}px`, marginLeft: '8px' } : undefined}
                 >
-                  {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
+                  {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0, row.label)}
                 </div>
                 <div 
                   className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
                   style={columnWidths ? { width: `${columnWidths.price2}px` } : undefined}
                 >
-                  {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
+                  {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0, row.label)}
                 </div>
                 <div 
                   className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
                   style={columnWidths ? { width: `${columnWidths.price3}px` } : undefined}
                 >
-                  {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
+                  {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0, row.label)}
                 </div>
               </div>
             )
@@ -784,7 +843,7 @@ const WynajemTable = ({
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
-                        {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
+                        {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0, row.label)}
                       </TableCell>
                       <TableCell 
                         className="pl-1.5 pr-1 py-2.5 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]" 
@@ -796,7 +855,7 @@ const WynajemTable = ({
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
-                        {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
+                        {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0, row.label)}
                       </TableCell>
                       <TableCell 
                         className="pl-1.5 pr-2 py-2.5 align-middle text-center leading-[1.4] border-l-2 border-[#8b7a5a]" 
@@ -808,7 +867,7 @@ const WynajemTable = ({
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
-                        {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}
+                        {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0, row.label)}
                       </TableCell>
                     </TableRow>
                   )

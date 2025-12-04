@@ -781,7 +781,6 @@ const WynajemTable = ({
                           minWidth: '45px', 
                           maxWidth: '17.33%', 
                           boxSizing: 'border-box', 
-                          overflow: 'hidden',
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
@@ -794,7 +793,6 @@ const WynajemTable = ({
                           minWidth: '45px', 
                           maxWidth: '17.33%', 
                           boxSizing: 'border-box', 
-                          overflow: 'hidden',
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
@@ -807,7 +805,6 @@ const WynajemTable = ({
                           minWidth: '45px', 
                           maxWidth: '17.33%', 
                           boxSizing: 'border-box', 
-                          overflow: 'hidden',
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >

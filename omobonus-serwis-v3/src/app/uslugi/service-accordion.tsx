@@ -376,7 +376,12 @@ const WynajemTable = ({
 
   useEffect(() => {
     const validSubcategoryIds = ['drukarki-mono', 'drukarki-kolor', 'mfu-mono', 'mfu-kolor', 'a3-drukarki-mono', 'a3-drukarki-kolor', 'a3-mfu-mono', 'a3-mfu-kolor']
-    if (!validSubcategoryIds.includes(subcategoryId) || !headerRefs.prices[0]?.current) return
+    if (!validSubcategoryIds.includes(subcategoryId)) return
+    
+    // Измерение размеров колонок нужно только для десктопной версии
+    // На мобильной версии используется фиксированная таблица, не зависящая от headerRefs
+    // Проверяем, что refs привязаны к реальным элементам (только на десктопе)
+    if (!headerRefs.prices[0]?.current) return
 
     const measureColumns = () => {
       const iconEl = headerRefs.icon.current
@@ -682,30 +687,31 @@ const WynajemTable = ({
               >
                 {/* Пустая колонка для иконки */}
                 <div 
+                  className="flex-shrink-0"
                   style={columnWidths ? { width: `${columnWidths.icon}px`, marginRight: '8px' } : { width: '40px', marginRight: '8px' }}
                 ></div>
                 {/* Колонка с описанием */}
                 <div 
-                  className={`px-2 py-1 flex items-center leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)]`}
+                  className={`px-2 py-1 flex items-center leading-[1.4] font-table-main ${labelFontSize} text-[rgba(255,255,245,0.85)] flex-shrink-0`}
                   style={columnWidths ? { width: `${columnWidths.text}px` } : undefined}
                 >
                   {renderLabel(row.label, labelFontSize)}
                 </div>
                 {/* Три колонки с данными - используют точные размеры из верхнего ряда */}
                 <div 
-                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a] flex-shrink-0"
                   style={columnWidths ? { width: `${columnWidths.price1}px`, marginLeft: '8px' } : undefined}
                 >
                   {renderValueWithSuffix(row.plan1, valueFontSize, idx === 1 ? 0 : 0)}
                 </div>
                 <div 
-                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a] flex-shrink-0"
                   style={columnWidths ? { width: `${columnWidths.price2}px` } : undefined}
                 >
                   {renderValueWithSuffix(row.plan2, valueFontSize, idx === 1 ? 1 : 0)}
                 </div>
                 <div 
-                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a]"
+                  className="px-2 py-1 flex items-center justify-center text-center leading-[1.4] border-l-2 border-[#8b7a5a] flex-shrink-0"
                   style={columnWidths ? { width: `${columnWidths.price3}px` } : undefined}
                 >
                   {renderValueWithSuffix(row.plan3, valueFontSize, idx === 1 ? 2 : 0)}

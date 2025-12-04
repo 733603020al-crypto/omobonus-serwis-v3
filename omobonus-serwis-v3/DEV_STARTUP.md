@@ -67,3 +67,4 @@ powershell -ExecutionPolicy Bypass -File ./start-dev.ps1
 - Если Cursor автоматически запускает `npm run dev`, остановите процесс вручную перед новым запуском
 - При изменении `next.config.js` всегда перезапускайте сервер безопасным способом
 
+

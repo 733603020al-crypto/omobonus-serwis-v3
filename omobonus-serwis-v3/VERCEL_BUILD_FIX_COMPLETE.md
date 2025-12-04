@@ -164,3 +164,5 @@ const finalLogoUrl = 'https://www.omobonus.com.pl/images/Logo_Omobonus.png'
 **Проект готов к успешному деплою на Vercel!** 🎉
 
 
+
+

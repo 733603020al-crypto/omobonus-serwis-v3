@@ -229,3 +229,5 @@ background-image: url('data:image/png;base64,iVBORw0KGgoAAAANS...');
 4. **Результат:** Изображения будут работать в Outlook без блокировок
 
 
+
+

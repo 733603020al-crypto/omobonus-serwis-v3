@@ -733,7 +733,7 @@ const WynajemTable = ({
                   <TableHead 
                     colSpan={3} 
                     className="pl-2 pr-2 py-2.5 align-middle text-center border-l-2 border-[#8b7a5a]" 
-                    style={{ width: '52%', maxWidth: '52%', boxSizing: 'border-box', overflow: 'hidden' }}
+                    style={{ width: '52%', maxWidth: '52%', boxSizing: 'border-box' }}
                   >
                     <div className="text-lg font-cormorant font-semibold text-[#ffffff] leading-tight">
                       Czynsz wynajmu [zł/mies.]
@@ -781,7 +781,6 @@ const WynajemTable = ({
                           minWidth: '45px', 
                           maxWidth: '17.33%', 
                           boxSizing: 'border-box', 
-                          overflow: 'hidden',
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
@@ -794,7 +793,6 @@ const WynajemTable = ({
                           minWidth: '45px', 
                           maxWidth: '17.33%', 
                           boxSizing: 'border-box', 
-                          overflow: 'hidden',
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
@@ -807,7 +805,6 @@ const WynajemTable = ({
                           minWidth: '45px', 
                           maxWidth: '17.33%', 
                           boxSizing: 'border-box', 
-                          overflow: 'hidden',
                           borderBottom: isLastRow ? 'none' : '1.5px solid rgba(139, 122, 90, 0.75)'
                         }}
                       >
@@ -1491,63 +1488,90 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                   })()}
                                 </div>
                                 <div className="md:hidden flex flex-col w-full gap-2">
-                                  <div className="flex items-center gap-2.5">
-                                    <div className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
-                                      <Image
-                                        src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
-                                        alt={subcategory.title}
-                                        width={40}
-                                        height={40}
-                                        className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
-                                        unoptimized
-                                      />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
-                                        {(() => {
-                                          const title = subcategory.title
-                                          // Для wynajem-drukarek подкатегорий части в скобках оформляем в том же стиле
-                                          const isWynajemSubcategory = service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
-                                          const match = title.match(/^(.+?)\s*\((.+?)\)$/)
-                                          if (match) {
-                                            const mainPart = match[1].trim()
-                                            const bracketPart = match[2].trim()
-                                            if (isWynajemSubcategory) {
-                                              // Для wynajem - вся часть в скобках в том же стиле
-                                              return (
-                                                <>
-                                                  {mainPart}{' '}
-                                                  <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
-                                                    ({bracketPart})
-                                                  </span>
-                                                </>
-                                              )
-                                            } else {
-                                              // Для других секций - как было
-                                              return (
-                                                <>
-                                                  {mainPart}{' '}
-                                                  <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
-                                                    ({bracketPart})
-                                                  </span>
-                                                </>
-                                              )
-                                            }
-                                          }
-                                          return title
-                                        })()}
-                                      </h4>
-                                    </div>
-                                  </div>
-                                  <div className="pl-[52px] -mt-0.5">
-                                    <div
-                                      data-subcategory-link
-                                      className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
-                                    >
-                                      <span>Zobacz szczegóły</span>
-                                      <ArrowRight className="w-3 h-3 flex-shrink-0" />
-                                    </div>
-                                  </div>
+                                  {(() => {
+                                    // Создаем или получаем refs для этого подменю (для мобильной версии)
+                                    const subcategoryKey = `${section.id}-${subcategory.id}`
+                                    if (!wynajemHeaderRefs.current[subcategoryKey]) {
+                                      wynajemHeaderRefs.current[subcategoryKey] = {
+                                        icon: React.createRef<HTMLDivElement>(),
+                                        text: React.createRef<HTMLDivElement>(),
+                                        prices: [
+                                          React.createRef<HTMLDivElement>(),
+                                          React.createRef<HTMLDivElement>(),
+                                          React.createRef<HTMLDivElement>(),
+                                        ],
+                                      }
+                                    }
+                                    const headerRefs = wynajemHeaderRefs.current[subcategoryKey]
+                                    
+                                    return (
+                                      <>
+                                        <div className="flex items-center gap-2.5">
+                                          <div 
+                                            ref={headerRefs.icon}
+                                            className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center"
+                                          >
+                                            <Image
+                                              src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
+                                              alt={subcategory.title}
+                                              width={40}
+                                              height={40}
+                                              className="object-contain w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
+                                              unoptimized
+                                            />
+                                          </div>
+                                          <div 
+                                            ref={headerRefs.text}
+                                            className="flex-1 min-w-0"
+                                          >
+                                            <h4 className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
+                                              {(() => {
+                                                const title = subcategory.title
+                                                // Для wynajem-drukarek подкатегорий части в скобках оформляем в том же стиле
+                                                const isWynajemSubcategory = service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
+                                                const match = title.match(/^(.+?)\s*\((.+?)\)$/)
+                                                if (match) {
+                                                  const mainPart = match[1].trim()
+                                                  const bracketPart = match[2].trim()
+                                                  if (isWynajemSubcategory) {
+                                                    // Для wynajem - вся часть в скобках в том же стиле
+                                                    return (
+                                                      <>
+                                                        {mainPart}{' '}
+                                                        <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
+                                                          ({bracketPart})
+                                                        </span>
+                                                      </>
+                                                    )
+                                                  } else {
+                                                    // Для других секций - как было
+                                                    return (
+                                                      <>
+                                                        {mainPart}{' '}
+                                                        <span className="font-table-sub text-[14px] text-[#ede0c4] leading-[1.3]" style={{ textShadow: supplementTextShadow }}>
+                                                          ({bracketPart})
+                                                        </span>
+                                                      </>
+                                                    )
+                                                  }
+                                                }
+                                                return title
+                                              })()}
+                                            </h4>
+                                          </div>
+                                        </div>
+                                        <div className="pl-[52px] -mt-0.5">
+                                          <div
+                                            data-subcategory-link
+                                            className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform whitespace-nowrap"
+                                          >
+                                            <span>Zobacz szczegóły</span>
+                                            <ArrowRight className="w-3 h-3 flex-shrink-0" />
+                                          </div>
+                                        </div>
+                                      </>
+                                    )
+                                  })()}
                                 </div>
                               </>
                             ) : (

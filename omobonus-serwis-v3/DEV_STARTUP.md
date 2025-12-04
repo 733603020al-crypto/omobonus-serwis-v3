@@ -68,3 +68,4 @@ powershell -ExecutionPolicy Bypass -File ./start-dev.ps1
 - При изменении `next.config.js` всегда перезапускайте сервер безопасным способом
 
 
+

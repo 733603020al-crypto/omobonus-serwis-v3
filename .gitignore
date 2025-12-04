@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -20,6 +21,8 @@
 
 # production
 /build
+dist/
+build/
 
 # misc
 .DS_Store
@@ -31,21 +34,20 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+.env.local
+.env
 
 # vercel
-.vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# node modules
-node_modules/
-.pnp/
 
 # cache
 .cache/
@@ -56,8 +58,7 @@ docs/backups/
 backup_*/
 _backups/
 
-# logs
-*.log
+# logs and diagnostics
 diagnostics.log
 diagnostics_summary.txt
 diagnostics_output.txt
@@ -77,9 +78,14 @@ npm_audit.json
 # Temporary files
 *.tmp
 *.bak
+*.ps1.backup
 *.rar
 *.zip
 
 # Windows specific
 Desktop.ini
+desktop.ini
 $RECYCLE.BIN/
+AppData/
+temp/
+Thumbs.db

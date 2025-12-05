@@ -312,6 +312,23 @@ const renderParenthesesText = (text: string) => (
   </div>
 )
 
+// Функция для рендеринга заголовка секции с возможностью переноса части в скобках
+const renderSectionTitleMobile = (title: string) => {
+  const match = title.match(/^(.+?)\s*\((.+?)\)$/)
+  if (match) {
+    const mainPart = match[1].trim()
+    const bracketPart = match[2].trim()
+    return (
+      <React.Fragment>
+        <span className="inline">{mainPart}</span>
+        <span className="inline md:hidden"> </span>
+        <span className="inline md:hidden">({bracketPart})</span>
+      </React.Fragment>
+    )
+  }
+  return <React.Fragment>{title}</React.Fragment>
+}
+
 // Мобильная версия строки услуги (flex layout)
 const renderMobileServiceRow = (
   item: { service: string; price: string; duration: string; link?: string },
@@ -794,7 +811,8 @@ const WynajemTable = ({
                     className="pl-2 pr-2 py-2.5 align-middle text-center border-l-2 border-[#8b7a5a]" 
                     style={{ width: '52%', maxWidth: '52%', boxSizing: 'border-box', overflow: 'hidden' }}
                   >
-                    <div className="text-lg font-cormorant font-semibold text-[#ffffff] leading-tight">
+                    {/* Надпись "Czynsz wynajmu [zł/mies.]" убрана из таблицы - теперь она в шапке секции */}
+                    <div className="hidden md:block text-lg font-cormorant font-semibold text-[#ffffff] leading-tight">
                       Czynsz wynajmu [zł/mies.]
                     </div>
                   </TableHead>
@@ -1215,27 +1233,66 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                         }
                         className="flex-1 relative"
                       >
-                        <h3 className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] group-hover:text-white transition-colors mb-1 leading-tight">
-                          <span className="md:hidden">
-                            {section.id === 'konserwacja'
-                              ? 'Czyszczenie i konserwacja'
-                              : section.id === 'naprawy'
-                              ? 'Naprawy i usługi serwisowe'
-                              : section.title}
-                          </span>
-                          <span className="hidden md:inline">{section.title}</span>
-                        </h3>
-                        {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен */}
-                        {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-1' && (
-                          <>
-                            {priceColumnsPosition1 ? (
-                              <>
-                                {/* Десктопная версия с вычисленной позицией */}
+                        <div className="flex flex-col md:block">
+                          <div className="flex items-start md:items-center gap-2 md:gap-0 flex-wrap md:flex-nowrap">
+                            <h3 className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] group-hover:text-white transition-colors mb-1 md:mb-1 leading-tight flex-shrink-0">
+                              <span className="md:hidden">
+                                {(() => {
+                                  if (service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')) {
+                                    return renderSectionTitleMobile(section.title)
+                                  }
+                                  if (section.id === 'konserwacja') {
+                                    return 'Czyszczenie i konserwacja'
+                                  }
+                                  if (section.id === 'naprawy') {
+                                    return 'Naprawy i usługi serwisowe'
+                                  }
+                                  return section.title
+                                })()}
+                              </span>
+                              <span className="hidden md:inline">{section.title}</span>
+                            </h3>
+                            {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен - мобильная версия */}
+                            {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && (
+                              <div className="md:hidden flex-shrink-0 ml-auto mt-1 md:mt-0">
+                                <span className="text-base font-cormorant font-semibold text-[#ffffff] leading-tight whitespace-nowrap">
+                                  Czynsz wynajmu [zł/mies.]
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен - десктопная версия */}
+                          {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-1' && (
+                            <>
+                              {priceColumnsPosition1 ? (
+                                <>
+                                  {/* Десктопная версия с вычисленной позицией */}
+                                  <div 
+                                    className="hidden md:block absolute top-0"
+                                    style={{
+                                      left: `${priceColumnsPosition1.left}px`,
+                                      width: `${priceColumnsPosition1.width}px`,
+                                    }}
+                                  >
+                                    <div className="text-center">
+                                      <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                        Czynsz wynajmu [zł/mies.]
+                                      </span>
+                                    </div>
+                                  </div>
+                                </>
+                              ) : null}
+                            </>
+                          )}
+                          {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-2' && (
+                            <>
+                              {/* Десктопная версия */}
+                              {priceColumnsPosition2 ? (
                                 <div 
                                   className="hidden md:block absolute top-0"
                                   style={{
-                                    left: `${priceColumnsPosition1.left}px`,
-                                    width: `${priceColumnsPosition1.width}px`,
+                                    left: `${priceColumnsPosition2.left}px`,
+                                    width: `${priceColumnsPosition2.width}px`,
                                   }}
                                 >
                                   <div className="text-center">
@@ -1244,40 +1301,18 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                     </span>
                                   </div>
                                 </div>
-                              </>
-                            ) : null}
-                            {/* Мобильная версия - скрыта полностью (надпись есть в таблице) */}
-                          </>
-                        )}
-                        {service.slug === 'wynajem-drukarek' && section.id === 'akordeon-2' && (
-                          <>
-                            {/* Десктопная версия */}
-                            {priceColumnsPosition2 ? (
-                              <div 
-                                className="hidden md:block absolute top-0"
-                                style={{
-                                  left: `${priceColumnsPosition2.left}px`,
-                                  width: `${priceColumnsPosition2.width}px`,
-                                }}
-                              >
-                                <div className="text-center">
-                                  <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                    Czynsz wynajmu [zł/mies.]
-                                  </span>
+                              ) : (
+                                <div className="hidden md:block absolute top-0 right-0" style={{ width: '60%' }}>
+                                  <div className="text-center">
+                                    <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
+                                      Czynsz wynajmu [zł/mies.]
+                                    </span>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : (
-                              <div className="hidden md:block absolute top-0 right-0" style={{ width: '60%' }}>
-                                <div className="text-center">
-                                  <span className="text-lg md:text-xl font-cormorant font-semibold text-[#ffffff] leading-tight">
-                                    Czynsz wynajmu [zł/mies.]
-                                  </span>
-                                </div>
-                              </div>
-                            )}
-                            {/* Мобильная версия - скрыта полностью (надпись есть в таблице) */}
-                          </>
-                        )}
+                              )}
+                            </>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2 text-[#bfa76a] text-xs font-serif group-hover:translate-x-1 transition-transform group-data-[state=open]:hidden">
                           <span>{section.id === 'faq' ? 'Zobacz' : 'Zobacz cennik'}</span>
                           <ArrowRight className="w-3 h-3" />
@@ -1424,7 +1459,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               section.id === 'faq'
                                 ? 'py-1 px-2 rounded-lg hover:border-[#ffecb3]/20'
                                 : service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')
-                                ? 'py-1 px-1.5 md:py-2 md:px-3'
+                                ? 'py-1 px-1.5 md:py-2 md:px-3 [&>svg]:hidden md:[&>svg]:block'
                                 : 'py-1.5 px-1.5 md:py-2 md:px-3'
                             }`}
                           >
@@ -1598,11 +1633,17 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                       </h4>
                                     </div>
                                     {/* Цены справа - только на мобильных */}
-                                    <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
+                                    <div className="flex items-center flex-shrink-0 ml-auto" style={{ width: '52%', minWidth: '135px' }}>
                                       {subcategory.price.split(' / ').map((price, idx) => (
                                         <div 
                                           key={idx}
-                                          className="flex items-center justify-center text-center px-1.5 border-l-2 border-[#8b7a5a]"
+                                          className="flex items-center justify-center text-center border-l-2 border-[#8b7a5a]"
+                                          style={{ 
+                                            width: '17.33%', 
+                                            minWidth: '45px',
+                                            paddingLeft: idx === 0 ? '8px' : '6px',
+                                            paddingRight: idx === 2 ? '8px' : '4px'
+                                          }}
                                         >
                                           <div className="text-lg font-normal text-[#ffffff] font-inter leading-[1.3]">
                                             <span className="inline-flex items-start">

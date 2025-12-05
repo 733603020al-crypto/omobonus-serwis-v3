@@ -1547,7 +1547,7 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                   })()}
                                 </div>
                                 <div className="md:hidden flex flex-col w-full gap-2">
-                                  <div className="flex items-center gap-2.5">
+                                  <div className="flex items-start gap-2.5">
                                     <div className="w-[40px] h-[40px] flex-shrink-0 flex items-center justify-center">
                                       <Image
                                         src={getIconForSubcategory(subcategory.id) || getIconForSection(section.id)}
@@ -1569,10 +1569,13 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                             const mainPart = match[1].trim()
                                             const bracketPart = match[2].trim()
                                             if (isWynajemSubcategory) {
-                                              // Для wynajem - вся часть в скобках в том же стиле
+                                              // Для wynajem на мобильных - переносим на две строки для экономии места
                                               return (
                                                 <>
-                                                  {mainPart}{' '}
+                                                  <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
+                                                    {mainPart}
+                                                  </span>
+                                                  <br className="md:hidden" />
                                                   <span className="text-lg font-semibold text-[#ffffff] font-table-main leading-[1.2]">
                                                     ({bracketPart})
                                                   </span>
@@ -1593,6 +1596,29 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                           return title
                                         })()}
                                       </h4>
+                                    </div>
+                                    {/* Цены справа - только на мобильных */}
+                                    <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
+                                      {subcategory.price.split(' / ').map((price, idx) => (
+                                        <div 
+                                          key={idx}
+                                          className="flex items-center justify-center text-center px-1.5 border-l-2 border-[#8b7a5a]"
+                                        >
+                                          <div className="text-lg font-normal text-[#ffffff] font-inter leading-[1.3]">
+                                            <span className="inline-flex items-start">
+                                              <span>{price}</span>
+                                              {isSubcategoryOpen(section.id, subcategory.id) && (
+                                                <span 
+                                                  className="font-table-sub text-[16px] text-[#ede0c4] leading-[1.3] ml-0.5 inline-flex" 
+                                                  style={{ textShadow: supplementTextShadow, marginTop: '-3px' }}
+                                                >
+                                                  zł
+                                                </span>
+                                              )}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ))}
                                     </div>
                                   </div>
                                   <div className="pl-[52px] -mt-0.5">

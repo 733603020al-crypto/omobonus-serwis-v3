@@ -28,3 +28,6 @@ Write-Host "  ✓ Git оптимизирован" -ForegroundColor Green
 Write-Host ""
 Write-Host "Готово! Git должен работать быстрее." -ForegroundColor Green
 
+
+
+

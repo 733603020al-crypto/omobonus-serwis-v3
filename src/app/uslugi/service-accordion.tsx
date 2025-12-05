@@ -1239,7 +1239,12 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               <span className="md:hidden">
                                 {(() => {
                                   if (service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2')) {
-                                    return renderSectionTitleMobile(section.title)
+                                    // Если аккордеон открыт, переносим заголовок на две строки для экономии места
+                                    if (isSectionOpen(section.id)) {
+                                      return renderSectionTitleMobile(section.title)
+                                    }
+                                    // Если закрыт - показываем обычный заголовок
+                                    return section.title
                                   }
                                   if (section.id === 'konserwacja') {
                                     return 'Czyszczenie i konserwacja'
@@ -1252,8 +1257,8 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                               </span>
                               <span className="hidden md:inline">{section.title}</span>
                             </h3>
-                            {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен - мобильная версия */}
-                            {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && (
+                            {/* "Czynsz wynajmu [zł/mies.]" над столбцами цен - мобильная версия, только когда аккордеон открыт */}
+                            {service.slug === 'wynajem-drukarek' && (section.id === 'akordeon-1' || section.id === 'akordeon-2') && isSectionOpen(section.id) && (
                               <div className="md:hidden flex-shrink-0 ml-auto mt-1 md:mt-0">
                                 <span className="text-base font-cormorant font-semibold text-[#ffffff] leading-tight whitespace-nowrap">
                                   Czynsz wynajmu [zł/mies.]
@@ -1632,17 +1637,19 @@ const ServiceAccordion = ({ service }: { service: ServiceData }) => {
                                         })()}
                                       </h4>
                                     </div>
-                                    {/* Цены справа - только на мобильных */}
+                                    {/* Цены справа - только на мобильных, выровнены с таблицей внутри аккордеона */}
                                     <div className="flex items-center flex-shrink-0 ml-auto" style={{ width: '52%', minWidth: '135px' }}>
                                       {subcategory.price.split(' / ').map((price, idx) => (
                                         <div 
                                           key={idx}
-                                          className="flex items-center justify-center text-center border-l-2 border-[#8b7a5a]"
+                                          className={`flex items-center justify-center text-center border-l-2 border-[#8b7a5a] ${
+                                            idx === 0 ? 'pl-2 pr-1' : idx === 1 ? 'pl-1.5 pr-1' : 'pl-1.5 pr-2'
+                                          }`}
                                           style={{ 
                                             width: '17.33%', 
                                             minWidth: '45px',
-                                            paddingLeft: idx === 0 ? '8px' : '6px',
-                                            paddingRight: idx === 2 ? '8px' : '4px'
+                                            maxWidth: '17.33%',
+                                            boxSizing: 'border-box'
                                           }}
                                         >
                                           <div className="text-lg font-normal text-[#ffffff] font-inter leading-[1.3]">
